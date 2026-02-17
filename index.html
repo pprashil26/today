@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Today Tool - Analog Style Final</title>
+<style>
+  /* Global Reset */
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+  body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
+
+  /* Card Styles */
+  .card {
+    width: 300px;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    background-size: 100% 24px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    overflow: hidden;
+  }
+
+  /* Subtle paper texture */
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="none" stroke="%23e0e0e0" stroke-width="1"/></svg>') repeat;
+    opacity: 0.03;
+    pointer-events: none;
+  }
+
+  /* Card background colors with ruled lines */
+  .today { background-color: #ffffff; background-image: linear-gradient(to bottom, #eaeaea 1px, transparent 1px); }
+  .next { background-color: #dffcf0; background-image: linear-gradient(to bottom, #c8f7e2 1px, transparent 1px); }
+  .someday { background-color: #c8f7e2; background-image: linear-gradient(to bottom, #b0ebd6 1px, transparent 1px); }
+
+  /* Headings - Handwritten-style font */
+  @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+  .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; margin-bottom: 12px; color: #333; z-index: 1; position: relative; }
+
+  /* Task List */
+  .task {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 6px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    background: rgba(255,255,255,0.6);
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.06); /* subtle offset shadow */
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Circle Status */
+  .circle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #999;
+    margin-right: 8px;
+    flex-shrink: 0;
+    cursor: pointer;
+    display: inline-block;
+    transition: all 0.2s ease;
+  }
+  .completed { background: #4caf50; border-color: #4caf50; }
+  .inprogress { background: #ffc107; border-color: #ffc107; }
+  .delegated { background: #2196f3; border-color: #2196f3; }
+
+  /* Task Text */
+  .task-text { flex: 1; margin-right: 8px; word-break: break-word; }
+
+  /* Buttons */
+  .task-buttons button {
+    margin-left: 4px;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: rgba(0,0,0,0.05);
+    transition: 0.2s;
+  }
+  .task-buttons button:hover { background: rgba(0,0,0,0.1); }
+
+  /* Add Task Input */
+  .add-task {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+    z-index: 1;
+    position: relative;
+  }
+  .add-task input {
+    flex: 1;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  .add-task button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #333;
+    color: #fff;
+    cursor: pointer;
+  }
+  .add-task button:hover { background: #555; }
+
+  /* Carry Over Button */
+  .carry-over-btn {
+    margin-top: 8px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #4caf50;
+    color: #fff;
+    cursor: pointer;
+    z-index: 1;
+    position: relative;
+  }
+  .carry-over-btn:hover { background: #45a049; }
+</style>
+</head>
+<body>
+
+<div class="card today">
+  <h2>Today - <span id="today-date"></span></h2>
+  <div class="task-list" id="today-tasks"></div>
+  <div class="add-task">
+    <input type="text" placeholder="New task..." id="today-input">
+    <button onclick="addTask('today')">Add</button>
+  </div>
+  <button class="carry-over-btn" onclick="carryOverToday()">Carry Over Unfinished Tasks</button>
+</div>
+
+<div class="card next">
+  <h2>Next - <span id="next-month"></span></h2>
+  <div class="task-list" id="next-tasks"></div>
+  <div class="add-task">
+    <input type="text" placeholder="New task..." id="next-input">
+    <button onclick="addTask('next')">Add</button>
+  </div>
+</div>
+
+<div class="card someday">
+  <h2>Someday</h2>
+  <div class="task-list" id="someday-tasks"></div>
+  <div class="add-task">
+    <input type="text" placeholder="New task..." id="someday-input">
+    <button onclick="addTask('someday')">Add</button>
+  </div>
+</div>
+
+<script>
+  // Utility
+  function todayDate() {
+    const d = new Date();
+    return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year:'numeric' });
+  }
+  function currentMonth() {
+    const d = new Date();
+    return d.toLocaleDateString(undefined, { month: 'long' });
+  }
+  document.getElementById('today-date').innerText = todayDate();
+  document.getElementById('next-month').innerText = currentMonth();
+
+  // Task Storage
+  const storageKey = 'todayToolTasks';
+  let tasks = JSON.parse(localStorage.getItem(storageKey)) || { today: [], next: [], someday: [] };
+  function saveTasks() { localStorage.setItem(storageKey, JSON.stringify(tasks)); }
+
+  // Render Tasks
+  function renderTasks() {
+    ['today','next','someday'].forEach(card => {
+      const container = document.getElementById(card+'-tasks');
+      container.innerHTML = '';
+      tasks[card].forEach((task, idx) => {
+        const taskDiv = document.createElement('div');
+        taskDiv.className = 'task';
+
+        const circle = document.createElement('span');
+        circle.className = 'circle '+task.status;
+        circle.title = 'Click to change status';
+        circle.onclick = () => toggleStatus(card, idx);
+
+        const text = document.createElement('span');
+        text.className = 'task-text';
+        text.textContent = task.text;
+
+        const btnDiv = document.createElement('div');
+        btnDiv.className = 'task-buttons';
+
+        // Movement buttons
+        if(card==='today') {
+          const nextBtn = document.createElement('button'); nextBtn.textContent='→ Next'; nextBtn.onclick = () => moveTask('today','next',idx);
+          const somedayBtn = document.createElement('button'); somedayBtn.textContent='→ Someday'; somedayBtn.onclick = () => moveTask('today','someday',idx);
+          btnDiv.append(nextBtn, somedayBtn);
+        } else if(card==='next') {
+          const somedayBtn = document.createElement('button'); somedayBtn.textContent='→ Someday'; somedayBtn.onclick = () => moveTask('next','someday',idx);
+          btnDiv.append(somedayBtn);
+        } else if(card==='someday') {
+          const todayBtn = document.createElement('button'); todayBtn.textContent='→ Today'; todayBtn.onclick = () => moveTask('someday','today',idx);
+          const nextBtn = document.createElement('button'); nextBtn.textContent='→ Next'; nextBtn.onclick = () => moveTask('someday','next',idx);
+          btnDiv.append(todayBtn, nextBtn);
+        }
+
+        taskDiv.append(circle, text, btnDiv);
+        container.appendChild(taskDiv);
+      });
+    });
+  }
+
+  // Add Task
+  function addTask(card) {
+    const input = document.getElementById(card+'-input');
+    const text = input.value.trim();
+    if(!text) return;
+    if(tasks[card].length>=10){ alert('Maximum 10 tasks per card'); return; }
+    tasks[card].push({ text: text, status: '' });
+    input.value = '';
+    saveTasks();
+    renderTasks();
+  }
+
+  // Toggle Status
+  function toggleStatus(card, idx){
+    const statusOrder = ['', 'completed', 'inprogress', 'delegated'];
+    let current = tasks[card][idx].status;
+    let nextIndex = (statusOrder.indexOf(current)+1) % statusOrder.length;
+    tasks[card][idx].status = statusOrder[nextIndex];
+    saveTasks();
+    renderTasks();
+  }
+
+  // Move Task
+  function moveTask(from, to, idx){
+    if(tasks[to].length>=10){ alert('Target card already has 10 tasks'); return; }
+    const [task] = tasks[from].splice(idx,1);
+    tasks[to].push(task);
+    saveTasks();
+    renderTasks();
+  }
+
+  // Carry Over
+  function carryOverToday() {
+    const unfinished = tasks['today'].filter(t => t.status === '' || t.status === 'inprogress');
+    if(unfinished.length === 0) { alert('No unfinished tasks to carry over'); return; }
+
+    const availableSlots = 10 - tasks['today'].length;
+    if(availableSlots <= 0) { alert('Today card already has 10 tasks'); return; }
+
+    const toAdd = unfinished.slice(0, availableSlots);
+    tasks['today'].push(...toAdd);
+
+    saveTasks();
+    renderTasks();
+    alert(`${toAdd.length} task(s) carried over to Today`);
+  }
+
+  renderTasks();
+</script>
+</body>
+</html>
