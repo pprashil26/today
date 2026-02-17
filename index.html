@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - Color Blind Friendly v1.1 FINAL</title>
+<title>Today Tool - v1.1 FINAL Minimal</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -16,7 +16,7 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .completed-card { background-color: #c8f7e2; background-image: linear-gradient(to bottom, #b0ebd6 1px, transparent 1px); }
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
-.card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; margin-bottom: 12px; color: #333; z-index: 1; position: relative; }
+.card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.15rem; color: #555; display: flex; justify-content: space-between; align-items: center; }
 
 .task { display: flex; align-items: center; justify-content: space-between; padding: 8px 6px; border-radius: 6px; margin-bottom: 4px; background: rgba(255,255,255,0.6); box-shadow: 2px 2px 4px rgba(0,0,0,0.06); position: relative; z-index: 1; }
 
@@ -40,12 +40,27 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 .carry-over-btn { margin-top: 8px; padding: 6px 12px; border: none; border-radius: 6px; background: #a0cfa0; color: #fff; cursor: pointer; z-index: 1; position: relative; }
 .carry-over-btn:hover { background: #91bf91; }
+
+/* Minimal toggle switch */
+.switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 12px; transition: .2s; }
+.slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .2s; }
+input:checked + .slider { background-color: #4caf50; }
+input:checked + .slider:before { transform: translateX(20px); }
 </style>
 </head>
 <body>
 
 <div class="card today">
-  <h2>Today - <span id="today-date"></span></h2>
+  <h2>
+    <span>Today - <span id="today-date"></span></span>
+    <!-- Toggle switch to hide/show Next & Completed -->
+    <label class="switch" title="Show Next & Completed cards">
+      <input type="checkbox" id="toggle-cards" checked>
+      <span class="slider"></span>
+    </label>
+  </h2>
   <div class="task-list" id="today-tasks"></div>
   <div class="add-task">
     <input type="text" placeholder="New task..." id="today-input">
@@ -54,12 +69,12 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   <button class="carry-over-btn" onclick="carryOverToday()">Carry Over Unfinished Tasks</button>
 </div>
 
-<div class="card next">
+<div class="card next" id="next-card">
   <h2>Next</h2>
   <div class="task-list" id="next-tasks"></div>
 </div>
 
-<div class="card completed-card">
+<div class="card completed-card" id="completed-card">
   <h2>Completed</h2>
   <div class="task-list" id="completed-tasks"></div>
 </div>
@@ -148,6 +163,13 @@ function carryOverToday(){
   const availableSlots=10-tasks['today'].length; if(availableSlots<=0){ alert('Today card already has 10 tasks'); return; }
   const toAdd=unfinished.slice(0,availableSlots); tasks['today'].push(...toAdd); saveTasks(); renderTasks(); alert(`${toAdd.length} task(s) carried over to Today`);
 }
+
+// Toggle visibility of Next & Completed cards
+document.getElementById('toggle-cards').addEventListener('change', function(){
+  const show = this.checked;
+  document.getElementById('next-card').style.display = show ? 'flex' : 'none';
+  document.getElementById('completed-card').style.display = show ? 'flex' : 'none';
+});
 
 renderTasks();
 </script>
