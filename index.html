@@ -150,19 +150,16 @@
 </div>
 
 <script>
-  // Utility
   function todayDate() {
     const d = new Date();
     return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year:'numeric' });
   }
   document.getElementById('today-date').innerText = todayDate();
 
-  // Task Storage
   const storageKey = 'todayToolTasks';
   let tasks = JSON.parse(localStorage.getItem(storageKey)) || { today: [], next: [], completed: [] };
   function saveTasks() { localStorage.setItem(storageKey, JSON.stringify(tasks)); }
 
-  // Render Tasks
   function renderTasks() {
     ['today','next','completed'].forEach(card => {
       const container = document.getElementById(card+'-tasks');
@@ -183,17 +180,37 @@
         const btnDiv = document.createElement('div');
         btnDiv.className = 'task-buttons';
 
-        // Movement buttons
+        // Movement buttons with proper index binding using data attributes
         if(card==='today') {
-          const nextBtn = document.createElement('button'); nextBtn.textContent='→ Next'; nextBtn.onclick = () => moveTask('today','next',idx);
-          const completedBtn = document.createElement('button'); completedBtn.textContent='→ Completed'; completedBtn.onclick = () => moveTask('today','completed',idx);
+          const nextBtn = document.createElement('button');
+          nextBtn.textContent='→ Next';
+          nextBtn.dataset.idx = idx;
+          nextBtn.onclick = function() { moveTask('today','next', Number(this.dataset.idx)); };
+
+          const completedBtn = document.createElement('button');
+          completedBtn.textContent='→ Completed';
+          completedBtn.dataset.idx = idx;
+          completedBtn.onclick = function() { moveTask('today','completed', Number(this.dataset.idx)); };
+
           btnDiv.append(nextBtn, completedBtn);
         } else if(card==='next') {
-          const completedBtn = document.createElement('button'); completedBtn.textContent='→ Completed'; completedBtn.onclick = () => moveTask('next','completed',idx);
+          const completedBtn = document.createElement('button');
+          completedBtn.textContent='→ Completed';
+          completedBtn.dataset.idx = idx;
+          completedBtn.onclick = function() { moveTask('next','completed', Number(this.dataset.idx)); };
+
           btnDiv.append(completedBtn);
         } else if(card==='completed') {
-          const todayBtn = document.createElement('button'); todayBtn.textContent='→ Today'; todayBtn.onclick = () => moveTask('completed','today',idx);
-          const nextBtn = document.createElement('button'); nextBtn.textContent='→ Next'; nextBtn.onclick = () => moveTask('completed','next',idx);
+          const todayBtn = document.createElement('button');
+          todayBtn.textContent='→ Today';
+          todayBtn.dataset.idx = idx;
+          todayBtn.onclick = function() { moveTask('completed','today', Number(this.dataset.idx)); };
+
+          const nextBtn = document.createElement('button');
+          nextBtn.textContent='→ Next';
+          nextBtn.dataset.idx = idx;
+          nextBtn.onclick = function() { moveTask('completed','next', Number(this.dataset.idx)); };
+
           btnDiv.append(todayBtn, nextBtn);
         }
 
@@ -203,9 +220,8 @@
     });
   }
 
-  // Add Task
   function addTask(card) {
-    if(card!=='today') return; // Only Today card can add tasks
+    if(card!=='today') return;
     const input = document.getElementById(card+'-input');
     const text = input.value.trim();
     if(!text) return;
@@ -216,7 +232,6 @@
     renderTasks();
   }
 
-  // Toggle Status
   function toggleStatus(card, idx){
     const statusOrder = ['', 'completed', 'inprogress', 'delegated'];
     let current = tasks[card][idx].status;
@@ -226,7 +241,6 @@
     renderTasks();
   }
 
-  // Move Task
   function moveTask(from, to, idx){
     if(tasks[to].length>=10){ alert('Target card already has 10 tasks'); return; }
     const [task] = tasks[from].splice(idx,1);
@@ -235,17 +249,13 @@
     renderTasks();
   }
 
-  // Carry Over
   function carryOverToday() {
     const unfinished = tasks['today'].filter(t => t.status === '' || t.status === 'inprogress');
     if(unfinished.length === 0) { alert('No unfinished tasks to carry over'); return; }
-
     const availableSlots = 10 - tasks['today'].length;
     if(availableSlots <= 0) { alert('Today card already has 10 tasks'); return; }
-
     const toAdd = unfinished.slice(0, availableSlots);
     tasks['today'].push(...toAdd);
-
     saveTasks();
     renderTasks();
     alert(`${toAdd.length} task(s) carried over to Today`);
