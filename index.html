@@ -3,101 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - Analog Style v1.1 FINAL</title>
+<title>Today Tool - Color Blind Friendly v1.1 FINAL</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-  body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
 
-  .card {
-    width: 300px;
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    position: relative;
-    background-size: 100% 24px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-    overflow: hidden;
-  }
+.card { width: 300px; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px; position: relative; background-size: 100% 24px; box-shadow: 0 6px 18px rgba(0,0,0,0.12); overflow: hidden; }
+.card::before { content: ""; position: absolute; inset: 0; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="none" stroke="%23e0e0e0" stroke-width="1"/></svg>') repeat; opacity: 0.03; pointer-events: none; }
 
-  .card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="none" stroke="%23e0e0e0" stroke-width="1"/></svg>') repeat;
-    opacity: 0.03;
-    pointer-events: none;
-  }
+.today { background-color: #ffffff; background-image: linear-gradient(to bottom, #eaeaea 1px, transparent 1px); }
+.next { background-color: #dffcf0; background-image: linear-gradient(to bottom, #c8f7e2 1px, transparent 1px); }
+.completed-card { background-color: #c8f7e2; background-image: linear-gradient(to bottom, #b0ebd6 1px, transparent 1px); }
 
-  .today { background-color: #ffffff; background-image: linear-gradient(to bottom, #eaeaea 1px, transparent 1px); }
-  .next { background-color: #dffcf0; background-image: linear-gradient(to bottom, #c8f7e2 1px, transparent 1px); }
-  .completed-card { background-color: #c8f7e2; background-image: linear-gradient(to bottom, #b0ebd6 1px, transparent 1px); }
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+.card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; margin-bottom: 12px; color: #333; z-index: 1; position: relative; }
 
-  @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
-  .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.3rem; margin-bottom: 12px; color: #333; z-index: 1; position: relative; }
+.task { display: flex; align-items: center; justify-content: space-between; padding: 8px 6px; border-radius: 6px; margin-bottom: 4px; background: rgba(255,255,255,0.6); box-shadow: 2px 2px 4px rgba(0,0,0,0.06); position: relative; z-index: 1; }
 
-  .task {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 6px;
-    border-radius: 6px;
-    margin-bottom: 4px;
-    background: rgba(255,255,255,0.6);
-    box-shadow: 2px 2px 4px rgba(0,0,0,0.06); 
-    position: relative;
-    z-index: 1;
-  }
+.circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 8px; flex-shrink: 0; cursor: pointer; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition: all 0.2s ease; }
+.circle.default { background: transparent; color: #333; }
+.circle.completed { background: #4caf50; color: #fff; }
+.circle.inprogress { background: #ffc107; color: #333; }
 
-  .circle {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 2px solid #999;
-    margin-right: 8px;
-    flex-shrink: 0;
-    cursor: pointer;
-    display: inline-block;
-    transition: all 0.2s ease;
-  }
-  .circle.completed { background: #4caf50; border-color: #4caf50; }
-  .circle.inprogress { background: #ffc107; border-color: #ffc107; }
-  .circle.delegated { background: #2196f3; border-color: #2196f3; }
+.task-text { flex: 1; margin-right: 8px; word-break: break-word; }
 
-  .task-text { flex: 1; margin-right: 8px; word-break: break-word; }
+.task-buttons button { margin-left: 4px; padding: 2px 6px; font-size: 0.75rem; border: none; border-radius: 6px; cursor: pointer; background: rgba(0,0,0,0.05); transition: 0.2s; }
+.task-buttons button:hover { background: rgba(0,0,0,0.1); }
 
-  .task-buttons button {
-    margin-left: 4px;
-    padding: 2px 6px;
-    font-size: 0.75rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    background: rgba(0,0,0,0.05);
-    transition: 0.2s;
-  }
-  .task-buttons button:hover { background: rgba(0,0,0,0.1); }
+.delete-btn { margin-left: 4px; padding: 1px 4px; font-size: 0.65rem; border: none; border-radius: 4px; cursor: pointer; background: rgba(255,0,0,0.2); color: #900; }
+.delete-btn:hover { background: rgba(255,0,0,0.4); }
 
-  .delete-btn {
-    margin-left: 4px;
-    padding: 1px 4px;
-    font-size: 0.65rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    background: rgba(255,0,0,0.2);
-    color: #900;
-  }
-  .delete-btn:hover { background: rgba(255,0,0,0.4); }
+.add-task { display: flex; gap: 4px; margin-top: 8px; z-index: 1; position: relative; }
+.add-task input { flex: 1; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
+.add-task button { padding: 6px 12px; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
+.add-task button:hover { background: #555; }
 
-  .add-task { display: flex; gap: 4px; margin-top: 8px; z-index: 1; position: relative; }
-  .add-task input { flex: 1; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
-  .add-task button { padding: 6px 12px; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
-  .add-task button:hover { background: #555; }
-
-  .carry-over-btn { margin-top: 8px; padding: 6px 12px; border: none; border-radius: 6px; background: #a0cfa0; color: #fff; cursor: pointer; z-index: 1; position: relative; }
-  .carry-over-btn:hover { background: #91bf91; }
+.carry-over-btn { margin-top: 8px; padding: 6px 12px; border: none; border-radius: 6px; background: #a0cfa0; color: #fff; cursor: pointer; z-index: 1; position: relative; }
+.carry-over-btn:hover { background: #91bf91; }
 </style>
 </head>
 <body>
@@ -131,8 +73,6 @@ document.getElementById('today-date').innerText = todayDate();
 
 const storageKey = 'todayToolTasks';
 let tasks = JSON.parse(localStorage.getItem(storageKey)) || { today: [], next: [], completed: [] };
-
-// Migration from old 'someday' key
 if(tasks.someday) { tasks.completed = tasks.someday; delete tasks.someday; localStorage.setItem(storageKey, JSON.stringify(tasks)); }
 
 function saveTasks(){ localStorage.setItem(storageKey, JSON.stringify(tasks)); }
@@ -142,94 +82,71 @@ function renderTasks() {
     const container = document.getElementById(card+'-tasks');
     container.innerHTML = '';
     tasks[card].forEach((task, idx) => {
-      const taskDiv = document.createElement('div');
-      taskDiv.className = 'task';
+      const taskDiv = document.createElement('div'); taskDiv.className='task';
+      const circle = document.createElement('span'); 
+      circle.className='circle '+(task.status||'default');
+      circle.textContent = task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
+      circle.title = task.status || 'No status';
+      circle.onclick = ()=>toggleStatus(card,idx);
+      const text = document.createElement('span'); text.className='task-text'; text.textContent=task.text;
 
-      const circle = document.createElement('span');
-      circle.className = 'circle '+task.status;
-      circle.title = 'Click to change status';
-      circle.onclick = () => toggleStatus(card, idx);
+      const btnDiv = document.createElement('div'); btnDiv.className='task-buttons';
 
-      const text = document.createElement('span');
-      text.className = 'task-text';
-      text.textContent = task.text;
-
-      const btnDiv = document.createElement('div');
-      btnDiv.className = 'task-buttons';
-
-      // Movement buttons with minimal labels
       if(card==='today'){
-        const nextBtn = document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
         nextBtn.onclick=function(){ moveTask('today','next',Number(this.dataset.idx)); };
-        const completedBtn = document.createElement('button'); completedBtn.textContent='C'; completedBtn.dataset.idx=idx;
+        const completedBtn=document.createElement('button'); completedBtn.textContent='C'; completedBtn.dataset.idx=idx;
         completedBtn.onclick=function(){ moveTask('today','completed',Number(this.dataset.idx)); };
-        btnDiv.append(nextBtn, completedBtn);
+        btnDiv.append(nextBtn,completedBtn);
       } else if(card==='next'){
-        const todayBtn = document.createElement('button'); todayBtn.textContent='T'; todayBtn.dataset.idx=idx;
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.dataset.idx=idx;
         todayBtn.onclick=function(){ moveTask('next','today',Number(this.dataset.idx)); };
-        const completedBtn = document.createElement('button'); completedBtn.textContent='C'; completedBtn.dataset.idx=idx;
+        const completedBtn=document.createElement('button'); completedBtn.textContent='C'; completedBtn.dataset.idx=idx;
         completedBtn.onclick=function(){ moveTask('next','completed',Number(this.dataset.idx)); };
-        btnDiv.append(todayBtn, completedBtn);
+        btnDiv.append(todayBtn,completedBtn);
       } else if(card==='completed'){
-        const todayBtn = document.createElement('button'); todayBtn.textContent='T'; todayBtn.dataset.idx=idx;
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.dataset.idx=idx;
         todayBtn.onclick=function(){ moveTask('completed','today',Number(this.dataset.idx)); };
-        const nextBtn = document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
         nextBtn.onclick=function(){ moveTask('completed','next',Number(this.dataset.idx)); };
-        btnDiv.append(todayBtn, nextBtn);
+        btnDiv.append(todayBtn,nextBtn);
       }
 
-      // Delete button
-      const delBtn = document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕';
-      delBtn.dataset.idx = idx;
-      delBtn.onclick=function(){ deleteTask(card,Number(this.dataset.idx)); };
+      const delBtn=document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕';
+      delBtn.dataset.idx=idx; delBtn.onclick=function(){ deleteTask(card,Number(this.dataset.idx)); };
       btnDiv.appendChild(delBtn);
 
-      taskDiv.append(circle,text,btnDiv);
-      container.appendChild(taskDiv);
+      taskDiv.append(circle,text,btnDiv); container.appendChild(taskDiv);
     });
   });
 }
 
 function addTask(card){
   if(card!=='today') return;
-  const input = document.getElementById(card+'-input');
-  const text = input.value.trim();
-  if(!text) return;
-  if(tasks[card].length>=10){ alert('Maximum 10 tasks per card'); return; }
-  tasks[card].push({ text:text, status:'' });
-  input.value='';
-  saveTasks(); renderTasks();
+  const input=document.getElementById(card+'-input'); const text=input.value.trim();
+  if(!text) return; if(tasks[card].length>=10){ alert('Maximum 10 tasks per card'); return; }
+  tasks[card].push({ text:text, status:'' }); input.value=''; saveTasks(); renderTasks();
 }
 
-function toggleStatus(card, idx){
-  const statusOrder=['','completed','inprogress','delegated'];
-  let current = tasks[card][idx].status;
-  let nextIndex = (statusOrder.indexOf(current)+1)%statusOrder.length;
-  tasks[card][idx].status = statusOrder[nextIndex];
-  saveTasks(); renderTasks();
+function toggleStatus(card,idx){
+  const statusOrder=['','completed','inprogress'];
+  let current=tasks[card][idx].status;
+  let nextIndex=(statusOrder.indexOf(current)+1)%statusOrder.length;
+  tasks[card][idx].status=statusOrder[nextIndex]; saveTasks(); renderTasks();
 }
 
 function moveTask(from,to,idx){
   if(tasks[to].length>=10){ alert('Target card already has 10 tasks'); return; }
-  const [task] = tasks[from].splice(idx,1);
-  tasks[to].push(task);
-  saveTasks(); renderTasks();
+  const [task]=tasks[from].splice(idx,1); tasks[to].push(task); saveTasks(); renderTasks();
 }
 
-function deleteTask(card,idx){
-  tasks[card].splice(idx,1);
-  saveTasks(); renderTasks();
-}
+function deleteTask(card,idx){ tasks[card].splice(idx,1); saveTasks(); renderTasks(); }
 
 function carryOverToday(){
-  const unfinished = tasks['today'].filter(t=>t.status===''||t.status==='inprogress');
+  const unfinished=tasks['today'].filter(t=>t.status===''||t.status==='inprogress');
   if(unfinished.length===0){ alert('No unfinished tasks to carry over'); return; }
-  const availableSlots = 10-tasks['today'].length;
-  if(availableSlots<=0){ alert('Today card already has 10 tasks'); return; }
-  const toAdd = unfinished.slice(0,availableSlots);
-  tasks['today'].push(...toAdd);
-  saveTasks(); renderTasks();
-  alert(`${toAdd.length} task(s) carried over to Today`);
+  const availableSlots=10-tasks['today'].length; if(availableSlots<=0){ alert('Today card already has 10 tasks'); return; }
+  const toAdd=unfinished.slice(0,availableSlots); tasks['today'].push(...toAdd); saveTasks(); renderTasks(); alert(`${toAdd.length} task(s) carried over to Today`);
 }
 
 renderTasks();
