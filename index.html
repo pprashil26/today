@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.1 FINAL Minimal Unlimited Tasks</title>
+<title>Today Tool - v1.1 FINAL Minimal Unlimited Tasks + Default Height</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -17,6 +17,9 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.15rem; color: #555; display: flex; justify-content: space-between; align-items: center; }
+
+/* Task container now has fixed height for 10 tasks + scroll if overflow */
+.task-list { flex: 1; min-height: 400px; max-height: 400px; overflow-y: auto; }
 
 .task { display: flex; align-items: center; justify-content: space-between; padding: 8px 6px; border-radius: 6px; margin-bottom: 4px; background: rgba(255,255,255,0.6); box-shadow: 2px 2px 4px rgba(0,0,0,0.06); position: relative; z-index: 1; }
 
@@ -138,7 +141,7 @@ function renderTasks() {
 function addTask(card){
   if(card!=='today') return;
   const input=document.getElementById(card+'-input'); const text=input.value.trim();
-  if(!text) return; // Removed 10-task limit
+  if(!text) return; 
   tasks[card].push({ text:text, status:'' }); input.value=''; saveTasks(); renderTasks();
 }
 
