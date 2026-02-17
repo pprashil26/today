@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.1 FINAL Minimal</title>
+<title>Today Tool - v1.1 FINAL Minimal Unlimited Tasks</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -55,7 +55,6 @@ input:checked + .slider:before { transform: translateX(20px); }
 <div class="card today">
   <h2>
     <span>Today - <span id="today-date"></span></span>
-    <!-- Toggle switch to hide/show Next & Completed -->
     <label class="switch" title="Show Next & Completed cards">
       <input type="checkbox" id="toggle-cards" checked>
       <span class="slider"></span>
@@ -139,7 +138,7 @@ function renderTasks() {
 function addTask(card){
   if(card!=='today') return;
   const input=document.getElementById(card+'-input'); const text=input.value.trim();
-  if(!text) return; if(tasks[card].length>=10){ alert('Maximum 10 tasks per card'); return; }
+  if(!text) return; // Removed 10-task limit
   tasks[card].push({ text:text, status:'' }); input.value=''; saveTasks(); renderTasks();
 }
 
@@ -151,7 +150,6 @@ function toggleStatus(card,idx){
 }
 
 function moveTask(from,to,idx){
-  if(tasks[to].length>=10){ alert('Target card already has 10 tasks'); return; }
   const [task]=tasks[from].splice(idx,1); tasks[to].push(task); saveTasks(); renderTasks();
 }
 
@@ -160,8 +158,7 @@ function deleteTask(card,idx){ tasks[card].splice(idx,1); saveTasks(); renderTas
 function carryOverToday(){
   const unfinished=tasks['today'].filter(t=>t.status===''||t.status==='inprogress');
   if(unfinished.length===0){ alert('No unfinished tasks to carry over'); return; }
-  const availableSlots=10-tasks['today'].length; if(availableSlots<=0){ alert('Today card already has 10 tasks'); return; }
-  const toAdd=unfinished.slice(0,availableSlots); tasks['today'].push(...toAdd); saveTasks(); renderTasks(); alert(`${toAdd.length} task(s) carried over to Today`);
+  tasks['today'].push(...unfinished); saveTasks(); renderTasks(); alert(`${unfinished.length} task(s) carried over to Today`);
 }
 
 // Toggle visibility of Next & Completed cards
