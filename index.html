@@ -150,6 +150,7 @@
 </div>
 
 <script>
+  // Display today's date
   function todayDate() {
     const d = new Date();
     return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year:'numeric' });
@@ -158,6 +159,14 @@
 
   const storageKey = 'todayToolTasks';
   let tasks = JSON.parse(localStorage.getItem(storageKey)) || { today: [], next: [], completed: [] };
+
+  // Migration: old 'someday' key → 'completed'
+  if(tasks.someday) {
+    tasks.completed = tasks.someday;
+    delete tasks.someday;
+    localStorage.setItem(storageKey, JSON.stringify(tasks));
+  }
+
   function saveTasks() { localStorage.setItem(storageKey, JSON.stringify(tasks)); }
 
   function renderTasks() {
