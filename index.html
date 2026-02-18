@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.4</title>
-
+<title>Today Tool - v1.4.1 FINAL + Archive</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -21,6 +20,7 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   overflow: hidden; 
 }
 
+/* Subtle paper texture overlay */
 .card::before { 
   content: ""; 
   position: absolute; 
@@ -30,48 +30,79 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   pointer-events: none; 
 }
 
-/* Dot Grid (unchanged) */
-.today { background-color:#ffffff; background-image:radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px); background-size:18px 18px; }
-.next { background-color:#dffcf0; background-image:radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px); background-size:18px 18px; }
-.someday { background-color:#c8f7e2; background-image:radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px); background-size:18px 18px; }
-.archive { background-color:#a0d9b7; background-image:radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px); background-size:18px 18px; }
+/* Softer Dot Grid */
+.today { 
+  background-color: #ffffff; 
+  background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+.next { 
+  background-color: #dffcf0; 
+  background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+.someday { 
+  background-color: #c8f7e2; 
+  background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+.archive { 
+  background-color: #a0d9b7; 
+  background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
-.card h2 { font-family:'Patrick Hand', cursive; font-size:1.05rem; color:#666; display:flex; justify-content:space-between; align-items:center; }
+.card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
 
-#today-date { font-size:0.8rem; color:#888; margin-left:6px; }
+#today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
 
-.task-list { flex:1; min-height:400px; max-height:400px; overflow-y:auto; }
+.task-list { flex: 1; min-height: 400px; max-height: 400px; overflow-y: auto; }
 
-.task { display:flex; flex-direction:column; padding:6px 4px; margin-bottom:2px; }
-.task-top { display:flex; align-items:center; }
+.task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; }
+.task-top { display: flex; align-items: center; }
 
-.circle { width:18px; height:18px; border-radius:50%; border:2px solid #999; margin-right:6px; flex-shrink:0; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition:all 0.2s ease; background:#fff; color:#333; }
+.circle { 
+  width: 18px; 
+  height: 18px; 
+  border-radius: 50%; 
+  border: 2px solid #999; 
+  margin-right: 6px; 
+  flex-shrink: 0; 
+  cursor: pointer; 
+  display: inline-flex; 
+  align-items:center; 
+  justify-content:center; 
+  font-size:12px; 
+  font-weight:bold; 
+  transition: all 0.2s ease; 
+  background: #fff; 
+  color: #333; 
+}
 
-.task-text { flex:1; word-break:break-word; font-size:0.9rem; }
+.task-text { flex: 1; word-break: break-word; font-size: 0.9rem; }
 
-.task-buttons { margin-top:1px; margin-left:24px; }
-.task-buttons button { margin-right:6px; padding:0; font-size:0.7rem; border:none; background:none; opacity:0.5; cursor:pointer; transition:opacity 0.15s ease; }
-.task:hover .task-buttons button { opacity:0.8; }
+.task-buttons { margin-top: 1px; margin-left: 24px; }
+.task-buttons button { margin-right: 6px; padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; transition: opacity 0.15s ease; }
+.task:hover .task-buttons button { opacity: 0.8; }
 
-.delete-btn { margin-left:4px; padding:0; font-size:0.65rem; border:none; background:none; color:#900; opacity:0.5; cursor:pointer; }
-.task:hover .delete-btn { opacity:0.8; }
+.delete-btn { margin-left: 4px; padding: 0; font-size: 0.65rem; border: none; background: none; color: #900; opacity: 0.5; cursor: pointer; }
+.task:hover .delete-btn { opacity: 0.8; }
 
-.add-task { display:flex; gap:4px; margin-top:8px; z-index:1; position:relative; }
-.add-task input { flex:1; padding:6px 8px; border:1px solid #ccc; border-radius:6px; }
-.add-task button { padding:6px 12px; border:none; border-radius:6px; background:#333; color:#fff; cursor:pointer; }
-.add-task button:hover { background:#555; }
+.add-task { display: flex; gap: 4px; margin-top: 8px; z-index: 1; position: relative; }
+.add-task input { flex: 1; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
+.add-task button { padding: 6px 12px; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
+.add-task button:hover { background: #555; }
 
-.switch { position:relative; display:inline-block; width:40px; height:20px; }
-.switch input { opacity:0; width:0; height:0; }
-.slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#ccc; border-radius:12px; transition:.2s; }
-.slider:before { position:absolute; content:""; height:14px; width:14px; left:3px; bottom:3px; background-color:white; border-radius:50%; transition:.2s; }
-input:checked + .slider { background-color:#4caf50; }
-input:checked + .slider:before { transform:translateX(20px); }
-
-.archive-tools { display:flex; gap:8px; }
-.archive-tools button { background:none; border:none; font-size:12px; cursor:pointer; opacity:0.6; padding:0; }
-.archive-tools button:hover { opacity:1; }
+.switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 12px; transition: .2s; }
+.slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .2s; }
+input:checked + .slider { background-color: #4caf50; }
+input:checked + .slider:before { transform: translateX(20px); }
 </style>
 </head>
 <body>
@@ -79,7 +110,7 @@ input:checked + .slider:before { transform:translateX(20px); }
 <div class="card today">
   <h2>
     <span>Today<span id="today-date"></span></span>
-    <label class="switch">
+    <label class="switch" title="Show Next & Someday & Archive cards">
       <input type="checkbox" id="toggle-cards" checked>
       <span class="slider"></span>
     </label>
@@ -98,8 +129,8 @@ input:checked + .slider:before { transform:translateX(20px); }
 
 <div class="card someday" id="someday-card">
   <h2>
-    <span>Someday</span>
-    <label class="switch">
+    Someday
+    <label class="switch" title="Show/Hide Someday & Archive cards">
       <input type="checkbox" id="toggle-someday" checked>
       <span class="slider"></span>
     </label>
@@ -108,161 +139,144 @@ input:checked + .slider:before { transform:translateX(20px); }
 </div>
 
 <div class="card archive" id="archive-card">
-  <h2>
-    Archive
-    <span class="archive-tools">
-      <button onclick="exportTasksTxt()">Export</button>
-      <button onclick="importTasksTxt()">Import</button>
-    </span>
-  </h2>
+  <h2>Archive</h2>
   <div class="task-list" id="archive-tasks"></div>
 </div>
 
 <script>
-function todayDate(){ const d=new Date(); return d.toLocaleDateString(undefined,{day:'numeric',month:'short'}); }
-document.getElementById('today-date').innerText=" "+todayDate();
-
-const storageKey='todayToolTasks';
-let tasks=JSON.parse(localStorage.getItem(storageKey))||{today:[],next:[],someday:[],archive:[]};
-function saveTasks(){ localStorage.setItem(storageKey,JSON.stringify(tasks)); }
-
-function renderTasks(){
-['today','next','someday','archive'].forEach(card=>{
-const container=document.getElementById(card+'-tasks');
-container.innerHTML='';
-tasks[card].forEach((task,idx)=>{
-const taskDiv=document.createElement('div'); taskDiv.className='task';
-const circle=document.createElement('span');
-circle.className='circle';
-circle.textContent=task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
-circle.onclick=()=>toggleStatus(card,idx);
-const text=document.createElement('span'); text.className='task-text'; text.textContent=task.text;
-const topRow=document.createElement('div'); topRow.className='task-top'; topRow.append(circle,text);
-const btnDiv=document.createElement('div'); btnDiv.className='task-buttons';
-
-if(card==='today'){
-let n=document.createElement('button'); n.textContent='N'; n.onclick=()=>moveTask('today','next',idx);
-let s=document.createElement('button'); s.textContent='S'; s.onclick=()=>moveTask('today','someday',idx);
-btnDiv.append(n,s);
+function todayDate() {
+  const d = new Date();
+  return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
 }
-else if(card==='next'){
-let t=document.createElement('button'); t.textContent='T'; t.onclick=()=>moveTask('next','today',idx);
-let s=document.createElement('button'); s.textContent='S'; s.onclick=()=>moveTask('next','someday',idx);
-btnDiv.append(t,s);
-}
-else if(card==='someday'){
-let t=document.createElement('button'); t.textContent='T'; t.onclick=()=>moveTask('someday','today',idx);
-let n=document.createElement('button'); n.textContent='N'; n.onclick=()=>moveTask('someday','next',idx);
-btnDiv.append(t,n);
-}
-else if(card==='archive'){
-let t=document.createElement('button'); t.textContent='T'; t.onclick=()=>moveTask('archive','today',idx);
-let n=document.createElement('button'); n.textContent='N'; n.onclick=()=>moveTask('archive','next',idx);
-let s=document.createElement('button'); s.textContent='S'; s.onclick=()=>moveTask('archive','someday',idx);
-btnDiv.append(t,n,s);
-}
+document.getElementById('today-date').innerText = " " + todayDate();
 
-const del=document.createElement('button'); del.className='delete-btn'; del.textContent='✕';
-del.onclick=()=> card==='archive'?deleteTask(card,idx):moveTask(card,'archive',idx);
-btnDiv.appendChild(del);
+const storageKey = 'todayToolTasks';
+let tasks = JSON.parse(localStorage.getItem(storageKey)) || { today: [], next: [], someday: [], archive: [] };
 
-taskDiv.append(topRow,btnDiv);
-container.appendChild(taskDiv);
-});
-});
+function saveTasks(){ localStorage.setItem(storageKey, JSON.stringify(tasks)); }
+
+function renderTasks() {
+  ['today','next','someday','archive'].forEach(card => {
+    const container = document.getElementById(card+'-tasks');
+    container.innerHTML = '';
+    tasks[card].forEach((task, idx) => {
+      const taskDiv = document.createElement('div'); taskDiv.className='task';
+      const circle = document.createElement('span'); 
+      circle.className='circle';
+      circle.textContent = task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
+      circle.title = task.status || 'No status';
+      circle.onclick = ()=>toggleStatus(card,idx);
+
+      const text = document.createElement('span'); text.className='task-text'; text.textContent=task.text;
+
+      const topRow = document.createElement('div'); topRow.className='task-top';
+      topRow.append(circle,text);
+
+      const btnDiv = document.createElement('div'); btnDiv.className='task-buttons';
+
+      if(card==='today'){
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
+        nextBtn.onclick=function(){ moveTask('today','next',Number(this.dataset.idx)); };
+        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.dataset.idx=idx;
+        somedayBtn.onclick=function(){ moveTask('today','someday',Number(this.dataset.idx)); };
+        btnDiv.append(nextBtn,somedayBtn);
+      } else if(card==='next'){
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.dataset.idx=idx;
+        todayBtn.onclick=function(){ moveTask('next','today',Number(this.dataset.idx)); };
+        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.dataset.idx=idx;
+        somedayBtn.onclick=function(){ moveTask('next','someday',Number(this.dataset.idx)); };
+        btnDiv.append(todayBtn,somedayBtn);
+      } else if(card==='someday'){
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.dataset.idx=idx;
+        todayBtn.onclick=function(){ moveTask('someday','today',Number(this.dataset.idx)); };
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
+        nextBtn.onclick=function(){ moveTask('someday','next',Number(this.dataset.idx)); };
+        btnDiv.append(todayBtn,nextBtn);
+      } else if(card==='archive'){
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.dataset.idx=idx;
+        todayBtn.onclick=function(){ moveTask('archive','today',Number(this.dataset.idx)); };
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
+        nextBtn.onclick=function(){ moveTask('archive','next',Number(this.dataset.idx)); };
+        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.dataset.idx=idx;
+        somedayBtn.onclick=function(){ moveTask('archive','someday',Number(this.dataset.idx)); };
+        btnDiv.append(todayBtn,nextBtn,somedayBtn);
+      }
+
+      const delBtn=document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕';
+      delBtn.dataset.idx=idx;
+      if(card==='archive'){
+        delBtn.onclick=function(){ deleteTask('archive',Number(this.dataset.idx)); };
+      } else {
+        delBtn.onclick=function(){ moveTask(card,'archive',Number(this.dataset.idx)); };
+      }
+      btnDiv.appendChild(delBtn);
+
+      taskDiv.append(topRow,btnDiv);
+      container.appendChild(taskDiv);
+    });
+  });
 }
 
 function addTask(card){
-if(card!=='today')return;
-const input=document.getElementById(card+'-input');
-const text=input.value.trim();
-if(!text)return;
-tasks[card].push({text,status:''});
-input.value='';
-saveTasks(); renderTasks();
+  if(card!=='today') return;
+  const input=document.getElementById(card+'-input');
+  const text=input.value.trim();
+  if(!text) return; 
+  tasks[card].push({ text:text, status:'' });
+  input.value='';
+  saveTasks();
+  renderTasks();
 }
 
 function toggleStatus(card,idx){
-const order=['','completed','inprogress'];
-let current=tasks[card][idx].status;
-tasks[card][idx].status=order[(order.indexOf(current)+1)%order.length];
-saveTasks(); renderTasks();
+  const statusOrder=['','completed','inprogress'];
+  let current=tasks[card][idx].status;
+  let nextIndex=(statusOrder.indexOf(current)+1)%statusOrder.length;
+  tasks[card][idx].status=statusOrder[nextIndex];
+  saveTasks();
+  renderTasks();
 }
 
 function moveTask(from,to,idx){
-const [task]=tasks[from].splice(idx,1);
-tasks[to].push(task);
-saveTasks(); renderTasks();
+  const [task]=tasks[from].splice(idx,1);
+  tasks[to].push(task);
+  saveTasks();
+  renderTasks();
 }
 
 function deleteTask(card,idx){
-tasks[card].splice(idx,1);
-saveTasks(); renderTasks();
+  tasks[card].splice(idx,1);
+  saveTasks();
+  renderTasks();
 }
 
-/* Existing Today toggle unchanged */
-document.getElementById('toggle-cards').addEventListener('change',function(){
-const show=this.checked;
-document.getElementById('next-card').style.display=show?'flex':'none';
-});
+// --- Visibility Logic --- //
 
-/* New Someday toggle */
-document.getElementById('toggle-someday').addEventListener('change',function(){
-const show=this.checked;
-document.getElementById('someday-card').style.display=show?'flex':'none';
-document.getElementById('archive-card').style.display=show?'flex':'none';
-});
+function updateCardVisibility() {
+  const todaySwitch = document.getElementById('toggle-cards').checked;
+  const somedaySwitch = document.getElementById('toggle-someday').checked;
 
-/* Export / Import unchanged */
-function exportTasksTxt(){
-let content='';
-Object.keys(tasks).forEach(card=>{
-content+=`[${card}]\n`;
-tasks[card].forEach(task=>{
-content+=`${task.text} | ${task.status||''}\n`;
-});
-content+='\n';
-});
-const blob=new Blob([content],{type:'text/plain'});
-const url=URL.createObjectURL(blob);
-const a=document.createElement('a');
-a.href=url; a.download='tasks-export.txt'; a.click();
-URL.revokeObjectURL(url);
+  // Today switch always takes priority
+  if(todaySwitch){
+    document.getElementById('next-card').style.display = 'flex';
+    document.getElementById('someday-card').style.display = 'flex';
+    document.getElementById('archive-card').style.display = 'flex';
+  } else {
+    document.getElementById('next-card').style.display = 'none';
+    document.getElementById('someday-card').style.display = somedaySwitch ? 'flex' : 'none';
+    document.getElementById('archive-card').style.display = somedaySwitch ? 'flex' : 'none';
+  }
 }
 
-function importTasksTxt(){
-const input=document.createElement('input');
-input.type='file'; input.accept='.txt';
-input.onchange=function(e){
-const file=e.target.files[0]; if(!file)return;
-const reader=new FileReader();
-reader.onload=function(ev){
-const lines=ev.target.result.split('\n');
-const newTasks={today:[],next:[],someday:[],archive:[]};
-let currentCard=null;
-lines.forEach(line=>{
-line=line.trim();
-if(!line)return;
-if(line.startsWith('[')&&line.endsWith(']')){
-currentCard=line.slice(1,-1);
-}else if(currentCard&&newTasks[currentCard]){
-const parts=line.split('|');
-newTasks[currentCard].push({text:parts[0].trim(),status:parts[1]?parts[1].trim():''});
-}
-});
-tasks=newTasks;
-saveTasks(); renderTasks();
-};
-reader.readAsText(file);
-};
-input.click();
-}
+document.getElementById('toggle-cards').addEventListener('change', updateCardVisibility);
+document.getElementById('toggle-someday').addEventListener('change', updateCardVisibility);
 
-document.getElementById('today-input').addEventListener('keydown',function(e){
-if(e.key==='Enter')addTask('today');
+document.getElementById('today-input').addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){ addTask('today'); }
 });
 
 renderTasks();
+updateCardVisibility(); // initial visibility
 </script>
 </body>
 </html>
