@@ -8,15 +8,14 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
 
-.card { width: 300px; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px; position: relative; box-shadow: 0 6px 18px rgba(0,0,0,0.12); overflow: hidden; }
-
-/* Softer dot grid */
+.card { width: 300px; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px; position: relative; background-size: 100% 24px; box-shadow: 0 6px 18px rgba(0,0,0,0.12); overflow: hidden; }
+/* Softer dot grid applied */
 .card::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 1px);
-  background-size: 16px 16px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="1" cy="1" r="1" fill="%23e0e0e0"/></svg>') repeat;
+  opacity: 0.06;  /* softer dot grid */
   pointer-events: none;
 }
 
@@ -49,6 +48,9 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .add-task input { flex: 1; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
 .add-task button { padding: 6px 12px; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
 .add-task button:hover { background: #555; }
+
+.import-export { display: flex; gap: 10px; margin-bottom: 8px; font-size: 0.85rem; cursor: pointer; color: #333; }
+.import-export span:hover { text-decoration: underline; }
 
 .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
 .switch input { opacity: 0; width: 0; height: 0; }
@@ -86,13 +88,12 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <div class="card archive" id="archive-card">
-  <h2>
-    Archive
-    <span style="margin-left:auto;">
-      <button onclick="exportTasks()" style="font-size:0.8rem; opacity:0.5;">Export</button>
-      <button onclick="importTasks()" style="font-size:0.8rem; opacity:0.5;">Import</button>
-    </span>
-  </h2>
+  <h2>Archive</h2>
+  <div class="import-export">
+    <span id="export-tasks">Export</span>
+    <span id="import-tasks">Import</span>
+    <input type="file" id="import-file" style="display:none;">
+  </div>
   <div class="task-list" id="archive-tasks"></div>
 </div>
 
@@ -127,7 +128,6 @@ function renderTasks() {
 
       const btnDiv = document.createElement('div'); btnDiv.className='task-buttons';
 
-      // Toolbar buttons
       if(card==='today'){
         const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
         nextBtn.onclick=function(){ moveTask('today','next',Number(this.dataset.idx)); };
@@ -204,37 +204,6 @@ function deleteTask(card,idx){
   renderTasks();
 }
 
-function exportTasks(){
-  const data = JSON.stringify(tasks, null, 2);
-  const blob = new Blob([data], {type: "application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'tasks_export.json';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function importTasks(){
-  const input = document.createElement('input');
-  input.type='file';
-  input.accept='application/json';
-  input.onchange = e => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = evt => {
-      try{
-        const imported = JSON.parse(evt.target.result);
-        tasks = imported;
-        saveTasks();
-        renderTasks();
-      } catch(err){ alert("Invalid JSON file"); }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
-}
-
 document.getElementById('toggle-cards').addEventListener('change', function(){
   const show = this.checked;
   document.getElementById('next-card').style.display = show ? 'flex' : 'none';
@@ -244,6 +213,36 @@ document.getElementById('toggle-cards').addEventListener('change', function(){
 
 document.getElementById('today-input').addEventListener('keydown', function(e){
   if(e.key === 'Enter'){ addTask('today'); }
+});
+
+// Export / Import
+document.getElementById('export-tasks').addEventListener('click', function(){
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tasks));
+  const dlAnchor = document.createElement('a');
+  dlAnchor.setAttribute("href", dataStr);
+  dlAnchor.setAttribute("download", "todayToolTasks.json");
+  dlAnchor.click();
+});
+
+document.getElementById('import-tasks').addEventListener('click', function(){
+  document.getElementById('import-file').click();
+});
+
+document.getElementById('import-file').addEventListener('change', function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(event){
+    try {
+      const imported = JSON.parse(event.target.result);
+      tasks = imported;
+      saveTasks();
+      renderTasks();
+    } catch(err){
+      alert('Invalid JSON file');
+    }
+  }
+  reader.readAsText(file);
 });
 
 renderTasks();
