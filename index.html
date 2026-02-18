@@ -142,7 +142,12 @@ function renderTasks() {
       }
 
       const delBtn=document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕';
-      delBtn.dataset.idx=idx; delBtn.onclick=function(){ moveTask(card,'archive',Number(this.dataset.idx)); };
+      delBtn.dataset.idx=idx;
+      if(card==='archive'){
+        delBtn.onclick=function(){ deleteTask('archive',Number(this.dataset.idx)); };
+      } else {
+        delBtn.onclick=function(){ moveTask(card,'archive',Number(this.dataset.idx)); };
+      }
       btnDiv.appendChild(delBtn);
 
       taskDiv.append(topRow,btnDiv);
@@ -174,6 +179,12 @@ function toggleStatus(card,idx){
 function moveTask(from,to,idx){
   const [task]=tasks[from].splice(idx,1);
   tasks[to].push(task);
+  saveTasks();
+  renderTasks();
+}
+
+function deleteTask(card,idx){
+  tasks[card].splice(idx,1);
   saveTasks();
   renderTasks();
 }
