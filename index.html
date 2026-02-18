@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.1 FINAL Someday Fixed Toolbar</title>
+<title>Today Tool - v1.1 FINAL Someday Toolbar Fixed</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -106,18 +106,21 @@ function renderTasks() {
 
       const btnDiv = document.createElement('div'); btnDiv.className='task-buttons';
 
-      // Corrected toolbar buttons
+      // Use let to ensure proper closure
       if(card==='today'){
-        const nextBtn = document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=()=>moveTask('today','next',idx);
-        const somedayBtn = document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=()=>moveTask('today','someday',idx);
+        let i = idx;
+        const nextBtn = document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=()=>moveTask('today','next',i);
+        const somedayBtn = document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=()=>moveTask('today','someday',i);
         btnDiv.append(nextBtn,somedayBtn);
       } else if(card==='next'){
-        const todayBtn = document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=()=>moveTask('next','today',idx);
-        const somedayBtn = document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=()=>moveTask('next','someday',idx);
+        let i = idx;
+        const todayBtn = document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=()=>moveTask('next','today',i);
+        const somedayBtn = document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=()=>moveTask('next','someday',i);
         btnDiv.append(todayBtn,somedayBtn);
       } else if(card==='someday'){
-        const todayBtn = document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=()=>moveTask('someday','today',idx);
-        const nextBtn = document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=()=>moveTask('someday','next',idx);
+        let i = idx;
+        const todayBtn = document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=()=>moveTask('someday','today',i);
+        const nextBtn = document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=()=>moveTask('someday','next',i);
         btnDiv.append(todayBtn,nextBtn);
       }
 
