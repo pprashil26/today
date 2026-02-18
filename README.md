@@ -1,7 +1,9 @@
 # Today Tool - v1.1 FINAL
 
 A minimal, analog-inspired task manager for daily planning, designed to be ADHD-friendly and distraction-free.  
-Inspired by [Ugmonk's analog system](https://ugmonk.com/en-au/pages/analog).
+Inspired by [Ugmonk's analog system](https://ugmonk.com/en-au/pages/analog).  
+
+💻 **Try it live:** [Today Tool Online](https://your-public-link-here)
 
 ## Features
 
@@ -21,7 +23,3 @@ Inspired by [Ugmonk's analog system](https://ugmonk.com/en-au/pages/analog).
 3. Move tasks between cards using **T/N/C** buttons.  
 4. Delete tasks with ✕ button.  
 5. Toggle visibility of Next & Completed cards with the switch.
-
-## License
-
-MIT
