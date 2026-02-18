@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.1 FINAL Minimal Refined</title>
+<title>Today Tool - v1.1 FINAL Minimal Symbols Only</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -20,34 +20,19 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 .task-list { flex: 1; min-height: 400px; max-height: 400px; overflow-y: auto; }
 
-/* REFINED TASK LAYOUT */
-.task {
-  display: flex;
-  flex-direction: column;
-  padding: 6px 4px;
-  margin-bottom: 2px;
-}
+.task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; }
+.task-top { display: flex; align-items: center; }
 
-.task-top {
-  display: flex;
-  align-items: center;
-}
-
-.circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px; flex-shrink: 0; cursor: pointer; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition: all 0.2s ease; }
-.circle.default { background: transparent; color: #333; }
-.circle.completed { background: #4caf50; color: #fff; }
-.circle.inprogress { background: #ffc107; color: #333; }
+.circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px; flex-shrink: 0; cursor: pointer; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition: all 0.2s ease; background: #fff; color: #333; }
+.circle.default { content: '•'; }
+.circle.completed { content: '✓'; }
+.circle.inprogress { content: '→'; }
 
 .task-text { flex: 1; word-break: break-word; font-size: 0.9rem; }
 
-.task-buttons {
-  margin-top: 1px;
-  margin-left: 24px;
-}
-
+.task-buttons { margin-top: 1px; margin-left: 24px; }
 .task-buttons button { margin-right: 6px; padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; transition: opacity 0.15s ease; }
 .task:hover .task-buttons button { opacity: 0.8; }
-
 .delete-btn { margin-left: 4px; padding: 0; font-size: 0.65rem; border: none; background: none; color: #900; opacity: 0.5; cursor: pointer; }
 .task:hover .delete-btn { opacity: 0.8; }
 
@@ -100,7 +85,6 @@ document.getElementById('today-date').innerText = todayDate();
 
 const storageKey = 'todayToolTasks';
 let tasks = JSON.parse(localStorage.getItem(storageKey)) || { today: [], next: [], completed: [] };
-if(tasks.someday) { tasks.completed = tasks.someday; delete tasks.someday; localStorage.setItem(storageKey, JSON.stringify(tasks)); }
 
 function saveTasks(){ localStorage.setItem(storageKey, JSON.stringify(tasks)); }
 
@@ -109,26 +93,19 @@ function renderTasks() {
     const container = document.getElementById(card+'-tasks');
     container.innerHTML = '';
     tasks[card].forEach((task, idx) => {
-      const taskDiv = document.createElement('div');
-      taskDiv.className='task';
-
+      const taskDiv = document.createElement('div'); taskDiv.className='task';
       const circle = document.createElement('span'); 
-      circle.className='circle '+(task.status||'default');
+      circle.className='circle';
       circle.textContent = task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
       circle.title = task.status || 'No status';
       circle.onclick = ()=>toggleStatus(card,idx);
 
-      const text = document.createElement('span');
-      text.className='task-text';
-      text.textContent=task.text;
+      const text = document.createElement('span'); text.className='task-text'; text.textContent=task.text;
 
-      const topRow = document.createElement('div');
-      topRow.className='task-top';
+      const topRow = document.createElement('div'); topRow.className='task-top';
       topRow.append(circle,text);
 
-      const btnDiv = document.createElement('div');
-      btnDiv.className='task-buttons';
-
+      const btnDiv = document.createElement('div'); btnDiv.className='task-buttons';
       if(card==='today'){
         const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
         nextBtn.onclick=function(){ moveTask('today','next',Number(this.dataset.idx)); };
@@ -149,11 +126,8 @@ function renderTasks() {
         btnDiv.append(todayBtn,nextBtn);
       }
 
-      const delBtn=document.createElement('button');
-      delBtn.className='delete-btn';
-      delBtn.textContent='✕';
-      delBtn.dataset.idx=idx;
-      delBtn.onclick=function(){ deleteTask(card,Number(this.dataset.idx)); };
+      const delBtn=document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕';
+      delBtn.dataset.idx=idx; delBtn.onclick=function(){ deleteTask(card,Number(this.dataset.idx)); };
       btnDiv.appendChild(delBtn);
 
       taskDiv.append(topRow,btnDiv);
