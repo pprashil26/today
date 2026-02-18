@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.1 FINAL Minimal Symbols Only</title>
+<title>Today Tool - v1.1 FINAL Minimal Symbols Only Compact Date</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -18,15 +18,14 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
 
+#today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
+
 .task-list { flex: 1; min-height: 400px; max-height: 400px; overflow-y: auto; }
 
 .task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; }
 .task-top { display: flex; align-items: center; }
 
 .circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px; flex-shrink: 0; cursor: pointer; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition: all 0.2s ease; background: #fff; color: #333; }
-.circle.default { content: '•'; }
-.circle.completed { content: '✓'; }
-.circle.inprogress { content: '→'; }
 
 .task-text { flex: 1; word-break: break-word; font-size: 0.9rem; }
 
@@ -53,7 +52,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 <div class="card today">
   <h2>
-    <span>Today - <span id="today-date"></span></span>
+    <span>Today<span id="today-date"></span></span>
     <label class="switch" title="Show Next & Completed cards">
       <input type="checkbox" id="toggle-cards" checked>
       <span class="slider"></span>
@@ -79,9 +78,9 @@ input:checked + .slider:before { transform: translateX(20px); }
 <script>
 function todayDate() {
   const d = new Date();
-  return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year:'numeric' });
+  return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short' }); // e.g., 24 Feb
 }
-document.getElementById('today-date').innerText = todayDate();
+document.getElementById('today-date').innerText = " " + todayDate();
 
 const storageKey = 'todayToolTasks';
 let tasks = JSON.parse(localStorage.getItem(storageKey)) || { today: [], next: [], completed: [] };
