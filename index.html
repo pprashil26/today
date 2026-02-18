@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.1 FINAL Someday Toolbar Fixed</title>
+<title>Today Tool - v1.1 FINAL Someday Fixed Toolbar</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -20,7 +20,6 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 #today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
 
 .task-list { flex: 1; min-height: 400px; max-height: 400px; overflow-y: auto; }
-
 .task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; }
 .task-top { display: flex; align-items: center; }
 
@@ -91,7 +90,8 @@ function renderTasks() {
     const container = document.getElementById(card+'-tasks');
     container.innerHTML = '';
     tasks[card].forEach((task, idx) => {
-      const taskDiv = document.createElement('div'); taskDiv.className='task';
+      const taskDiv = document.createElement('div'); 
+      taskDiv.className='task';
 
       const circle = document.createElement('span'); 
       circle.className='circle';
@@ -99,32 +99,27 @@ function renderTasks() {
       circle.title = task.status || 'No status';
       circle.onclick = ()=>toggleStatus(card,idx);
 
-      const text = document.createElement('span'); text.className='task-text'; text.textContent=task.text;
+      const text = document.createElement('span'); text.className='task-text'; text.textContent = task.text;
 
       const topRow = document.createElement('div'); topRow.className='task-top';
       topRow.append(circle,text);
 
       const btnDiv = document.createElement('div'); btnDiv.className='task-buttons';
 
+      // BUTTON LOGIC
       if(card==='today'){
-        const i = idx;
-        const nextBtn = document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=()=>moveTask('today','next',i);
-        const somedayBtn = document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=()=>moveTask('today','someday',i);
-        btnDiv.append(nextBtn,somedayBtn);
+        btnDiv.append(createButton('N',()=>moveTask('today','next',idx)));
+        btnDiv.append(createButton('S',()=>moveTask('today','someday',idx)));
       } else if(card==='next'){
-        const i = idx;
-        const todayBtn = document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=()=>moveTask('next','today',i);
-        const somedayBtn = document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=()=>moveTask('next','someday',i);
-        btnDiv.append(todayBtn,somedayBtn);
+        btnDiv.append(createButton('T',()=>moveTask('next','today',idx)));
+        btnDiv.append(createButton('S',()=>moveTask('next','someday',idx)));
       } else if(card==='someday'){
-        const i = idx;
-        const todayBtn = document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=()=>moveTask('someday','today',i);
-        const nextBtn = document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=()=>moveTask('someday','next',i);
-        btnDiv.append(todayBtn,nextBtn);
+        btnDiv.append(createButton('T',()=>moveTask('someday','today',idx)));
+        btnDiv.append(createButton('N',()=>moveTask('someday','next',idx)));
       }
 
-      const delBtn=document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕';
-      delBtn.onclick=function(){ deleteTask(card,idx); };
+      const delBtn = document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕';
+      delBtn.onclick = ()=>deleteTask(card,idx);
       btnDiv.appendChild(delBtn);
 
       taskDiv.append(topRow,btnDiv);
@@ -133,12 +128,20 @@ function renderTasks() {
   });
 }
 
+// helper to create button
+function createButton(text, fn){
+  const b = document.createElement('button');
+  b.textContent = text;
+  b.onclick = fn;
+  return b;
+}
+
 function addTask(card){
   if(card!=='today') return;
-  const input=document.getElementById(card+'-input');
-  const text=input.value.trim();
-  if(!text) return; 
-  tasks[card].push({ text:text, status:'' });
+  const input = document.getElementById(card+'-input');
+  const text = input.value.trim();
+  if(!text) return;
+  tasks[card].push({text:text, status:''});
   input.value='';
   saveTasks();
   renderTasks();
@@ -154,7 +157,7 @@ function toggleStatus(card,idx){
 }
 
 function moveTask(from,to,idx){
-  const [task]=tasks[from].splice(idx,1);
+  const [task] = tasks[from].splice(idx,1);
   tasks[to].push(task);
   saveTasks();
   renderTasks();
@@ -173,7 +176,7 @@ document.getElementById('toggle-cards').addEventListener('change', function(){
 });
 
 document.getElementById('today-input').addEventListener('keydown', function(e){
-  if(e.key === 'Enter'){ addTask('today'); }
+  if(e.key==='Enter') addTask('today');
 });
 
 renderTasks();
