@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.3.4</title>
+<title>Today Tool - v1.3.5</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -127,6 +127,16 @@ input:checked + .slider:before { transform: translateX(20px); }
 .highlighted {
   background-color: #fff79a;
 }
+
+/* Card header styling for first letter emphasis */
+.card h2 span:first-letter {
+  font-weight: bold;
+  color: #666;
+}
+.card h2 span:not(:first-letter) {
+  font-weight: normal;
+  opacity: 0.3;
+}
 </style>
 </head>
 <body>
@@ -147,12 +157,12 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <div class="card next" id="next-card">
-  <h2>Next</h2>
+  <h2><span>Next</span></h2>
   <div class="task-list" id="next-tasks"></div>
 </div>
 
 <div class="card someday" id="someday-card">
-  <h2>Someday</h2>
+  <h2><span>Someday</span></h2>
   <div class="task-list" id="someday-tasks"></div>
 </div>
 
@@ -234,6 +244,7 @@ function renderTasks() {
         highlightBtn.innerHTML = '⭐';
         highlightBtn.title = 'Toggle Highlight';
         highlightBtn.dataset.idx = idx;
+        highlightBtn.style.opacity = task.highlighted ? 0.8 : 0.5;
         highlightBtn.onclick = function(){ toggleHighlight(card, Number(this.dataset.idx)); };
         btnDiv.appendChild(highlightBtn);
       }
