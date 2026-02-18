@@ -55,23 +55,11 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   background-size: 18px 18px;
 }
 
-/* Card Title Styling with first-letter highlight */
-.card h2 { 
-  font-family: 'Patrick Hand', cursive; 
-  font-size: 1.05rem; 
-  color: #666; 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
-}
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+.card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
 
-.card h2 span.title-light span { 
-  color: #ccc; /* lighter letters for hint */
-}
-
-.card h2 span.title-light span:first-letter { 
-  color: #666; /* keep first letter normal */
-}
+.title-light .first-letter { color: #666; }
+.title-light .rest { color: #ccc; }
 
 #today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
 
@@ -119,7 +107,6 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 input:checked + .slider { background-color: #4caf50; }
 input:checked + .slider:before { transform: translateX(20px); }
 
-/* Archive Tools */
 .archive-tools {
   display: flex;
   gap: 8px;
@@ -143,7 +130,10 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 <div class="card today">
   <h2>
-    <span class="title-light">Today<span id="today-date"></span></span>
+    <span class="title-light">
+      <span class="first-letter">T</span><span class="rest">oday</span>
+      <span id="today-date"></span>
+    </span>
     <label class="switch" title="Show Next & Someday & Archive cards">
       <input type="checkbox" id="toggle-cards" checked>
       <span class="slider"></span>
@@ -157,12 +147,20 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <div class="card next" id="next-card">
-  <h2><span class="title-light">Next</span></h2>
+  <h2>
+    <span class="title-light">
+      <span class="first-letter">N</span><span class="rest">ext</span>
+    </span>
+  </h2>
   <div class="task-list" id="next-tasks"></div>
 </div>
 
 <div class="card someday" id="someday-card">
-  <h2><span class="title-light">Someday</span></h2>
+  <h2>
+    <span class="title-light">
+      <span class="first-letter">S</span><span class="rest">omeday</span>
+    </span>
+  </h2>
   <div class="task-list" id="someday-tasks"></div>
 </div>
 
@@ -284,12 +282,14 @@ function deleteTask(card,idx){
   renderTasks();
 }
 
-/* Export / Import */
+/* ===== Export / Import ===== */
 function exportTasksTxt() {
   let content = '';
   Object.keys(tasks).forEach(card => {
     content += `[${card}]\n`;
-    tasks[card].forEach(task => { content += `${task.text} | ${task.status || ''}\n`; });
+    tasks[card].forEach(task => {
+      content += `${task.text} | ${task.status || ''}\n`;
+    });
     content += '\n';
   });
   const blob = new Blob([content], { type: 'text/plain' });
