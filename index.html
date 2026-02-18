@@ -106,19 +106,18 @@ function renderTasks() {
 
       const btnDiv = document.createElement('div'); btnDiv.className='task-buttons';
 
-      // Use let to ensure proper closure
       if(card==='today'){
-        let i = idx;
+        const i = idx;
         const nextBtn = document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=()=>moveTask('today','next',i);
         const somedayBtn = document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=()=>moveTask('today','someday',i);
         btnDiv.append(nextBtn,somedayBtn);
       } else if(card==='next'){
-        let i = idx;
+        const i = idx;
         const todayBtn = document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=()=>moveTask('next','today',i);
         const somedayBtn = document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=()=>moveTask('next','someday',i);
         btnDiv.append(todayBtn,somedayBtn);
       } else if(card==='someday'){
-        let i = idx;
+        const i = idx;
         const todayBtn = document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=()=>moveTask('someday','today',i);
         const nextBtn = document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=()=>moveTask('someday','next',i);
         btnDiv.append(todayBtn,nextBtn);
