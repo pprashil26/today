@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.3.5</title>
+<title>Today Tool - v1.3.4</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -20,6 +20,7 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   overflow: hidden; 
 }
 
+/* Subtle paper texture overlay */
 .card::before { 
   content: ""; 
   position: absolute; 
@@ -29,22 +30,25 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   pointer-events: none; 
 }
 
-/* Dot grid */
+/* Softer Dot Grid */
 .today { 
   background-color: #ffffff; 
   background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px);
   background-size: 18px 18px;
 }
+
 .next { 
   background-color: #dffcf0; 
   background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px);
   background-size: 18px 18px;
 }
+
 .someday { 
   background-color: #c8f7e2; 
   background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px);
   background-size: 18px 18px;
 }
+
 .archive { 
   background-color: #a0d9b7; 
   background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px);
@@ -53,11 +57,14 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
+
 #today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
+
 .task-list { flex: 1; min-height: 400px; max-height: 400px; overflow-y: auto; }
 
 .task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; }
 .task-top { display: flex; align-items: center; }
+
 .circle { 
   width: 18px; 
   height: 18px; 
@@ -75,7 +82,9 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   background: #fff; 
   color: #333; 
 }
+
 .task-text { flex: 1; word-break: break-word; font-size: 0.9rem; }
+
 .task-buttons { margin-top: 1px; margin-left: 24px; }
 .task-buttons button { margin-right: 6px; padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; transition: opacity 0.15s ease; }
 .task:hover .task-buttons button { opacity: 0.8; }
@@ -95,14 +104,29 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 input:checked + .slider { background-color: #4caf50; }
 input:checked + .slider:before { transform: translateX(20px); }
 
-.archive-tools { display: flex; gap: 8px; }
-.archive-tools button { background: none; border: none; font-size: 12px; cursor: pointer; opacity: 0.6; padding: 0; }
-.archive-tools button:hover { opacity: 1; }
+/* Archive Tools */
+.archive-tools {
+  display: flex;
+  gap: 8px;
+}
 
-/* Highlight star button */
-.highlight-btn { font-size: 14px; cursor: pointer; transition: opacity 0.15s ease; }
-.highlight-btn.active { color: gold; opacity: 1; }
-.highlight-btn.inactive { color: #000; opacity: 0.5; }
+.archive-tools button {
+  background: none;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.6;
+  padding: 0;
+}
+
+.archive-tools button:hover {
+  opacity: 1;
+}
+
+/* Highlighted task style */
+.highlighted {
+  background-color: #fff79a;
+}
 </style>
 </head>
 <body>
@@ -161,6 +185,8 @@ function renderTasks() {
     container.innerHTML = '';
     tasks[card].forEach((task, idx) => {
       const taskDiv = document.createElement('div'); taskDiv.className='task';
+      if(task.highlighted) taskDiv.classList.add('highlighted');
+
       const circle = document.createElement('span'); 
       circle.className='circle';
       circle.textContent = task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
@@ -202,13 +228,15 @@ function renderTasks() {
         btnDiv.append(todayBtn,nextBtn,somedayBtn);
       }
 
-      // highlight button
-      const highlightBtn = document.createElement('button');
-      highlightBtn.className = 'highlight-btn ' + (task.highlight ? 'active' : 'inactive');
-      highlightBtn.innerHTML = '⭐';
-      highlightBtn.dataset.idx = idx;
-      highlightBtn.onclick = () => toggleHighlight(card, idx);
-      btnDiv.appendChild(highlightBtn);
+      // Highlight toggle button (star icon)
+      if(card !== 'archive'){
+        const highlightBtn = document.createElement('button');
+        highlightBtn.innerHTML = '⭐';
+        highlightBtn.title = 'Toggle Highlight';
+        highlightBtn.dataset.idx = idx;
+        highlightBtn.onclick = function(){ toggleHighlight(card, Number(this.dataset.idx)); };
+        btnDiv.appendChild(highlightBtn);
+      }
 
       const delBtn=document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕';
       delBtn.dataset.idx=idx;
@@ -230,7 +258,7 @@ function addTask(card){
   const input=document.getElementById(card+'-input');
   const text=input.value.trim();
   if(!text) return; 
-  tasks[card].push({ text:text, status:'', highlight:false });
+  tasks[card].push({ text:text, status:'', highlighted:false });
   input.value='';
   saveTasks();
   renderTasks();
@@ -245,8 +273,8 @@ function toggleStatus(card,idx){
   renderTasks();
 }
 
-function toggleHighlight(card, idx){
-  tasks[card][idx].highlight = !tasks[card][idx].highlight;
+function toggleHighlight(card,idx){
+  tasks[card][idx].highlighted = !tasks[card][idx].highlighted;
   saveTasks();
   renderTasks();
 }
@@ -270,7 +298,7 @@ function exportTasksTxt() {
   Object.keys(tasks).forEach(card => {
     content += `[${card}]\n`;
     tasks[card].forEach(task => {
-      content += `${task.text} | ${task.status || ''} | ${task.highlight ? 'highlight' : ''}\n`;
+      content += `${task.text} | ${task.status || ''} | ${task.highlighted ? 'highlighted' : ''}\n`;
     });
     content += '\n';
   });
@@ -305,8 +333,8 @@ function importTasksTxt() {
           const parts = line.split('|');
           const taskText = parts[0].trim();
           const status = parts[1] ? parts[1].trim() : '';
-          const highlight = parts[2] && parts[2].trim() === 'highlight';
-          newTasks[currentCard].push({ text: taskText, status: status, highlight: highlight });
+          const highlighted = parts[2] ? parts[2].trim() === 'highlighted' : false;
+          newTasks[currentCard].push({ text: taskText, status: status, highlighted: highlighted });
         }
       });
       tasks = newTasks;
