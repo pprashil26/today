@@ -3,57 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.2 FINAL + Archive</title>
+<title>Today Tool - v1.2 FINAL + Archive + Export/Import</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
 
-.card { 
-  width: 300px; 
-  border-radius: 12px; 
-  padding: 16px; 
-  display: flex; 
-  flex-direction: column; 
-  gap: 8px; 
-  position: relative; 
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12); 
-  overflow: hidden; 
-}
+.card { width: 300px; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px; position: relative; background-size: 100% 24px; box-shadow: 0 6px 18px rgba(0,0,0,0.12); overflow: hidden; }
+.card::before { content: ""; position: absolute; inset: 0; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="2" cy="2" r="1" fill="%23ccc"/></svg>') repeat; opacity: 0.03; pointer-events: none; }
 
-/* Subtle paper texture overlay (unchanged) */
-.card::before { 
-  content: ""; 
-  position: absolute; 
-  inset: 0; 
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="none" stroke="%23e0e0e0" stroke-width="1"/></svg>') repeat; 
-  opacity: 0.03; 
-  pointer-events: none; 
-}
-
-/* ✅ Softer Dot Grid Applied */
-.today { 
-  background-color: #ffffff; 
-  background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px);
-  background-size: 18px 18px;
-}
-
-.next { 
-  background-color: #dffcf0; 
-  background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px);
-  background-size: 18px 18px;
-}
-
-.someday { 
-  background-color: #c8f7e2; 
-  background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px);
-  background-size: 18px 18px;
-}
-
-.archive { 
-  background-color: #a0d9b7; 
-  background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px);
-  background-size: 18px 18px;
-}
+.today { background-color: #ffffff; }
+.next { background-color: #dffcf0; }
+.someday { background-color: #c8f7e2; }
+.archive { background-color: #8dd1aa; }
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
@@ -65,30 +26,13 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; }
 .task-top { display: flex; align-items: center; }
 
-.circle { 
-  width: 18px; 
-  height: 18px; 
-  border-radius: 50%; 
-  border: 2px solid #999; 
-  margin-right: 6px; 
-  flex-shrink: 0; 
-  cursor: pointer; 
-  display: inline-flex; 
-  align-items:center; 
-  justify-content:center; 
-  font-size:12px; 
-  font-weight:bold; 
-  transition: all 0.2s ease; 
-  background: #fff; 
-  color: #333; 
-}
+.circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px; flex-shrink: 0; cursor: pointer; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition: all 0.2s ease; background: #fff; color: #333; }
 
 .task-text { flex: 1; word-break: break-word; font-size: 0.9rem; }
 
 .task-buttons { margin-top: 1px; margin-left: 24px; }
 .task-buttons button { margin-right: 6px; padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; transition: opacity 0.15s ease; }
 .task:hover .task-buttons button { opacity: 0.8; }
-
 .delete-btn { margin-left: 4px; padding: 0; font-size: 0.65rem; border: none; background: none; color: #900; opacity: 0.5; cursor: pointer; }
 .task:hover .delete-btn { opacity: 0.8; }
 
@@ -103,6 +47,10 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .2s; }
 input:checked + .slider { background-color: #4caf50; }
 input:checked + .slider:before { transform: translateX(20px); }
+
+/* Archive header text controls */
+.archive-header { display: flex; gap: 8px; font-size: 0.75rem; opacity: 0.5; cursor: pointer; }
+.archive-header span:hover { opacity: 0.8; }
 </style>
 </head>
 <body>
@@ -133,7 +81,15 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <div class="card archive" id="archive-card">
-  <h2>Archive</h2>
+  <h2>
+    <div style="display:flex; justify-content: space-between; align-items:center; width:100%;">
+      <span>Archive</span>
+      <div class="archive-header">
+        <span id="export-btn">export</span>
+        <span id="import-btn">import</span>
+      </div>
+    </div>
+  </h2>
   <div class="task-list" id="archive-tasks"></div>
 </div>
 
@@ -253,6 +209,39 @@ document.getElementById('toggle-cards').addEventListener('change', function(){
 
 document.getElementById('today-input').addEventListener('keydown', function(e){
   if(e.key === 'Enter'){ addTask('today'); }
+});
+
+// --- EXPORT / IMPORT ---
+document.getElementById('export-btn').addEventListener('click', function(){
+  const blob = new Blob([JSON.stringify(tasks)], {type: "application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "today-tool-backup.json";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('import-btn').addEventListener('click', function(){
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = event => {
+      try {
+        const imported = JSON.parse(event.target.result);
+        if(imported.today && imported.next && imported.someday && imported.archive){
+          tasks = imported;
+          saveTasks();
+          renderTasks();
+        } else { alert('Invalid file format'); }
+      } catch(err){ alert('Error reading file'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
 });
 
 renderTasks();
