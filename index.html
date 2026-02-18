@@ -8,22 +8,22 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
 
-.card { width: 300px; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px; position: relative; background-size: 100% 24px; box-shadow: 0 6px 18px rgba(0,0,0,0.12); overflow: hidden; }
+.card { width: 300px; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px; position: relative; box-shadow: 0 6px 18px rgba(0,0,0,0.12); overflow: hidden; }
 
-/* SOFTER DOT GRID */
+/* Softer dot grid */
 .card::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background: radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size: 16px 16px;
   pointer-events: none;
 }
 
 .today { background-color: #ffffff; }
 .next { background-color: #dffcf0; }
 .someday { background-color: #c8f7e2; }
-.archive { background-color: #8dd1aa; }
+.archive { background-color: #a0d9b7; }
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
@@ -56,11 +56,6 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .2s; }
 input:checked + .slider { background-color: #4caf50; }
 input:checked + .slider:before { transform: translateX(20px); }
-
-/* EXPORT/IMPORT TEXT AT TOP OF ARCHIVE */
-#archive-top { display: flex; justify-content: flex-start; gap: 10px; margin-bottom: 6px; font-size: 0.85rem; }
-#archive-top span { cursor: pointer; color: #333; opacity: 0.6; }
-#archive-top span:hover { opacity: 1; }
 </style>
 </head>
 <body>
@@ -91,11 +86,13 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <div class="card archive" id="archive-card">
-  <h2>Archive</h2>
-  <div id="archive-top">
-    <span id="export-tasks">Export</span>
-    <span id="import-tasks">Import</span>
-  </div>
+  <h2>
+    Archive
+    <span style="margin-left:auto;">
+      <button onclick="exportTasks()" style="font-size:0.8rem; opacity:0.5;">Export</button>
+      <button onclick="importTasks()" style="font-size:0.8rem; opacity:0.5;">Import</button>
+    </span>
+  </h2>
   <div class="task-list" id="archive-tasks"></div>
 </div>
 
@@ -130,6 +127,7 @@ function renderTasks() {
 
       const btnDiv = document.createElement('div'); btnDiv.className='task-buttons';
 
+      // Toolbar buttons
       if(card==='today'){
         const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
         nextBtn.onclick=function(){ moveTask('today','next',Number(this.dataset.idx)); };
@@ -206,6 +204,37 @@ function deleteTask(card,idx){
   renderTasks();
 }
 
+function exportTasks(){
+  const data = JSON.stringify(tasks, null, 2);
+  const blob = new Blob([data], {type: "application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'tasks_export.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importTasks(){
+  const input = document.createElement('input');
+  input.type='file';
+  input.accept='application/json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = evt => {
+      try{
+        const imported = JSON.parse(evt.target.result);
+        tasks = imported;
+        saveTasks();
+        renderTasks();
+      } catch(err){ alert("Invalid JSON file"); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
 document.getElementById('toggle-cards').addEventListener('change', function(){
   const show = this.checked;
   document.getElementById('next-card').style.display = show ? 'flex' : 'none';
@@ -215,35 +244,6 @@ document.getElementById('toggle-cards').addEventListener('change', function(){
 
 document.getElementById('today-input').addEventListener('keydown', function(e){
   if(e.key === 'Enter'){ addTask('today'); }
-});
-
-// EXPORT/IMPORT
-document.getElementById('export-tasks').addEventListener('click', function(){
-  const data = JSON.stringify(tasks,null,2);
-  const blob = new Blob([data], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'tasks_export.json';
-  a.click(); URL.revokeObjectURL(url);
-});
-document.getElementById('import-tasks').addEventListener('click', function(){
-  const input = document.createElement('input'); input.type='file'; input.accept='.json';
-  input.onchange = e => {
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = evt => {
-      try {
-        const imported = JSON.parse(evt.target.result);
-        ['today','next','someday','archive'].forEach(c => {
-          if(imported[c]) tasks[c] = imported[c];
-        });
-        saveTasks(); renderTasks();
-      } catch(err){ alert('Invalid JSON'); }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
 });
 
 renderTasks();
