@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.1 FINAL Stable Toolbar Fix</title>
+<title>Today Tool - v1.1 FINAL Minimal Symbols Only Compact Date</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -76,13 +76,14 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <script>
+// Generate unique ID for each task
+function generateId(){ return Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
+
 function todayDate() {
   const d = new Date();
   return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
 }
 document.getElementById('today-date').innerText = " " + todayDate();
-
-function generateId(){ return '_' + Math.random().toString(36).substr(2,9); }
 
 const storageKey = 'todayToolTasks';
 let tasks = JSON.parse(localStorage.getItem(storageKey)) || { today: [], next: [], completed: [] };
@@ -94,12 +95,15 @@ function renderTasks() {
     const container = document.getElementById(card+'-tasks');
     container.innerHTML = '';
     tasks[card].forEach(task => {
+      if(!task.id) task.id = generateId();
+      const taskId = task.id;
+
       const taskDiv = document.createElement('div'); taskDiv.className='task';
-      const circle = document.createElement('span'); 
+      const circle = document.createElement('span');
       circle.className='circle';
       circle.textContent = task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
       circle.title = task.status || 'No status';
-      circle.onclick = ()=>toggleStatus(card,task.id);
+      circle.onclick = ()=>toggleStatus(card, taskId);
 
       const text = document.createElement('span'); text.className='task-text'; text.textContent=task.text;
 
@@ -107,35 +111,35 @@ function renderTasks() {
       topRow.append(circle,text);
 
       const btnDiv = document.createElement('div'); btnDiv.className='task-buttons';
-
       if(card==='today'){
         const nextBtn=document.createElement('button'); nextBtn.textContent='N';
-        nextBtn.onclick=function(){ moveTaskById('today','next',task.id); };
+        nextBtn.onclick=function(){ moveTaskById('today','next',taskId); };
         const somedayBtn=document.createElement('button'); somedayBtn.textContent='S';
-        somedayBtn.onclick=function(){ moveTaskById('today','completed',task.id); };
-        btnDiv.append(nextBtn,somedayBtn);
+        somedayBtn.onclick=function(){ moveTaskById('today','completed',taskId); };
+        btnDiv.append(nextBtn, somedayBtn);
       } else if(card==='next'){
         const todayBtn=document.createElement('button'); todayBtn.textContent='T';
-        todayBtn.onclick=function(){ moveTaskById('next','today',task.id); };
+        todayBtn.onclick=function(){ moveTaskById('next','today',taskId); };
         const somedayBtn=document.createElement('button'); somedayBtn.textContent='S';
-        somedayBtn.onclick=function(){ moveTaskById('next','completed',task.id); };
-        btnDiv.append(todayBtn,somedayBtn);
+        somedayBtn.onclick=function(){ moveTaskById('next','completed',taskId); };
+        btnDiv.append(todayBtn, somedayBtn);
       } else if(card==='completed'){
         const todayBtn=document.createElement('button'); todayBtn.textContent='T';
-        todayBtn.onclick=function(){ moveTaskById('completed','today',task.id); };
+        todayBtn.onclick=function(){ moveTaskById('completed','today',taskId); };
         const nextBtn=document.createElement('button'); nextBtn.textContent='N';
-        nextBtn.onclick=function(){ moveTaskById('completed','next',task.id); };
-        btnDiv.append(todayBtn,nextBtn);
+        nextBtn.onclick=function(){ moveTaskById('completed','next',taskId); };
+        btnDiv.append(todayBtn, nextBtn);
       }
 
       const delBtn=document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕';
-      delBtn.onclick=function(){ deleteTaskById(card,task.id); };
+      delBtn.onclick=function(){ deleteTaskById(card, taskId); };
       btnDiv.appendChild(delBtn);
 
-      taskDiv.append(topRow,btnDiv);
+      taskDiv.append(topRow, btnDiv);
       container.appendChild(taskDiv);
     });
   });
+  saveTasks();
 }
 
 function addTask(card){
@@ -145,46 +149,42 @@ function addTask(card){
   if(!text) return; 
   tasks[card].push({ id: generateId(), text:text, status:'' });
   input.value='';
-  saveTasks();
   renderTasks();
 }
 
-function toggleStatus(card,id){
+function toggleStatus(card, taskId){
   const statusOrder=['','completed','inprogress'];
-  const task = tasks[card].find(t=>t.id===id);
-  if(task){
-    let nextIndex=(statusOrder.indexOf(task.status)+1)%statusOrder.length;
-    task.status=statusOrder[nextIndex];
-    saveTasks();
-    renderTasks();
-  }
+  const idx = tasks[card].findIndex(t=>t.id===taskId);
+  if(idx===-1) return;
+  let current=tasks[card][idx].status;
+  let nextIndex=(statusOrder.indexOf(current)+1)%statusOrder.length;
+  tasks[card][idx].status=statusOrder[nextIndex];
+  renderTasks();
 }
 
-function moveTaskById(from,to,id){
-  const idx = tasks[from].findIndex(t=>t.id===id);
-  if(idx>=0){
-    const [task]=tasks[from].splice(idx,1);
-    tasks[to].push(task);
-    saveTasks();
-    renderTasks();
-  }
+function moveTaskById(from,to,taskId){
+  const idx = tasks[from].findIndex(t=>t.id===taskId);
+  if(idx===-1) return;
+  const [task]=tasks[from].splice(idx,1);
+  tasks[to].push(task);
+  renderTasks();
 }
 
-function deleteTaskById(card,id){
-  const idx = tasks[card].findIndex(t=>t.id===id);
-  if(idx>=0){
-    tasks[card].splice(idx,1);
-    saveTasks();
-    renderTasks();
-  }
+function deleteTaskById(card,taskId){
+  const idx = tasks[card].findIndex(t=>t.id===taskId);
+  if(idx===-1) return;
+  tasks[card].splice(idx,1);
+  renderTasks();
 }
 
+// Toggle visibility of Next & Someday cards
 document.getElementById('toggle-cards').addEventListener('change', function(){
   const show = this.checked;
   document.getElementById('next-card').style.display = show ? 'flex' : 'none';
   document.getElementById('completed-card').style.display = show ? 'flex' : 'none';
 });
 
+// Add Enter key functionality
 document.getElementById('today-input').addEventListener('keydown', function(e){
   if(e.key === 'Enter'){ addTask('today'); }
 });
