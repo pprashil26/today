@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.1 FINAL Minimal Symbols Only Compact Date + Someday</title>
+<title>Today Tool - v1.1 FINAL Someday Fixed Toolbar</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -17,7 +17,6 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
-
 #today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
 
 .task-list { flex: 1; min-height: 400px; max-height: 400px; overflow-y: auto; }
@@ -93,6 +92,7 @@ function renderTasks() {
     container.innerHTML = '';
     tasks[card].forEach((task, idx) => {
       const taskDiv = document.createElement('div'); taskDiv.className='task';
+
       const circle = document.createElement('span'); 
       circle.className='circle';
       circle.textContent = task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
@@ -105,28 +105,24 @@ function renderTasks() {
       topRow.append(circle,text);
 
       const btnDiv = document.createElement('div'); btnDiv.className='task-buttons';
+
+      // Corrected toolbar buttons
       if(card==='today'){
-        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
-        nextBtn.onclick=function(){ moveTask('today','next',Number(this.dataset.idx)); };
-        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.dataset.idx=idx;
-        somedayBtn.onclick=function(){ moveTask('today','someday',Number(this.dataset.idx)); };
+        const nextBtn = document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=()=>moveTask('today','next',idx);
+        const somedayBtn = document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=()=>moveTask('today','someday',idx);
         btnDiv.append(nextBtn,somedayBtn);
       } else if(card==='next'){
-        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.dataset.idx=idx;
-        todayBtn.onclick=function(){ moveTask('next','today',Number(this.dataset.idx)); };
-        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.dataset.idx=idx;
-        somedayBtn.onclick=function(){ moveTask('next','someday',Number(this.dataset.idx)); };
+        const todayBtn = document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=()=>moveTask('next','today',idx);
+        const somedayBtn = document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=()=>moveTask('next','someday',idx);
         btnDiv.append(todayBtn,somedayBtn);
       } else if(card==='someday'){
-        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.dataset.idx=idx;
-        todayBtn.onclick=function(){ moveTask('someday','today',Number(this.dataset.idx)); };
-        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
-        nextBtn.onclick=function(){ moveTask('someday','next',Number(this.dataset.idx)); };
+        const todayBtn = document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=()=>moveTask('someday','today',idx);
+        const nextBtn = document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=()=>moveTask('someday','next',idx);
         btnDiv.append(todayBtn,nextBtn);
       }
 
       const delBtn=document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕';
-      delBtn.dataset.idx=idx; delBtn.onclick=function(){ deleteTask(card,Number(this.dataset.idx)); };
+      delBtn.onclick=function(){ deleteTask(card,idx); };
       btnDiv.appendChild(delBtn);
 
       taskDiv.append(topRow,btnDiv);
