@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.1 FINAL Minimal Symbols Only Compact Date</title>
+<title>Today Tool - v1.1 FINAL Minimal Symbols Only Compact Date + Stable Toolbar</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -17,18 +17,14 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
-
 #today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
 
 .task-list { flex: 1; min-height: 400px; max-height: 400px; overflow-y: auto; }
 
 .task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; }
 .task-top { display: flex; align-items: center; }
-
 .circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px; flex-shrink: 0; cursor: pointer; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition: all 0.2s ease; background: #fff; color: #333; }
-
 .task-text { flex: 1; word-break: break-word; font-size: 0.9rem; }
-
 .task-buttons { margin-top: 1px; margin-left: 24px; }
 .task-buttons button { margin-right: 6px; padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; transition: opacity 0.15s ease; }
 .task:hover .task-buttons button { opacity: 0.8; }
@@ -76,9 +72,6 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <script>
-// Generate unique ID for each task
-function generateId(){ return Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
-
 function todayDate() {
   const d = new Date();
   return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
@@ -95,15 +88,13 @@ function renderTasks() {
     const container = document.getElementById(card+'-tasks');
     container.innerHTML = '';
     tasks[card].forEach(task => {
-      if(!task.id) task.id = generateId();
-      const taskId = task.id;
-
       const taskDiv = document.createElement('div'); taskDiv.className='task';
-      const circle = document.createElement('span');
+
+      const circle = document.createElement('span'); 
       circle.className='circle';
       circle.textContent = task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
       circle.title = task.status || 'No status';
-      circle.onclick = ()=>toggleStatus(card, taskId);
+      circle.onclick = ()=>toggleStatusById(task.id);
 
       const text = document.createElement('span'); text.className='task-text'; text.textContent=task.text;
 
@@ -111,69 +102,79 @@ function renderTasks() {
       topRow.append(circle,text);
 
       const btnDiv = document.createElement('div'); btnDiv.className='task-buttons';
+
       if(card==='today'){
         const nextBtn=document.createElement('button'); nextBtn.textContent='N';
-        nextBtn.onclick=function(){ moveTaskById('today','next',taskId); };
+        nextBtn.onclick=function(){ moveTaskById('today','next',task.id); };
         const somedayBtn=document.createElement('button'); somedayBtn.textContent='S';
-        somedayBtn.onclick=function(){ moveTaskById('today','completed',taskId); };
-        btnDiv.append(nextBtn, somedayBtn);
+        somedayBtn.onclick=function(){ moveTaskById('today','completed',task.id); };
+        btnDiv.append(nextBtn,somedayBtn);
       } else if(card==='next'){
         const todayBtn=document.createElement('button'); todayBtn.textContent='T';
-        todayBtn.onclick=function(){ moveTaskById('next','today',taskId); };
+        todayBtn.onclick=function(){ moveTaskById('next','today',task.id); };
         const somedayBtn=document.createElement('button'); somedayBtn.textContent='S';
-        somedayBtn.onclick=function(){ moveTaskById('next','completed',taskId); };
-        btnDiv.append(todayBtn, somedayBtn);
+        somedayBtn.onclick=function(){ moveTaskById('next','completed',task.id); };
+        btnDiv.append(todayBtn,somedayBtn);
       } else if(card==='completed'){
         const todayBtn=document.createElement('button'); todayBtn.textContent='T';
-        todayBtn.onclick=function(){ moveTaskById('completed','today',taskId); };
+        todayBtn.onclick=function(){ moveTaskById('completed','today',task.id); };
         const nextBtn=document.createElement('button'); nextBtn.textContent='N';
-        nextBtn.onclick=function(){ moveTaskById('completed','next',taskId); };
-        btnDiv.append(todayBtn, nextBtn);
+        nextBtn.onclick=function(){ moveTaskById('completed','next',task.id); };
+        btnDiv.append(todayBtn,nextBtn);
       }
 
       const delBtn=document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕';
-      delBtn.onclick=function(){ deleteTaskById(card, taskId); };
+      delBtn.onclick=function(){ deleteTaskById(task.id); };
       btnDiv.appendChild(delBtn);
 
-      taskDiv.append(topRow, btnDiv);
+      taskDiv.append(topRow,btnDiv);
       container.appendChild(taskDiv);
     });
   });
-  saveTasks();
 }
 
+// Add new task with persistent ID
 function addTask(card){
   if(card!=='today') return;
   const input=document.getElementById(card+'-input');
   const text=input.value.trim();
   if(!text) return; 
-  tasks[card].push({ id: generateId(), text:text, status:'' });
+  tasks[card].push({ id: Date.now()+Math.random(), text:text, status:'' });
   input.value='';
+  saveTasks();
   renderTasks();
 }
 
-function toggleStatus(card, taskId){
-  const statusOrder=['','completed','inprogress'];
-  const idx = tasks[card].findIndex(t=>t.id===taskId);
-  if(idx===-1) return;
-  let current=tasks[card][idx].status;
-  let nextIndex=(statusOrder.indexOf(current)+1)%statusOrder.length;
-  tasks[card][idx].status=statusOrder[nextIndex];
+// Toggle status by ID
+function toggleStatusById(taskId){
+  ['today','next','completed'].forEach(card=>{
+    const t = tasks[card].find(t => t.id === taskId);
+    if(t){
+      const statusOrder=['','completed','inprogress'];
+      t.status = statusOrder[(statusOrder.indexOf(t.status)+1)%statusOrder.length];
+    }
+  });
+  saveTasks();
   renderTasks();
 }
 
+// Move task by ID
 function moveTaskById(from,to,taskId){
-  const idx = tasks[from].findIndex(t=>t.id===taskId);
-  if(idx===-1) return;
-  const [task]=tasks[from].splice(idx,1);
+  const index = tasks[from].findIndex(t=>t.id===taskId);
+  if(index<0) return;
+  const [task] = tasks[from].splice(index,1);
   tasks[to].push(task);
+  saveTasks();
   renderTasks();
 }
 
-function deleteTaskById(card,taskId){
-  const idx = tasks[card].findIndex(t=>t.id===taskId);
-  if(idx===-1) return;
-  tasks[card].splice(idx,1);
+// Delete task by ID
+function deleteTaskById(taskId){
+  ['today','next','completed'].forEach(card=>{
+    const index = tasks[card].findIndex(t=>t.id===taskId);
+    if(index>=0) tasks[card].splice(index,1);
+  });
+  saveTasks();
   renderTasks();
 }
 
@@ -184,7 +185,7 @@ document.getElementById('toggle-cards').addEventListener('change', function(){
   document.getElementById('completed-card').style.display = show ? 'flex' : 'none';
 });
 
-// Add Enter key functionality
+// Add Enter key to add task
 document.getElementById('today-input').addEventListener('keydown', function(e){
   if(e.key === 'Enter'){ addTask('today'); }
 });
