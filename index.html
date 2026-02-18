@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.1 FINAL Someday Fixed Toolbar</title>
+<title>Today Tool - v1.1 FINAL Someday Fixed Toolbar Proper</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -23,7 +23,7 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; }
 .task-top { display: flex; align-items: center; }
 
-.circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px; flex-shrink: 0; cursor: pointer; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition: all 0.2s ease; background: #fff; color: #333; }
+.circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px; flex-shrink: 0; cursor: pointer; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; background: #fff; color: #333; }
 
 .task-text { flex: 1; word-break: break-word; font-size: 0.9rem; }
 
@@ -86,53 +86,52 @@ let tasks = JSON.parse(localStorage.getItem(storageKey)) || { today: [], next: [
 function saveTasks(){ localStorage.setItem(storageKey, JSON.stringify(tasks)); }
 
 function renderTasks() {
-  ['today','next','someday'].forEach(card => {
+  const cards = ['today','next','someday'];
+  cards.forEach(card => {
     const container = document.getElementById(card+'-tasks');
     container.innerHTML = '';
     tasks[card].forEach((task, idx) => {
-      const taskDiv = document.createElement('div'); 
-      taskDiv.className='task';
+      const taskDiv = document.createElement('div'); taskDiv.className='task';
 
       const circle = document.createElement('span'); 
       circle.className='circle';
       circle.textContent = task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
       circle.title = task.status || 'No status';
-      circle.onclick = ()=>toggleStatus(card,idx);
+      circle.onclick = () => toggleStatus(card, idx);
 
-      const text = document.createElement('span'); text.className='task-text'; text.textContent = task.text;
+      const text = document.createElement('span'); text.className='task-text'; text.textContent=task.text;
 
       const topRow = document.createElement('div'); topRow.className='task-top';
       topRow.append(circle,text);
 
       const btnDiv = document.createElement('div'); btnDiv.className='task-buttons';
 
-      // BUTTON LOGIC
+      // Toolbar buttons fixed
       if(card==='today'){
-        btnDiv.append(createButton('N',()=>moveTask('today','next',idx)));
-        btnDiv.append(createButton('S',()=>moveTask('today','someday',idx)));
+        btnDiv.appendChild(createBtn('N', () => moveTask('today','next',idx)));
+        btnDiv.appendChild(createBtn('S', () => moveTask('today','someday',idx)));
       } else if(card==='next'){
-        btnDiv.append(createButton('T',()=>moveTask('next','today',idx)));
-        btnDiv.append(createButton('S',()=>moveTask('next','someday',idx)));
+        btnDiv.appendChild(createBtn('T', () => moveTask('next','today',idx)));
+        btnDiv.appendChild(createBtn('S', () => moveTask('next','someday',idx)));
       } else if(card==='someday'){
-        btnDiv.append(createButton('T',()=>moveTask('someday','today',idx)));
-        btnDiv.append(createButton('N',()=>moveTask('someday','next',idx)));
+        btnDiv.appendChild(createBtn('T', () => moveTask('someday','today',idx)));
+        btnDiv.appendChild(createBtn('N', () => moveTask('someday','next',idx)));
       }
 
-      const delBtn = document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕';
-      delBtn.onclick = ()=>deleteTask(card,idx);
+      const delBtn = createBtn('✕', () => deleteTask(card, idx), true);
       btnDiv.appendChild(delBtn);
 
-      taskDiv.append(topRow,btnDiv);
+      taskDiv.append(topRow, btnDiv);
       container.appendChild(taskDiv);
     });
   });
 }
 
-// helper to create button
-function createButton(text, fn){
+function createBtn(text, fn, isDelete=false){
   const b = document.createElement('button');
   b.textContent = text;
   b.onclick = fn;
+  if(isDelete) b.className='delete-btn';
   return b;
 }
 
@@ -149,9 +148,9 @@ function addTask(card){
 
 function toggleStatus(card,idx){
   const statusOrder=['','completed','inprogress'];
-  let current=tasks[card][idx].status;
-  let nextIndex=(statusOrder.indexOf(current)+1)%statusOrder.length;
-  tasks[card][idx].status=statusOrder[nextIndex];
+  let current = tasks[card][idx].status;
+  let nextIndex = (statusOrder.indexOf(current)+1)%statusOrder.length;
+  tasks[card][idx].status = statusOrder[nextIndex];
   saveTasks();
   renderTasks();
 }
