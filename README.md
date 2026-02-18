@@ -3,7 +3,7 @@
 A minimal, analog-inspired task manager for daily planning, designed to be ADHD-friendly and distraction-free.  
 Inspired by [Ugmonk's analog system](https://ugmonk.com/en-au/pages/analog).  
 
-💻 **Try it live:** [Today Tool Online](https://your-public-link-here)
+💻 **Try it live:** [Today Tool Online](https://pprashil26.github.io/today/)
 
 ## Features
 
