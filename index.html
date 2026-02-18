@@ -2,11 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.2 FINAL Minimal Symbols Only Compact Date + Archive</title>
+<title>Today Tool - v1.2 FINAL + Archive</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -16,18 +13,21 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 .today { background-color: #ffffff; background-image: linear-gradient(to bottom, #eaeaea 1px, transparent 1px); }
 .next { background-color: #dffcf0; background-image: linear-gradient(to bottom, #c8f7e2 1px, transparent 1px); }
-.someday-card { background-color: #c8f7e2; background-image: linear-gradient(to bottom, #b0ebd6 1px, transparent 1px); }
-.archive-card { background-color: #e6e6e6; background-image: linear-gradient(to bottom, #dcdcdc 1px, transparent 1px); }
+.someday { background-color: #c8f7e2; background-image: linear-gradient(to bottom, #b0ebd6 1px, transparent 1px); }
+.archive { background-color: #a0d9b7; background-image: linear-gradient(to bottom, #8dd1aa 1px, transparent 1px); }
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
+
 #today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
 
 .task-list { flex: 1; min-height: 400px; max-height: 400px; overflow-y: auto; }
 
 .task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; }
 .task-top { display: flex; align-items: center; }
+
 .circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px; flex-shrink: 0; cursor: pointer; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition: all 0.2s ease; background: #fff; color: #333; }
+
 .task-text { flex: 1; word-break: break-word; font-size: 0.9rem; }
 
 .task-buttons { margin-top: 1px; margin-left: 24px; }
@@ -71,12 +71,12 @@ input:checked + .slider:before { transform: translateX(20px); }
   <div class="task-list" id="next-tasks"></div>
 </div>
 
-<div class="card someday-card" id="someday-card">
+<div class="card someday" id="someday-card">
   <h2>Someday</h2>
   <div class="task-list" id="someday-tasks"></div>
 </div>
 
-<div class="card archive-card" id="archive-card">
+<div class="card archive" id="archive-card">
   <h2>Archive</h2>
   <div class="task-list" id="archive-tasks"></div>
 </div>
@@ -112,6 +112,7 @@ function renderTasks() {
 
       const btnDiv = document.createElement('div'); btnDiv.className='task-buttons';
 
+      // Toolbar buttons
       if(card==='today'){
         const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
         nextBtn.onclick=function(){ moveTask('today','next',Number(this.dataset.idx)); };
@@ -141,11 +142,7 @@ function renderTasks() {
       }
 
       const delBtn=document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕';
-      delBtn.dataset.idx=idx;
-      delBtn.onclick=function(){
-        if(card!=='archive') moveTask(card,'archive',Number(this.dataset.idx));
-        else deleteTask('archive',Number(this.dataset.idx));
-      };
+      delBtn.dataset.idx=idx; delBtn.onclick=function(){ moveTask(card,'archive',Number(this.dataset.idx)); };
       btnDiv.appendChild(delBtn);
 
       taskDiv.append(topRow,btnDiv);
@@ -177,12 +174,6 @@ function toggleStatus(card,idx){
 function moveTask(from,to,idx){
   const [task]=tasks[from].splice(idx,1);
   tasks[to].push(task);
-  saveTasks();
-  renderTasks();
-}
-
-function deleteTask(card,idx){
-  tasks[card].splice(idx,1);
   saveTasks();
   renderTasks();
 }
