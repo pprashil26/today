@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.1 FINAL Minimal Symbols Only Compact Date + Someday</title>
+<title>Today Tool - v1.1 FINAL Stable Toolbar Fix</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -13,17 +13,20 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 .today { background-color: #ffffff; background-image: linear-gradient(to bottom, #eaeaea 1px, transparent 1px); }
 .next { background-color: #dffcf0; background-image: linear-gradient(to bottom, #c8f7e2 1px, transparent 1px); }
-.someday { background-color: #c8f7e2; background-image: linear-gradient(to bottom, #b0ebd6 1px, transparent 1px); }
+.completed-card { background-color: #c8f7e2; background-image: linear-gradient(to bottom, #b0ebd6 1px, transparent 1px); }
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
+
 #today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
 
 .task-list { flex: 1; min-height: 400px; max-height: 400px; overflow-y: auto; }
 
 .task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; }
 .task-top { display: flex; align-items: center; }
+
 .circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px; flex-shrink: 0; cursor: pointer; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition: all 0.2s ease; background: #fff; color: #333; }
+
 .task-text { flex: 1; word-break: break-word; font-size: 0.9rem; }
 
 .task-buttons { margin-top: 1px; margin-left: 24px; }
@@ -67,9 +70,9 @@ input:checked + .slider:before { transform: translateX(20px); }
   <div class="task-list" id="next-tasks"></div>
 </div>
 
-<div class="card someday" id="someday-card">
+<div class="card completed-card" id="completed-card">
   <h2>Someday</h2>
-  <div class="task-list" id="someday-tasks"></div>
+  <div class="task-list" id="completed-tasks"></div>
 </div>
 
 <script>
@@ -79,27 +82,24 @@ function todayDate() {
 }
 document.getElementById('today-date').innerText = " " + todayDate();
 
+function generateId(){ return '_' + Math.random().toString(36).substr(2,9); }
+
 const storageKey = 'todayToolTasks';
-let tasks = JSON.parse(localStorage.getItem(storageKey)) || { today: [], next: [], someday: [] };
+let tasks = JSON.parse(localStorage.getItem(storageKey)) || { today: [], next: [], completed: [] };
 
 function saveTasks(){ localStorage.setItem(storageKey, JSON.stringify(tasks)); }
 
 function renderTasks() {
-  const cards = [
-    {key:'today', el:'today-tasks'},
-    {key:'next', el:'next-tasks'},
-    {key:'someday', el:'someday-tasks'}
-  ];
-  
-  cards.forEach(card => {
-    const container = document.getElementById(card.el);
+  ['today','next','completed'].forEach(card => {
+    const container = document.getElementById(card+'-tasks');
     container.innerHTML = '';
-    tasks[card.key].forEach((task, idx) => {
+    tasks[card].forEach(task => {
       const taskDiv = document.createElement('div'); taskDiv.className='task';
-      const circle = document.createElement('span'); circle.className='circle';
+      const circle = document.createElement('span'); 
+      circle.className='circle';
       circle.textContent = task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
       circle.title = task.status || 'No status';
-      circle.onclick = ()=>toggleStatus(card.key,idx);
+      circle.onclick = ()=>toggleStatus(card,task.id);
 
       const text = document.createElement('span'); text.className='task-text'; text.textContent=task.text;
 
@@ -108,21 +108,28 @@ function renderTasks() {
 
       const btnDiv = document.createElement('div'); btnDiv.className='task-buttons';
 
-      // Toolbar buttons
-      if(card.key==='today'){
-        btnDiv.append(createMoveBtn('N','today','next',idx));
-        btnDiv.append(createMoveBtn('S','today','someday',idx));
-      } else if(card.key==='next'){
-        btnDiv.append(createMoveBtn('T','next','today',idx));
-        btnDiv.append(createMoveBtn('S','next','someday',idx));
-      } else if(card.key==='someday'){
-        btnDiv.append(createMoveBtn('T','someday','today',idx));
-        btnDiv.append(createMoveBtn('N','someday','next',idx));
+      if(card==='today'){
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N';
+        nextBtn.onclick=function(){ moveTaskById('today','next',task.id); };
+        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S';
+        somedayBtn.onclick=function(){ moveTaskById('today','completed',task.id); };
+        btnDiv.append(nextBtn,somedayBtn);
+      } else if(card==='next'){
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T';
+        todayBtn.onclick=function(){ moveTaskById('next','today',task.id); };
+        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S';
+        somedayBtn.onclick=function(){ moveTaskById('next','completed',task.id); };
+        btnDiv.append(todayBtn,somedayBtn);
+      } else if(card==='completed'){
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T';
+        todayBtn.onclick=function(){ moveTaskById('completed','today',task.id); };
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N';
+        nextBtn.onclick=function(){ moveTaskById('completed','next',task.id); };
+        btnDiv.append(todayBtn,nextBtn);
       }
 
-      // Delete button
       const delBtn=document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕';
-      delBtn.onclick=function(){ deleteTask(card.key,idx); };
+      delBtn.onclick=function(){ deleteTaskById(card,task.id); };
       btnDiv.appendChild(delBtn);
 
       taskDiv.append(topRow,btnDiv);
@@ -131,45 +138,51 @@ function renderTasks() {
   });
 }
 
-// Create toolbar button with proper closure
-function createMoveBtn(label, from, to, idx){
-  const btn = document.createElement('button');
-  btn.textContent = label;
-  btn.onclick = function(){ moveTask(from,to,idx); };
-  return btn;
-}
-
 function addTask(card){
   if(card!=='today') return;
-  const input=document.getElementById(card+'-input'); const text=input.value.trim();
+  const input=document.getElementById(card+'-input');
+  const text=input.value.trim();
   if(!text) return; 
-  tasks[card].push({ text:text, status:'' }); input.value=''; saveTasks(); renderTasks();
+  tasks[card].push({ id: generateId(), text:text, status:'' });
+  input.value='';
+  saveTasks();
+  renderTasks();
 }
 
-function toggleStatus(card,idx){
+function toggleStatus(card,id){
   const statusOrder=['','completed','inprogress'];
-  let current=tasks[card][idx].status;
-  let nextIndex=(statusOrder.indexOf(current)+1)%statusOrder.length;
-  tasks[card][idx].status=statusOrder[nextIndex]; saveTasks(); renderTasks();
+  const task = tasks[card].find(t=>t.id===id);
+  if(task){
+    let nextIndex=(statusOrder.indexOf(task.status)+1)%statusOrder.length;
+    task.status=statusOrder[nextIndex];
+    saveTasks();
+    renderTasks();
+  }
 }
 
-function moveTask(from,to,idx){
-  const [task]=tasks[from].splice(idx,1);
-  tasks[to].push(task);
-  saveTasks();
-  renderTasks();
+function moveTaskById(from,to,id){
+  const idx = tasks[from].findIndex(t=>t.id===id);
+  if(idx>=0){
+    const [task]=tasks[from].splice(idx,1);
+    tasks[to].push(task);
+    saveTasks();
+    renderTasks();
+  }
 }
 
-function deleteTask(card,idx){
-  tasks[card].splice(idx,1);
-  saveTasks();
-  renderTasks();
+function deleteTaskById(card,id){
+  const idx = tasks[card].findIndex(t=>t.id===id);
+  if(idx>=0){
+    tasks[card].splice(idx,1);
+    saveTasks();
+    renderTasks();
+  }
 }
 
 document.getElementById('toggle-cards').addEventListener('change', function(){
   const show = this.checked;
   document.getElementById('next-card').style.display = show ? 'flex' : 'none';
-  document.getElementById('someday-card').style.display = show ? 'flex' : 'none';
+  document.getElementById('completed-card').style.display = show ? 'flex' : 'none';
 });
 
 document.getElementById('today-input').addEventListener('keydown', function(e){
