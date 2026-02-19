@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.3.6</title>
+<title>Today Tool - v1.3.7</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -18,36 +18,24 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   position: relative; 
   box-shadow: 0 6px 18px rgba(0,0,0,0.12); 
   overflow: hidden; 
+  background-color: #fff;
 }
 
-/* Subtle paper texture overlay */
-.card::before { 
-  content: ""; 
-  position: absolute; 
-  inset: 0; 
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="none" stroke="%23e0e0e0" stroke-width="1"/></svg>') repeat; 
-  opacity: 0.03; 
-  pointer-events: none; 
+/* Lined Background */
+.today, .next, .someday, .archive {
+  background-image: repeating-linear-gradient(to bottom, rgba(0,0,0,0.05) 0, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 18px);
 }
-
-/* Lined background */
-.today { background-color: #ffffff; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
-.next { background-color: #dffcf0; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
-.someday { background-color: #c8f7e2; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
-.archive { background-color: #a0d9b7; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
-
 .card h2 .first { font-weight: bold; color: #666; }
 .card h2 .rest { opacity: 0.3; font-weight: normal; }
-
 #today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
 
-.task-list { flex: 1; max-height: 400px; overflow-y: auto; }
+.task-list { flex: 1; min-height: 400px; max-height: 400px; overflow-y: auto; }
 
-.task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; cursor: pointer; }
-.task-top { display: flex; align-items: center; justify-content: space-between; }
+.task { display: flex; flex-direction: column; padding: 4px 4px; margin-bottom: 2px; cursor: pointer; }
+.task-top { display: flex; align-items: center; }
 
 .circle { 
   width: 18px; 
@@ -68,11 +56,11 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 .task-text { flex: 1; word-break: break-word; font-size: 0.9rem; }
 
-.task-toolbar { display: none; margin-left: 24px; margin-top: 2px; gap: 6px; }
-.task-toolbar button { padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; transition: opacity 0.15s ease; }
-.task-toolbar button:hover { opacity: 0.8; }
+.task-buttons { display: none; margin-top: 1px; margin-left: 24px; gap: 4px; }
+.task.expanded .task-buttons { display: flex; }
 
-.chevron { font-size: 12px; margin-left: 6px; transition: transform 0.2s ease; }
+.task-buttons button { padding: 0 4px; font-size: 0.75rem; border: none; background: none; opacity: 0.6; cursor: pointer; transition: opacity 0.15s ease; }
+.task-buttons button:hover { opacity: 1; }
 
 .add-task { display: flex; gap: 4px; margin-top: 8px; z-index: 1; position: relative; }
 .add-task input { flex: 1; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
@@ -132,6 +120,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <script>
+// ====== JS logic =====
 function todayDate() { const d=new Date(); return d.toLocaleDateString(undefined,{day:'numeric',month:'short'}); }
 document.getElementById('today-date').innerText=" "+todayDate();
 
@@ -146,52 +135,68 @@ function renderTasks() {
       const taskDiv=document.createElement('div'); taskDiv.className='task';
       if(task.highlighted) taskDiv.classList.add('highlighted');
 
-      const topRow=document.createElement('div'); topRow.className='task-top';
-
-      const leftGroup=document.createElement('div'); leftGroup.style.display='flex'; leftGroup.style.alignItems='center';
       const circle=document.createElement('span'); circle.className='circle';
       circle.textContent=task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
       circle.title=task.status||'No status'; circle.onclick=()=>toggleStatus(card,idx);
+
       const text=document.createElement('span'); text.className='task-text'; text.textContent=task.text;
-      leftGroup.append(circle,text);
 
-      const chevron=document.createElement('span'); chevron.className='chevron'; chevron.textContent='>';
-      chevron.onclick=function(e){
-        e.stopPropagation();
-        toolbar.style.display = toolbar.style.display==='flex'?'none':'flex';
-        chevron.style.transform = toolbar.style.display==='flex'?'rotate(90deg)':'rotate(0deg)';
-      };
+      const topRow=document.createElement('div'); topRow.className='task-top'; topRow.append(circle,text);
 
-      topRow.append(leftGroup, chevron);
+      const btnDiv=document.createElement('div'); btnDiv.className='task-buttons';
 
-      const toolbar=document.createElement('div'); toolbar.className='task-toolbar';
-      if(card!=='archive'){
+      // Add buttons based on card
+      if(card==='today'){
         const nextBtn=document.createElement('button'); nextBtn.textContent='N';
-        nextBtn.onclick=function(){ moveTask(card,'next',idx); };
+        nextBtn.onclick=function(){ moveTask('today','next',idx); };
         const somedayBtn=document.createElement('button'); somedayBtn.textContent='S';
-        somedayBtn.onclick=function(){ moveTask(card,'someday',idx); };
+        somedayBtn.onclick=function(){ moveTask('today','someday',idx); };
+        const archiveBtn=document.createElement('button'); archiveBtn.textContent='✕';
+        archiveBtn.onclick=function(){ moveTask('today','archive',idx); };
+        btnDiv.append(nextBtn,somedayBtn,archiveBtn);
+        const expandBtn=document.createElement('button'); expandBtn.textContent='⌄';
+        expandBtn.onclick=function(){ taskDiv.classList.toggle('expanded'); };
+        btnDiv.append(expandBtn);
+      }
+      else if(card==='next'){
         const todayBtn=document.createElement('button'); todayBtn.textContent='T';
-        todayBtn.onclick=function(){ moveTask(card,'today',idx); };
-        const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐';
-        highlightBtn.style.opacity = task.highlighted ? '1' : '0.3';
-        highlightBtn.onclick=function(){ toggleHighlight(card,idx); };
-        if(card==='today'){ toolbar.append(nextBtn,somedayBtn,highlightBtn); }
-        if(card==='next'){ toolbar.append(todayBtn,somedayBtn,highlightBtn); }
-        if(card==='someday'){ toolbar.append(todayBtn,nextBtn,highlightBtn); }
-      } else {
+        todayBtn.onclick=function(){ moveTask('next','today',idx); };
+        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S';
+        somedayBtn.onclick=function(){ moveTask('next','someday',idx); };
+        const archiveBtn=document.createElement('button'); archiveBtn.textContent='✕';
+        archiveBtn.onclick=function(){ moveTask('next','archive',idx); };
+        btnDiv.append(todayBtn,somedayBtn,archiveBtn);
+        const expandBtn=document.createElement('button'); expandBtn.textContent='⌄';
+        expandBtn.onclick=function(){ taskDiv.classList.toggle('expanded'); };
+        btnDiv.append(expandBtn);
+      }
+      else if(card==='someday'){
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T';
+        todayBtn.onclick=function(){ moveTask('someday','today',idx); };
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N';
+        nextBtn.onclick=function(){ moveTask('someday','next',idx); };
+        const archiveBtn=document.createElement('button'); archiveBtn.textContent='✕';
+        archiveBtn.onclick=function(){ moveTask('someday','archive',idx); };
+        btnDiv.append(todayBtn,nextBtn,archiveBtn);
+        const expandBtn=document.createElement('button'); expandBtn.textContent='⌄';
+        expandBtn.onclick=function(){ taskDiv.classList.toggle('expanded'); };
+        btnDiv.append(expandBtn);
+      }
+      else if(card==='archive'){
         const todayBtn=document.createElement('button'); todayBtn.textContent='T';
         todayBtn.onclick=function(){ moveTask('archive','today',idx); };
         const nextBtn=document.createElement('button'); nextBtn.textContent='N';
         nextBtn.onclick=function(){ moveTask('archive','next',idx); };
         const somedayBtn=document.createElement('button'); somedayBtn.textContent='S';
         somedayBtn.onclick=function(){ moveTask('archive','someday',idx); };
-        const delBtn=document.createElement('button'); delBtn.textContent='✕';
-        delBtn.onclick=function(){ deleteTask('archive',idx); };
-        toolbar.append(todayBtn,nextBtn,somedayBtn,delBtn);
+        const starBtn=document.createElement('button'); starBtn.textContent='⭐';
+        starBtn.onclick=function(){ toggleHighlight('archive',idx); };
+        const expandBtn=document.createElement('button'); expandBtn.textContent='⌄';
+        expandBtn.onclick=function(){ taskDiv.classList.toggle('expanded'); };
+        btnDiv.append(todayBtn,nextBtn,somedayBtn,starBtn,expandBtn);
       }
 
-      taskDiv.append(topRow, toolbar);
-      container.appendChild(taskDiv);
+      taskDiv.append(topRow,btnDiv); container.appendChild(taskDiv);
     });
   });
 }
@@ -201,7 +206,6 @@ tasks[card].push({text:text,status:'',highlighted:false}); input.value=''; saveT
 function toggleStatus(card,idx){ const statusOrder=['','completed','inprogress']; let current=tasks[card][idx].status; let nextIndex=(statusOrder.indexOf(current)+1)%statusOrder.length; tasks[card][idx].status=statusOrder[nextIndex]; saveTasks(); renderTasks(); }
 function toggleHighlight(card,idx){ tasks[card][idx].highlighted=!tasks[card][idx].highlighted; saveTasks(); renderTasks(); }
 function moveTask(from,to,idx){ const [task]=tasks[from].splice(idx,1); tasks[to].push(task); saveTasks(); renderTasks(); }
-function deleteTask(card,idx){ tasks[card].splice(idx,1); saveTasks(); renderTasks(); }
 
 /* Export / Import */
 function exportTasksTxt(){ let content=''; Object.keys(tasks).forEach(card=>{ content+=`[${card}]\n`; tasks[card].forEach(task=>{ content+=`${task.text} | ${task.status || ''} | ${task.highlighted?'highlighted':''}\n`; }); content+='\n'; }); const blob=new Blob([content],{type:'text/plain'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='tasks-export.txt'; a.click(); URL.revokeObjectURL(url);}
