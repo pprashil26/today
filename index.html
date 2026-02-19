@@ -4,269 +4,256 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Today Tool - v1.3.5</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
-
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
 
-body {
-  background: #f4f4f4;
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 20px;
+.card { 
+  width: 300px; 
+  border-radius: 12px; 
+  padding: 16px; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px; 
+  position: relative; 
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12); 
+  overflow: hidden; 
 }
 
-/* CARD BASE */
-.card {
-  width: 300px;
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  position: relative;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-  overflow: hidden;
+/* Subtle paper texture overlay */
+.card::before { 
+  content: ""; 
+  position: absolute; 
+  inset: 0; 
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="none" stroke="%23e0e0e0" stroke-width="1"/></svg>') repeat; 
+  opacity: 0.03; 
+  pointer-events: none; 
 }
 
-/* === LINED PAPER STYLE (Replaces Dot Grid) === */
-.today,
-.next,
-.someday,
-.archive {
+/* ===== LINED PAPER STYLE ===== */
+
+.today { 
+  background-color: #ffffff; 
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(0,0,0,0.08) 0px,
-    rgba(0,0,0,0.08) 1px,
-    transparent 1px,
-    transparent 22px
+    transparent,
+    transparent 23px,
+    rgba(0,0,0,0.08) 24px
   );
 }
 
-.today { background-color: #ffffff; }
-.next { background-color: #dffcf0; }
-.someday { background-color: #c8f7e2; }
-.archive { background-color: #a0d9b7; }
-
-/* HEADINGS */
-.card h2 {
-  font-family: 'Patrick Hand', cursive;
-  font-size: 1.05rem;
-  color: #666;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.next { 
+  background-color: #dffcf0; 
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 23px,
+    rgba(0,0,0,0.08) 24px
+  );
 }
 
-.card h2 .first {
-  font-weight: bold;
-  color: #666;
+.someday { 
+  background-color: #c8f7e2; 
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 23px,
+    rgba(0,0,0,0.08) 24px
+  );
 }
 
-.card h2 .rest {
-  opacity: 0.3;
-  font-weight: normal;
+.archive { 
+  background-color: #a0d9b7; 
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 23px,
+    rgba(0,0,0,0.08) 24px
+  );
 }
 
-#today-date {
-  font-size: 0.8rem;
-  color: #888;
-  margin-left: 6px;
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+.card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
+
+.card h2 .first { font-weight: bold; color: #666; }
+.card h2 .rest { opacity: 0.3; font-weight: normal; }
+
+#today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
+
+.task-list { flex: 1; min-height: 400px; max-height: 400px; overflow-y: auto; }
+
+.task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; }
+.task-top { display: flex; align-items: center; }
+
+.circle { 
+  width: 18px; 
+  height: 18px; 
+  border-radius: 50%; 
+  border: 2px solid #999; 
+  margin-right: 6px; 
+  flex-shrink: 0; 
+  cursor: pointer; 
+  display: inline-flex; 
+  align-items:center; 
+  justify-content:center; 
+  font-size:12px; 
+  font-weight:bold; 
+  transition: all 0.2s ease; 
+  background: #fff; 
+  color: #333; 
 }
 
-/* TASK LIST */
-.task-list {
-  flex: 1;
-  min-height: 400px;
-  max-height: 400px;
-  overflow-y: auto;
-}
+.task-text { flex: 1; word-break: break-word; font-size: 0.9rem; }
 
-.task {
-  display: flex;
-  flex-direction: column;
-  padding: 6px 4px;
-  margin-bottom: 2px;
-}
+.task-buttons { margin-top: 1px; margin-left: 24px; }
+.task-buttons button { margin-right: 6px; padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; transition: opacity 0.15s ease; }
+.task:hover .task-buttons button { opacity: 0.8; }
 
-.task-top {
-  display: flex;
-  align-items: center;
-}
+.delete-btn { margin-left: 4px; padding: 0; font-size: 0.65rem; border: none; background: none; color: #900; opacity: 0.5; cursor: pointer; }
+.task:hover .delete-btn { opacity: 0.8; }
 
-.circle {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2px solid #999;
-  margin-right: 6px;
-  flex-shrink: 0;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: bold;
-  transition: all 0.2s ease;
-  background: #fff;
-  color: #333;
-}
+.add-task { display: flex; gap: 4px; margin-top: 8px; z-index: 1; position: relative; }
+.add-task input { flex: 1; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
+.add-task button { padding: 6px 12px; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
+.add-task button:hover { background: #555; }
 
-.task-text {
-  flex: 1;
-  word-break: break-word;
-  font-size: 0.9rem;
-}
+.switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 12px; transition: .2s; }
+.slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .2s; }
+input:checked + .slider { background-color: #4caf50; }
+input:checked + .slider:before { transform: translateX(20px); }
 
-/* TASK BUTTONS */
-.task-buttons {
-  margin-top: 1px;
-  margin-left: 24px;
-}
+.archive-tools { display: flex; gap: 8px; }
+.archive-tools button { background: none; border: none; font-size: 12px; cursor: pointer; opacity: 0.6; padding: 0; }
+.archive-tools button:hover { opacity: 1; }
 
-.task-buttons button {
-  margin-right: 6px;
-  padding: 0;
-  font-size: 0.7rem;
-  border: none;
-  background: none;
-  opacity: 0.5;
-  cursor: pointer;
-  transition: opacity 0.15s ease;
-}
-
-.task:hover .task-buttons button {
-  opacity: 0.8;
-}
-
-.delete-btn {
-  margin-left: 4px;
-  padding: 0;
-  font-size: 0.65rem;
-  border: none;
-  background: none;
-  color: #900;
-  opacity: 0.5;
-  cursor: pointer;
-}
-
-.task:hover .delete-btn {
-  opacity: 0.8;
-}
-
-/* ADD TASK */
-.add-task {
-  display: flex;
-  gap: 4px;
-  margin-top: 8px;
-  z-index: 1;
-  position: relative;
-}
-
-.add-task input {
-  flex: 1;
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.add-task button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  background: #333;
-  color: #fff;
-  cursor: pointer;
-}
-
-.add-task button:hover {
-  background: #555;
-}
-
-/* TOGGLE SWITCH */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 20px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  border-radius: 12px;
-  transition: .2s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 14px;
-  width: 14px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  border-radius: 50%;
-  transition: .2s;
-}
-
-input:checked + .slider {
-  background-color: #4caf50;
-}
-
-input:checked + .slider:before {
-  transform: translateX(20px);
-}
-
-/* ARCHIVE TOOLS */
-.archive-tools {
-  display: flex;
-  gap: 8px;
-}
-
-.archive-tools button {
-  background: none;
-  border: none;
-  font-size: 12px;
-  cursor: pointer;
-  opacity: 0.6;
-  padding: 0;
-}
-
-.archive-tools button:hover {
-  opacity: 1;
-}
-
-/* HIGHLIGHT */
-.highlighted {
-  background-color: #fff79a;
-  color: #000;
-}
+.highlighted { background-color: #fff79a; color: #000; }
 </style>
 </head>
-
 <body>
 
-<!-- 
-IMPORTANT:
-Your existing BODY structure and SCRIPT section
-remain exactly as in your working stable version.
-Nothing was changed there.
--->
+<div class="card today">
+  <h2>
+    <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
+    <label class="switch" title="Show Next & Someday & Archive cards">
+      <input type="checkbox" id="toggle-cards" checked>
+      <span class="slider"></span>
+    </label>
+  </h2>
+  <div class="task-list" id="today-tasks"></div>
+  <div class="add-task">
+    <input type="text" placeholder="New task..." id="today-input">
+    <button onclick="addTask('today')">Add</button>
+  </div>
+</div>
 
+<div class="card next" id="next-card">
+  <h2><span><span class="first">N</span><span class="rest">ext</span></span></h2>
+  <div class="task-list" id="next-tasks"></div>
+</div>
+
+<div class="card someday" id="someday-card">
+  <h2><span><span class="first">S</span><span class="rest">omeday</span></span></h2>
+  <div class="task-list" id="someday-tasks"></div>
+</div>
+
+<div class="card archive" id="archive-card">
+  <h2>
+    Archive
+    <span class="archive-tools">
+      <button onclick="exportTasksTxt()">Export</button>
+      <button onclick="importTasksTxt()">Import</button>
+    </span>
+  </h2>
+  <div class="task-list" id="archive-tasks"></div>
+</div>
+
+<script>
+function todayDate() { const d=new Date(); return d.toLocaleDateString(undefined,{day:'numeric',month:'short'}); }
+document.getElementById('today-date').innerText=" "+todayDate();
+
+const storageKey='todayToolTasks';
+let tasks=JSON.parse(localStorage.getItem(storageKey))||{today:[],next:[],someday:[],archive:[]};
+function saveTasks(){ localStorage.setItem(storageKey,JSON.stringify(tasks)); }
+
+function renderTasks() {
+  ['today','next','someday','archive'].forEach(card=>{
+    const container=document.getElementById(card+'-tasks'); container.innerHTML='';
+    tasks[card].forEach((task,idx)=>{
+      const taskDiv=document.createElement('div'); taskDiv.className='task';
+      if(task.highlighted) taskDiv.classList.add('highlighted');
+
+      const circle=document.createElement('span'); circle.className='circle';
+      circle.textContent=task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
+      circle.title=task.status||'No status'; circle.onclick=()=>toggleStatus(card,idx);
+
+      const text=document.createElement('span'); text.className='task-text'; text.textContent=task.text;
+
+      const topRow=document.createElement('div'); topRow.className='task-top'; topRow.append(circle,text);
+
+      const btnDiv=document.createElement('div'); btnDiv.className='task-buttons';
+
+      if(card==='today'){
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
+        nextBtn.onclick=function(){ moveTask('today','next',Number(this.dataset.idx)); };
+        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.dataset.idx=idx;
+        somedayBtn.onclick=function(){ moveTask('today','someday',Number(this.dataset.idx)); };
+        btnDiv.append(nextBtn,somedayBtn);
+      } else if(card==='next'){
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.dataset.idx=idx;
+        todayBtn.onclick=function(){ moveTask('next','today',Number(this.dataset.idx)); };
+        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.dataset.idx=idx;
+        somedayBtn.onclick=function(){ moveTask('next','someday',Number(this.dataset.idx)); };
+        btnDiv.append(todayBtn,somedayBtn);
+      } else if(card==='someday'){
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.dataset.idx=idx;
+        todayBtn.onclick=function(){ moveTask('someday','today',Number(this.dataset.idx)); };
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
+        nextBtn.onclick=function(){ moveTask('someday','next',Number(this.dataset.idx)); };
+        btnDiv.append(todayBtn,nextBtn);
+      } else if(card==='archive'){
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.dataset.idx=idx;
+        todayBtn.onclick=function(){ moveTask('archive','today',Number(this.dataset.idx)); };
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.dataset.idx=idx;
+        nextBtn.onclick=function(){ moveTask('archive','next',Number(this.dataset.idx)); };
+        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.dataset.idx=idx;
+        somedayBtn.onclick=function(){ moveTask('archive','someday',Number(this.dataset.idx)); };
+        btnDiv.append(todayBtn,nextBtn,somedayBtn);
+      }
+
+      if(card!=='archive'){
+        const highlightBtn=document.createElement('button'); highlightBtn.innerHTML='⭐';
+        highlightBtn.style.opacity = task.highlighted ? '1' : '0.3';
+        highlightBtn.title='Toggle Highlight'; highlightBtn.dataset.idx=idx;
+        highlightBtn.onclick=function(){ toggleHighlight(card,Number(this.dataset.idx)); };
+        btnDiv.appendChild(highlightBtn);
+      }
+
+      const delBtn=document.createElement('button'); delBtn.className='delete-btn'; delBtn.textContent='✕'; delBtn.dataset.idx=idx;
+      if(card==='archive'){ delBtn.onclick=function(){ deleteTask('archive',Number(this.dataset.idx)); }; }
+      else{ delBtn.onclick=function(){ moveTask(card,'archive',Number(this.dataset.idx)); }; }
+      btnDiv.appendChild(delBtn);
+
+      taskDiv.append(topRow,btnDiv); container.appendChild(taskDiv);
+    });
+  });
+}
+
+function addTask(card){ if(card!=='today') return; const input=document.getElementById(card+'-input'); const text=input.value.trim(); if(!text) return;
+tasks[card].push({text:text,status:'',highlighted:false}); input.value=''; saveTasks(); renderTasks(); }
+function toggleStatus(card,idx){ const statusOrder=['','completed','inprogress']; let current=tasks[card][idx].status; let nextIndex=(statusOrder.indexOf(current)+1)%statusOrder.length; tasks[card][idx].status=statusOrder[nextIndex]; saveTasks(); renderTasks(); }
+function toggleHighlight(card,idx){ tasks[card][idx].highlighted=!tasks[card][idx].highlighted; saveTasks(); renderTasks(); }
+function moveTask(from,to,idx){ const [task]=tasks[from].splice(idx,1); tasks[to].push(task); saveTasks(); renderTasks(); }
+function deleteTask(card,idx){ tasks[card].splice(idx,1); saveTasks(); renderTasks(); }
+
+function exportTasksTxt(){ let content=''; Object.keys(tasks).forEach(card=>{ content+=`[${card}]\n`; tasks[card].forEach(task=>{ content+=`${task.text} | ${task.status || ''} | ${task.highlighted?'highlighted':''}\n`; }); content+='\n'; }); const blob=new Blob([content],{type:'text/plain'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='tasks-export.txt'; a.click(); URL.revokeObjectURL(url);}
+function importTasksTxt(){ const input=document.createElement('input'); input.type='file'; input.accept='.txt'; input.onchange=function(event){ const file=event.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=function(e){ const text=e.target.result; const lines=text.split('\n'); const newTasks={today:[],next:[],someday:[],archive:[]}; let currentCard=null; lines.forEach(line=>{ line=line.trim(); if(!line) return; if(line.startsWith('[')&&line.endsWith(']')){ currentCard=line.slice(1,-1); } else if(currentCard && newTasks[currentCard]){ const parts=line.split('|'); const taskText=parts[0].trim(); const status=parts[1]?parts[1].trim():''; const highlighted=parts[2]?parts[2].trim()==='highlighted':false; newTasks[currentCard].push({text:taskText,status:status,highlighted:highlighted}); } }); tasks=newTasks; saveTasks(); renderTasks(); }; reader.readAsText(file); }; input.click(); }
+
+document.getElementById('toggle-cards').addEventListener('change',function(){ const show=this.checked; document.getElementById('next-card').style.display=show?'flex':'none'; document.getElementById('someday-card').style.display=show?'flex':'none'; document.getElementById('archive-card').style.display=show?'flex':'none'; });
+document.getElementById('today-input').addEventListener('keydown',function(e){ if(e.key==='Enter'){ addTask('today'); } });
+
+renderTasks();
+</script>
 </body>
 </html>
