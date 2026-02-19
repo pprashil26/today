@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.3.7</title>
+<title>Today Tool - v1.3.8</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -38,8 +38,10 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
+
 .card h2 .first { font-weight: bold; color: #666; }
 .card h2 .rest { opacity: 0.3; font-weight: normal; }
+
 #today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
 
 .task-list { flex: 1; max-height: 400px; overflow-y: auto; }
@@ -130,7 +132,6 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <script>
-// Preserve v1.3.6 behavior, add chevron toggle
 function todayDate() { const d=new Date(); return d.toLocaleDateString(undefined,{day:'numeric',month:'short'}); }
 document.getElementById('today-date').innerText=" "+todayDate();
 
@@ -155,38 +156,49 @@ function renderTasks() {
       leftGroup.append(circle,text);
 
       const chevron=document.createElement('span'); chevron.className='chevron'; chevron.textContent='>';
+      topRow.append(leftGroup, chevron);
+
       const toolbar=document.createElement('div'); toolbar.className='task-toolbar';
+
+      if(card!=='archive'){
+        // Today/Next/Someday toolbar buttons
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=function(){ moveTask(card,'today',idx); };
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=function(){ moveTask(card,'next',idx); };
+        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=function(){ moveTask(card,'someday',idx); };
+        const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ moveTask(card,'archive',idx); };
+        const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐';
+        highlightBtn.style.opacity = task.highlighted ? '1' : '0.3'; highlightBtn.onclick=function(){ toggleHighlight(card,idx); };
+
+        if(card==='today'){ toolbar.append(nextBtn,somedayBtn,highlightBtn,delBtn); }
+        if(card==='next'){ toolbar.append(todayBtn,somedayBtn,highlightBtn,delBtn); }
+        if(card==='someday'){ toolbar.append(todayBtn,nextBtn,highlightBtn,delBtn); }
+
+      } else {
+        // Archive toolbar buttons
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=function(){ moveTask('archive','today',idx); };
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=function(){ moveTask('archive','next',idx); };
+        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=function(){ moveTask('archive','someday',idx); };
+        const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ deleteTask('archive',idx); };
+        const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐';
+        highlightBtn.style.opacity = task.highlighted ? '1' : '0.3'; highlightBtn.onclick=function(){ toggleHighlight('archive',idx); };
+        toolbar.append(todayBtn,nextBtn,somedayBtn,delBtn,highlightBtn);
+      }
+
       chevron.onclick=function(e){
         e.stopPropagation();
         toolbar.style.display = toolbar.style.display==='flex'?'none':'flex';
         chevron.style.transform = toolbar.style.display==='flex'?'rotate(90deg)':'rotate(0deg)';
       };
 
-      // toolbar buttons
-      if(card!=='archive'){
-        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=function(){ moveTask(card,'next',idx); };
-        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=function(){ moveTask(card,'someday',idx); };
-        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=function(){ moveTask(card,'today',idx); };
-        const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐'; highlightBtn.style.opacity=task.highlighted?'1':'0.3'; highlightBtn.onclick=function(){ toggleHighlight(card,idx); };
-        if(card==='today'){ toolbar.append(nextBtn,somedayBtn,highlightBtn); }
-        if(card==='next'){ toolbar.append(todayBtn,somedayBtn,highlightBtn); }
-        if(card==='someday'){ toolbar.append(todayBtn,nextBtn,highlightBtn); }
-      } else {
-        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=function(){ moveTask('archive','today',idx); };
-        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=function(){ moveTask('archive','next',idx); };
-        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=function(){ moveTask('archive','someday',idx); };
-        const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ deleteTask('archive',idx); };
-        toolbar.append(todayBtn,nextBtn,somedayBtn,delBtn);
-      }
-
-      topRow.append(leftGroup,chevron);
-      taskDiv.append(topRow,toolbar);
+      topRow.appendChild(chevron);
+      taskDiv.append(topRow, toolbar);
       container.appendChild(taskDiv);
     });
   });
 }
 
-function addTask(card){ if(card!=='today') return; const input=document.getElementById(card+'-input'); const text=input.value.trim(); if(!text) return; tasks[card].push({text:text,status:'',highlighted:false}); input.value=''; saveTasks(); renderTasks(); }
+function addTask(card){ if(card!=='today') return; const input=document.getElementById(card+'-input'); const text=input.value.trim(); if(!text) return;
+tasks[card].push({text:text,status:'',highlighted:false}); input.value=''; saveTasks(); renderTasks(); }
 function toggleStatus(card,idx){ const statusOrder=['','completed','inprogress']; let current=tasks[card][idx].status; let nextIndex=(statusOrder.indexOf(current)+1)%statusOrder.length; tasks[card][idx].status=statusOrder[nextIndex]; saveTasks(); renderTasks(); }
 function toggleHighlight(card,idx){ tasks[card][idx].highlighted=!tasks[card][idx].highlighted; saveTasks(); renderTasks(); }
 function moveTask(from,to,idx){ const [task]=tasks[from].splice(idx,1); tasks[to].push(task); saveTasks(); renderTasks(); }
