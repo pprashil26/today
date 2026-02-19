@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.3.6</title>
+<title>Today Tool - v1.3.8</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -30,29 +30,29 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   pointer-events: none; 
 }
 
-/* Lined Grid (instead of dot grid) */
+/* Softer Dot Grid */
 .today { 
   background-color: #ffffff; 
-  background-image: linear-gradient(rgba(0,0,0,0.08) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px);
+  background-size: 18px 18px;
 }
 
 .next { 
   background-color: #dffcf0; 
-  background-image: linear-gradient(rgba(0,0,0,0.08) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px);
+  background-size: 18px 18px;
 }
 
 .someday { 
   background-color: #c8f7e2; 
-  background-image: linear-gradient(rgba(0,0,0,0.08) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px);
+  background-size: 18px 18px;
 }
 
 .archive { 
   background-color: #a0d9b7; 
-  background-image: linear-gradient(rgba(0,0,0,0.08) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px);
+  background-size: 18px 18px;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
@@ -65,8 +65,8 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 .task-list { flex: 1; min-height: 400px; max-height: 400px; overflow-y: auto; }
 
-.task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; height: 32px; }
-.task-top { display: flex; align-items: center; height: 32px; }
+.task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; height: 32px; } /* task height locked */
+.task-top { display: flex; align-items: center; height: 100%; }
 
 .circle { 
   width: 18px; 
@@ -88,24 +88,15 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 .task-text { flex: 1; word-break: break-word; font-size: 0.9rem; line-height: 32px; }
 
-.task-buttons { margin-top: 1px; margin-left: 24px; }
-.task-buttons button { margin-right: 6px; padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; transition: opacity 0.15s ease; }
+.task-buttons { display: flex; align-items: center; gap: 6px; margin-left: 24px; height: 100%; } /* aligned to task height */
+.task-buttons button { padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; height: 24px; line-height: 24px; display: flex; align-items: center; justify-content: center; transition: opacity 0.15s ease; }
 .task:hover .task-buttons button { opacity: 0.8; }
 
-.delete-btn { margin-left: 4px; padding: 0; font-size: 0.65rem; border: none; background: none; color: #900; opacity: 0.5; cursor: pointer; }
+.delete-btn { padding: 0; font-size: 0.65rem; border: none; background: none; color: #900; opacity: 0.5; cursor: pointer; height: 24px; line-height: 24px; display: flex; align-items: center; justify-content: center; }
 .task:hover .delete-btn { opacity: 0.8; }
 
 .add-task { display: flex; gap: 4px; margin-top: 8px; z-index: 1; position: relative; }
-.add-task input { 
-  flex: 1; 
-  height: 32px;        /* match task row height */
-  line-height: 32px;   /* vertically center text */
-  padding: 0 8px; 
-  border: 1px solid #ccc; 
-  border-radius: 6px; 
-  font-size: 0.9rem;   /* match task-text */
-  box-sizing: border-box;
-}
+.add-task input { flex: 1; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
 .add-task button { padding: 6px 12px; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
 .add-task button:hover { background: #555; }
 
