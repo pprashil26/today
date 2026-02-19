@@ -3,17 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.4.4</title>
+<title>Today Tool - v1.4.5</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 
 body {
   background: #f4f4f4;
-  padding: 20px;
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
+  min-height: 100vh;
 }
 
 /* ===== Sidebar ===== */
@@ -24,6 +21,12 @@ body {
   padding: 16px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.12);
   transition: transform 0.3s ease;
+  flex-shrink: 0;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  height: calc(100% - 40px);
+  z-index: 1000;
 }
 
 .sidebar.collapsed {
@@ -56,39 +59,46 @@ body {
   font-size: 0.8rem;
 }
 
+/* Hamburger button for mobile */
 .hamburger {
   position: fixed;
   top: 20px;
   left: 20px;
-  font-size: 20px;
+  font-size: 22px;
   cursor: pointer;
-  z-index: 1000;
-  display: none; /* only show on mobile */
+  z-index: 1100;
+  display: none;
 }
 
-/* ===== Cards Layout Wrapper ===== */
+/* ===== Main content wrapper ===== */
 .main {
+  flex: 1;
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
-  justify-content: center;
+  margin-left: 260px; /* reserve space for sidebar */
+  padding: 20px 20px 20px 0;
+  transition: margin-left 0.3s ease;
+}
+
+/* When sidebar collapsed, reduce left margin */
+.sidebar.collapsed ~ .main {
+  margin-left: 20px;
 }
 
 /* ===== Cards ===== */
 .card {
   width: 300px;
-  max-width: 95%;
   border-radius: 12px;
-  padding: 14px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   position: relative;
   box-shadow: 0 6px 18px rgba(0,0,0,0.12);
   overflow: hidden;
 }
 
-/* Paper texture */
 .card::before {
   content: "";
   position: absolute;
@@ -98,14 +108,12 @@ body {
   pointer-events: none;
 }
 
-/* Dot grids */
 .today { background-color: #ffffff; background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px); background-size: 18px 18px; }
 .next { background-color: #dffcf0; background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px); background-size: 18px 18px; }
 .someday { background-color: #c8f7e2; background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px); background-size: 18px 18px; }
 .archive { background-color: #a0d9b7; background-image: radial-gradient(rgba(0,0,0,0.12) 1px, transparent 1px); background-size: 18px 18px; }
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
-
 .card h2 {
   font-family: 'Patrick Hand', cursive;
   font-size: 1.05rem;
@@ -114,60 +122,30 @@ body {
   justify-content: space-between;
   align-items: center;
 }
-
 .card h2 .first { font-weight: bold; color: #666; }
 .card h2 .rest { opacity: 0.3; font-weight: normal; }
-
 #today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
 
 .task-list { flex: 1; min-height: 400px; max-height: 400px; overflow-y: auto; }
-
 .task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; }
 .task-top { display: flex; align-items: center; }
 
 .circle {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2px solid #999;
-  margin-right: 6px;
-  flex-shrink: 0;
-  cursor: pointer;
-  display: inline-flex;
-  align-items:center;
-  justify-content:center;
-  font-size:12px;
-  font-weight:bold;
-  transition: all 0.2s ease;
-  background: #fff;
-  color: #333;
+  width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px;
+  flex-shrink: 0; cursor: pointer; display: inline-flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:bold; transition: all 0.2s ease; background: #fff; color: #333;
 }
 
 .task-text { flex: 1; word-break: break-word; font-size: 0.9rem; }
 
 .task-buttons { margin-top: 1px; margin-left: 24px; }
 .task-buttons button {
-  margin-right: 6px;
-  padding: 0;
-  font-size: 0.7rem;
-  border: none;
-  background: none;
-  opacity: 0.5;
-  cursor: pointer;
+  margin-right: 6px; padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer;
   transition: opacity 0.15s ease;
 }
 .task:hover .task-buttons button { opacity: 0.8; }
 
-.delete-btn {
-  margin-left: 4px;
-  padding: 0;
-  font-size: 0.65rem;
-  border: none;
-  background: none;
-  color: #900;
-  opacity: 0.5;
-  cursor: pointer;
-}
+.delete-btn { margin-left: 4px; padding: 0; font-size: 0.65rem; border: none; background: none; color: #900; opacity: 0.5; cursor: pointer; }
 .task:hover .delete-btn { opacity: 0.8; }
 
 .add-task { display: flex; gap: 4px; margin-top: 8px; position: relative; }
@@ -176,30 +154,17 @@ body {
 .add-task button:hover { background: #555; }
 
 .archive-tools { display: flex; gap: 8px; }
-.archive-tools button {
-  background: none;
-  border: none;
-  font-size: 12px;
-  cursor: pointer;
-  opacity: 0.6;
-  padding: 0;
-}
+.archive-tools button { background: none; border: none; font-size: 12px; cursor: pointer; opacity: 0.6; padding: 0; }
 .archive-tools button:hover { opacity: 1; }
 
 .highlighted { background-color: #fff79a; color: #000; }
 
-/* ===== Desktop-specific adjustments ===== */
-@media(min-width:1200px){
-  .card { width: 360px; }
-  .hamburger { display: none; }
-  .sidebar { position: relative; transform: translateX(0); }
-}
-
-/* ===== Mobile-specific adjustments ===== */
-@media(max-width: 768px){
-  body { flex-direction: column; align-items: center; }
+/* ===== Mobile adjustments ===== */
+@media(max-width: 992px){
   .hamburger { display: block; }
-  .sidebar { position: fixed; top: 0; left: 0; height: 100%; z-index: 1000; transform: translateX(-240px); }
+  .sidebar { top: 0; left: 0; height: 100%; transform: translateX(-240px); }
+  .sidebar.collapsed { transform: translateX(-240px); }
+  .main { margin-left: 0; padding: 20px; }
 }
 </style>
 </head>
@@ -253,7 +218,7 @@ body {
 </div>
 
 <script>
-// ===== Original Task Logic (UNCHANGED) =====
+// ===== Original Task Logic =====
 function todayDate(){const d=new Date();return d.toLocaleDateString(undefined,{day:'numeric',month:'short'});}
 document.getElementById('today-date').innerText=" "+todayDate();
 
@@ -267,11 +232,9 @@ const container=document.getElementById(card+'-tasks');container.innerHTML='';
 tasks[card].forEach((task,idx)=>{
 const taskDiv=document.createElement('div');taskDiv.className='task';
 if(task.highlighted)taskDiv.classList.add('highlighted');
-
 const circle=document.createElement('span');circle.className='circle';
 circle.textContent=task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
 circle.title=task.status||'No status';circle.onclick=()=>toggleStatus(card,idx);
-
 const text=document.createElement('span');text.className='task-text';text.textContent=task.text;
 const topRow=document.createElement('div');topRow.className='task-top';topRow.append(circle,text);
 const btnDiv=document.createElement('div');btnDiv.className='task-buttons';
@@ -334,12 +297,10 @@ function importTasksTxt(){const input=document.createElement('input');input.type
 
 // ===== Sidebar Logic =====
 const sidebarStateKey='todayToolSidebar';
-
 function toggleSidebar(){
 document.getElementById('sidebar').classList.toggle('collapsed');
 saveSidebarState();
 }
-
 function saveSidebarState(){
 const state={
 collapsed:document.getElementById('sidebar').classList.contains('collapsed'),
@@ -347,7 +308,6 @@ visibility:getCardVisibility()
 };
 localStorage.setItem(sidebarStateKey,JSON.stringify(state));
 }
-
 function getCardVisibility(){
 const visibility={};
 document.querySelectorAll('.sidebar input[type=checkbox]').forEach(cb=>{
@@ -355,26 +315,22 @@ visibility[cb.dataset.card]=cb.checked;
 });
 return visibility;
 }
-
 function applyCardVisibility(visibility){
 Object.keys(visibility).forEach(card=>{
 document.getElementById(card+'-card').style.display=visibility[card]?'flex':'none';
 });
 }
-
 function showAllCards(){
 document.querySelectorAll('.sidebar input[type=checkbox]').forEach(cb=>cb.checked=true);
 applyCardVisibility(getCardVisibility());
 saveSidebarState();
 }
-
 document.querySelectorAll('.sidebar input[type=checkbox]').forEach(cb=>{
 cb.addEventListener('change',()=>{
 applyCardVisibility(getCardVisibility());
 saveSidebarState();
 });
 });
-
 (function initSidebar(){
 const saved=JSON.parse(localStorage.getItem(sidebarStateKey));
 if(saved){
@@ -387,7 +343,6 @@ applyCardVisibility(saved.visibility);
 }
 }
 })();
-
 document.getElementById('today-input').addEventListener('keydown',function(e){if(e.key==='Enter'){addTask('today');}});
 renderTasks();
 </script>
