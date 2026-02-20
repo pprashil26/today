@@ -166,7 +166,6 @@ function saveTasks(){ localStorage.setItem(storageKey,JSON.stringify(tasks)); }
 const newCardsKey='newCards';
 let newCards=JSON.parse(localStorage.getItem(newCardsKey))||[{title:'New Card', tasks:[]}];
 let currentAdhoc=0;
-
 function saveNewCards(){ localStorage.setItem(newCardsKey,JSON.stringify(newCards)); }
 
 function renderTasks() {
@@ -219,19 +218,9 @@ function renderTasks() {
         toolbar.append(todayBtn,nextBtn,somedayBtn,delBtn,highlightBtn);
       }
 
-      chevron.onclick=function(e){
-        e.stopPropagation();
-        toolbar.style.display = toolbar.style.display==='flex'?'none':'flex';
-        chevron.style.transform = toolbar.style.display==='flex'?'rotate(90deg)':'rotate(0deg)';
-      };
+      chevron.onclick=function(e){ e.stopPropagation(); toolbar.style.display = toolbar.style.display==='flex'?'none':'flex'; chevron.style.transform = toolbar.style.display==='flex'?'rotate(90deg)':'rotate(0deg)'; };
+      taskDiv.onclick=function(){ const isOpen = toolbar.style.display==='flex'; toolbar.style.display = isOpen ? 'none' : 'flex'; chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)'; }
 
-      taskDiv.onclick=function(){ 
-        const isOpen = toolbar.style.display==='flex';
-        toolbar.style.display = isOpen ? 'none':'flex';
-        chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
-      }
-
-      topRow.appendChild(chevron);
       taskDiv.append(topRow, toolbar);
       container.appendChild(taskDiv);
     });
@@ -270,17 +259,8 @@ function renderTasks() {
     highlightBtn.style.opacity = task.highlighted ? '1' : '0.3'; highlightBtn.onclick=function(){ toggleHighlightNew(idx); };
     toolbar.append(todayBtn,nextBtn,somedayBtn,delBtn,highlightBtn);
 
-    chevron.onclick=function(e){
-      e.stopPropagation();
-      toolbar.style.display = toolbar.style.display==='flex'?'none':'flex';
-      chevron.style.transform = toolbar.style.display==='flex'?'rotate(90deg)':'rotate(0deg)';
-    };
-
-    taskDiv.onclick=function(){ 
-      const isOpen = toolbar.style.display==='flex';
-      toolbar.style.display = isOpen ? 'none' : 'flex';
-      chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
-    }
+    chevron.onclick=function(e){ e.stopPropagation(); toolbar.style.display = toolbar.style.display==='flex'?'none':'flex'; chevron.style.transform = toolbar.style.display==='flex'?'rotate(90deg)':'rotate(0deg)'; };
+    taskDiv.onclick=function(){ const isOpen = toolbar.style.display==='flex'; toolbar.style.display = isOpen ? 'none' : 'flex'; chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)'; }
 
     taskDiv.append(topRow, toolbar);
     newCardContainer.appendChild(taskDiv);
@@ -334,6 +314,11 @@ function exportTasksTxt(){ const data=JSON.stringify(tasks); const blob=new Blob
 function importTasksTxt(){ const inp=document.createElement('input'); inp.type='file'; inp.accept='text/plain'; inp.onchange=e=>{ const file=e.target.files[0]; const reader=new FileReader(); reader.onload=function(){ try{ tasks=JSON.parse(reader.result); saveTasks(); renderTasks(); }catch(err){alert('Invalid file');} }; reader.readAsText(file); }; inp.click(); }
 
 renderTasks();
+
+// Restore Today card master toggle
+document.getElementById('toggle-cards').addEventListener('change', function() {
+    renderTasks();
+});
 </script>
 </body>
 </html>
