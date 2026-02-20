@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.4.2 Phase 2a</title>
+<title>Today Tool - v1.4.1a</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -20,6 +20,7 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   overflow: hidden; 
 }
 
+/* Subtle paper texture overlay */
 .card::before { 
   content: ""; 
   position: absolute; 
@@ -29,6 +30,7 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   pointer-events: none; 
 }
 
+/* Lined background */
 .today { background-color: #ffffff; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
 .next { background-color: #dffcf0; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
 .someday { background-color: #c8f7e2; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
@@ -36,10 +38,8 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
-
 .card h2 .first { font-weight: bold; color: #666; }
 .card h2 .rest { opacity: 0.3; font-weight: normal; }
-
 #today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
 
 .task-list { flex: 1; max-height: 400px; overflow-y: auto; }
@@ -47,15 +47,7 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; cursor: pointer; }
 .task-top { display: flex; align-items: center; justify-content: space-between; }
 
-.signifier {
-  width: 16px;
-  text-align: center;
-  margin-right: 4px;
-  font-size: 12px;
-  flex-shrink: 0;
-  cursor: pointer;
-  user-select: none;
-}
+.signifier { width: 18px; flex-shrink: 0; text-align: center; margin-right: 4px; font-weight: bold; color: #d00; }
 
 .circle { 
   width: 18px; 
@@ -94,27 +86,16 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 input:checked + .slider { background-color: #4caf50; }
 input:checked + .slider:before { transform: translateX(20px); }
 
-.archive-tools { display: flex; gap: 8px; }
-.archive-tools button { background: none; border: none; font-size: 12px; cursor: pointer; opacity: 0.6; padding: 0; }
-.archive-tools button:hover { opacity: 1; }
+.archive-tools, .card-hide-btn { display: flex; gap: 8px; }
+.archive-tools button, .card-hide-btn { background: none; border: none; font-size: 12px; cursor: pointer; opacity: 0.6; padding: 0; }
+.archive-tools button:hover, .card-hide-btn:hover { opacity: 1; }
 
 .highlighted { background-color: #fff79a; color: #000; }
-
-.card-hide-btn {
-  position: absolute;
-  top: 4px;
-  right: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  opacity: 0.5;
-}
-.card-hide-btn:hover { opacity: 1; }
-
-.hidden-card { display: none; }
 </style>
 </head>
 <body>
 
+<!-- Today Card -->
 <div class="card today">
   <h2>
     <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
@@ -130,25 +111,32 @@ input:checked + .slider:before { transform: translateX(20px); }
   </div>
 </div>
 
+<!-- Next Card -->
 <div class="card next" id="next-card">
-  <span class="card-hide-btn" onclick="hideCard('next-card')">–</span>
-  <h2><span><span class="first">N</span><span class="rest">ext</span></span></h2>
+  <h2>
+    <span><span class="first">N</span><span class="rest">ext</span></span>
+    <div class="card-hide-btn" onclick="hideCard('next-card')">hide</div>
+  </h2>
   <div class="task-list" id="next-tasks"></div>
 </div>
 
+<!-- Someday Card -->
 <div class="card someday" id="someday-card">
-  <span class="card-hide-btn" onclick="hideCard('someday-card')">–</span>
-  <h2><span><span class="first">S</span><span class="rest">omeday</span></span></h2>
+  <h2>
+    <span><span class="first">S</span><span class="rest">omeday</span></span>
+    <div class="card-hide-btn" onclick="hideCard('someday-card')">hide</div>
+  </h2>
   <div class="task-list" id="someday-tasks"></div>
 </div>
 
-<div class="card archive hidden-card" id="archive-card">
-  <span class="card-hide-btn" onclick="hideCard('archive-card')">–</span>
+<!-- Archive Card -->
+<div class="card archive" id="archive-card">
   <h2>
     Archive
     <span class="archive-tools">
       <button onclick="exportTasksTxt()">Export</button>
       <button onclick="importTasksTxt()">Import</button>
+      <button class="card-hide-btn" onclick="hideCard('archive-card')">hide</button>
     </span>
   </h2>
   <div class="task-list" id="archive-tasks"></div>
@@ -172,13 +160,10 @@ function renderTasks() {
       const topRow=document.createElement('div'); topRow.className='task-top';
 
       const leftGroup=document.createElement('div'); leftGroup.style.display='flex'; leftGroup.style.alignItems='center';
-
-      // Signifier
       const signifier=document.createElement('span'); signifier.className='signifier';
-      signifier.textContent = task.signifier||'';
-      signifier.title='Signifier: click to cycle'; 
-      signifier.onclick = ()=>{ toggleSignifier(card,idx); };
-      
+      signifier.textContent=task.signifier||'';
+      signifier.onclick=()=>toggleSignifier(card,idx);
+
       const circle=document.createElement('span'); circle.className='circle';
       circle.textContent=task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
       circle.title=task.status||'No status'; circle.onclick=()=>toggleStatus(card,idx);
@@ -199,11 +184,9 @@ function renderTasks() {
         const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ moveTask(card,'archive',idx); };
         const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐';
         highlightBtn.style.opacity = task.highlighted ? '1' : '0.3'; highlightBtn.onclick=function(){ toggleHighlight(card,idx); };
-        const editBtn=document.createElement('button'); editBtn.textContent='✎'; editBtn.onclick=function(){ editTask(card,idx); };
-
-        if(card==='today'){ toolbar.append(nextBtn,somedayBtn,highlightBtn,editBtn,delBtn); }
-        if(card==='next'){ toolbar.append(todayBtn,somedayBtn,highlightBtn,editBtn,delBtn); }
-        if(card==='someday'){ toolbar.append(todayBtn,nextBtn,highlightBtn,editBtn,delBtn); }
+        if(card==='today'){ toolbar.append(nextBtn,somedayBtn,highlightBtn,delBtn); }
+        if(card==='next'){ toolbar.append(todayBtn,somedayBtn,highlightBtn,delBtn); }
+        if(card==='someday'){ toolbar.append(todayBtn,nextBtn,highlightBtn,delBtn); }
 
       } else {
         const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=function(){ moveTask('archive','today',idx); };
@@ -212,137 +195,58 @@ function renderTasks() {
         const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ deleteTask('archive',idx); };
         const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐';
         highlightBtn.style.opacity = task.highlighted ? '1' : '0.3'; highlightBtn.onclick=function(){ toggleHighlight('archive',idx); };
-        const editBtn=document.createElement('button'); editBtn.textContent='✎'; editBtn.onclick=function(){ editTask('archive',idx); };
-        toolbar.append(todayBtn,nextBtn,somedayBtn,delBtn,highlightBtn,editBtn);
+        toolbar.append(todayBtn,nextBtn,somedayBtn,delBtn,highlightBtn);
       }
 
-      // Toggle toolbar on click anywhere on task
-      taskDiv.onclick=function(){ 
-        toolbar.style.display = toolbar.style.display==='flex'?'none':'flex'; 
-        chevron.style.transform = toolbar.style.display==='flex'?'rotate(90deg)':'rotate(0deg)';
-      };
+      chevron.onclick=function(e){ e.stopPropagation(); toolbar.style.display = toolbar.style.display==='flex'?'none':'flex'; chevron.style.transform = toolbar.style.display==='flex'?'rotate(90deg)':'rotate(0deg)'; };
 
-      chevron.onclick=function(e){
-        e.stopPropagation();
-        toolbar.style.display = toolbar.style.display==='flex'?'none':'flex';
-        chevron.style.transform = toolbar.style.display==='flex'?'rotate(90deg)':'rotate(0deg)';
-      };
+      topRow.onclick=function(){ toolbar.style.display = toolbar.style.display==='flex'?'none':'flex'; chevron.style.transform = toolbar.style.display==='flex'?'rotate(90deg)':'rotate(0deg)'; };
 
-      topRow.appendChild(chevron);
       taskDiv.append(topRow, toolbar);
       container.appendChild(taskDiv);
     });
   });
 }
 
-// ---- Task Actions ----
-function addTask(card){
-  if(card!=='today') return;
-  const input=document.getElementById(card+'-input'); 
-  const text=input.value.trim(); 
-  if(!text) return;
-  const now = new Date().toISOString();
-  tasks[card].push({text:text,status:'',highlighted:false,signifier:'',createdAt:now,completedAt:''}); 
-  input.value=''; 
-  saveTasks(); 
-  renderTasks();
-}
+// --- Task Functions ---
+function addTask(card){ if(card!=='today') return; const input=document.getElementById(card+'-input'); const text=input.value.trim(); if(!text) return;
+tasks[card].push({text:text,status:'',highlighted:false,signifier:'',createdAt:new Date().toISOString(),completedAt:null}); input.value=''; saveTasks(); renderTasks(); }
 
 function toggleStatus(card,idx){ 
   const statusOrder=['','completed','inprogress']; 
   let current=tasks[card][idx].status; 
   let nextIndex=(statusOrder.indexOf(current)+1)%statusOrder.length; 
   tasks[card][idx].status=statusOrder[nextIndex]; 
-  tasks[card][idx].completedAt = tasks[card][idx].status==='completed'? new Date().toISOString() : '';
-  saveTasks(); 
-  renderTasks(); 
+  if(tasks[card][idx].status==='completed') tasks[card][idx].completedAt=new Date().toISOString(); 
+  saveTasks(); renderTasks(); 
 }
 
 function toggleHighlight(card,idx){ tasks[card][idx].highlighted=!tasks[card][idx].highlighted; saveTasks(); renderTasks(); }
-
-function toggleSignifier(card,idx){
-  const order=['','!!','↓'];
-  let current=tasks[card][idx].signifier||'';
-  let next=order[(order.indexOf(current)+1)%order.length];
-  tasks[card][idx].signifier = next;
-  saveTasks(); renderTasks();
-}
-
-function editTask(card,idx){
-  const newText = prompt("Edit task:", tasks[card][idx].text);
-  if(newText!==null){ tasks[card][idx].text=newText.trim(); saveTasks(); renderTasks(); }
-}
-
 function moveTask(from,to,idx){ const [task]=tasks[from].splice(idx,1); tasks[to].push(task); saveTasks(); renderTasks(); }
 function deleteTask(card,idx){ tasks[card].splice(idx,1); saveTasks(); renderTasks(); }
 
-// ---- Export / Import ----
-function exportTasksTxt(){ 
-  let content=''; 
-  Object.keys(tasks).forEach(card=>{
-    content+=`[${card}]\n`; 
-    tasks[card].forEach(task=>{
-      content+=`${task.text} | ${task.status || ''} | ${task.highlighted?'highlighted':''} | ${task.signifier || ''} | ${task.createdAt || ''} | ${task.completedAt || ''}\n`;
-    }); 
-    content+='\n'; 
-  }); 
-  const blob=new Blob([content],{type:'text/plain'}); 
-  const url=URL.createObjectURL(blob); 
-  const a=document.createElement('a'); 
-  a.href=url; 
-  a.download='tasks-export.txt'; 
-  a.click(); 
-  URL.revokeObjectURL(url);
+function toggleSignifier(card,idx){ 
+  const order=['','!!','↓']; 
+  const current=tasks[card][idx].signifier||''; 
+  const next=order[(order.indexOf(current)+1)%order.length]; 
+  tasks[card][idx].signifier=next; 
+  saveTasks(); renderTasks(); 
 }
 
-function importTasksTxt(){ 
-  const input=document.createElement('input'); 
-  input.type='file'; 
-  input.accept='.txt'; 
-  input.onchange=function(event){ 
-    const file=event.target.files[0]; 
-    if(!file) return; 
-    const reader=new FileReader(); 
-    reader.onload=function(e){ 
-      const text=e.target.result; 
-      const lines=text.split('\n'); 
-      const newTasks={today:[],next:[],someday:[],archive:[]}; 
-      let currentCard=null; 
-      lines.forEach(line=>{
-        line=line.trim(); 
-        if(!line) return; 
-        if(line.startsWith('[')&&line.endsWith(']')){ currentCard=line.slice(1,-1); } 
-        else if(currentCard && newTasks[currentCard]){
-          const parts=line.split('|'); 
-          const taskText=parts[0]?parts[0].trim():''; 
-          const status=parts[1]?parts[1].trim():''; 
-          const highlighted=parts[2]?parts[2].trim()==='highlighted':false;
-          const signifier=parts[3]?parts[3].trim():'';
-          const createdAt=parts[4]?parts[4].trim():'';
-          const completedAt=parts[5]?parts[5].trim():'';
-          newTasks[currentCard].push({text:taskText,status:status,highlighted:highlighted,signifier:signifier,createdAt:createdAt,completedAt:completedAt}); 
-        } 
-      }); 
-      tasks=newTasks; saveTasks(); renderTasks(); 
-    }; 
-    reader.readAsText(file); 
-  }; 
-  input.click(); 
-}
+// --- Export / Import ---
+function exportTasksTxt(){ let content=''; Object.keys(tasks).forEach(card=>{ content+=`[${card}]\n`; tasks[card].forEach(task=>{ content+=`${task.text} | ${task.status || ''} | ${task.highlighted?'highlighted':''} | ${task.signifier || ''}\n`; }); content+='\n'; }); const blob=new Blob([content],{type:'text/plain'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='tasks-export.txt'; a.click(); URL.revokeObjectURL(url);}
+function importTasksTxt(){ const input=document.createElement('input'); input.type='file'; input.accept='.txt'; input.onchange=function(event){ const file=event.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=function(e){ const text=e.target.result; const lines=text.split('\n'); const newTasks={today:[],next:[],someday:[],archive:[]}; let currentCard=null; lines.forEach(line=>{ line=line.trim(); if(!line) return; if(line.startsWith('[')&&line.endsWith(']')){ currentCard=line.slice(1,-1); } else if(currentCard && newTasks[currentCard]){ const parts=line.split('|'); const taskText=parts[0].trim(); const status=parts[1]?parts[1].trim():''; const highlighted=parts[2]?parts[2].trim()==='highlighted':false; const signifier=parts[3]?parts[3].trim():''; newTasks[currentCard].push({text:taskText,status:status,highlighted:highlighted,signifier:signifier,createdAt:new Date().toISOString(),completedAt:null}); } }); tasks=newTasks; saveTasks(); renderTasks(); }; reader.readAsText(file); }; input.click(); }
 
-// ---- Card Visibility ----
+// --- Card Visibility ---
+function hideCard(cardId){ document.getElementById(cardId).style.display='none'; document.getElementById(cardId).classList.add('hidden-card'); }
+
 document.getElementById('toggle-cards').addEventListener('change',function(){ 
   const show=this.checked; 
   ['next-card','someday-card','archive-card'].forEach(id=>{ 
     const el=document.getElementById(id); 
-    if(el && !el.classList.contains('hidden-card')) el.style.display=show?'flex':'none';
+    if(el){ el.style.display=show?'flex':'none'; } 
   }); 
 });
-
-function hideCard(cardId){
-  document.getElementById(cardId).style.display='none';
-  document.getElementById(cardId).classList.add('hidden-card');
-}
 
 document.getElementById('today-input').addEventListener('keydown',function(e){ if(e.key==='Enter'){ addTask('today'); } });
 
