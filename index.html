@@ -202,12 +202,12 @@ function renderTasks() {
         chevron.style.transform = toolbar.style.display==='flex'?'rotate(90deg)':'rotate(0deg)';
       };
 
-      // show toolbar on task click
-      taskDiv.onclick=function(){ toolbar.style.display = 'flex'; chevron.style.transform='rotate(90deg)'; }
-
-      topRow.appendChild(chevron);
-      taskDiv.append(topRow, toolbar);
-      container.appendChild(taskDiv);
+      // toggle toolbar on task click
+        taskDiv.onclick=function(){ 
+        const isOpen = toolbar.style.display === 'flex';
+        toolbar.style.display = isOpen ? 'none' : 'flex';
+        chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(90deg)';
+        }
     });
   });
 }
