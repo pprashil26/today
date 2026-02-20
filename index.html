@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.4.2b+</title>
+<title>Today Tool - v1.4.2c</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -30,12 +30,11 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   pointer-events: none; 
 }
 
-/* Lined background */
+/* Lined backgrounds */
 .today { background-color: #ffffff; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
-.next { background-color: #dffcf0; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
+.next, .new { background-color: #dffcf0; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
 .someday { background-color: #c8f7e2; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
 .archive { background-color: #a0d9b7; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
-.new { background-color: #dffcf0; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
@@ -96,6 +95,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 </head>
 <body>
 
+<!-- Today Card -->
 <div class="card today">
   <h2>
     <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
@@ -111,6 +111,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   </div>
 </div>
 
+<!-- Next Card -->
 <div class="card next" id="next-card">
   <h2><span><span class="first">N</span><span class="rest">ext</span></span>
     <span class="archive-tools"><button onclick="toggleHideCard('next')">hide</button></span>
@@ -118,6 +119,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   <div class="task-list" id="next-tasks"></div>
 </div>
 
+<!-- Someday Card -->
 <div class="card someday" id="someday-card">
   <h2><span><span class="first">S</span><span class="rest">omeday</span></span>
     <span class="archive-tools"><button onclick="toggleHideCard('someday')">hide</button></span>
@@ -125,6 +127,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   <div class="task-list" id="someday-tasks"></div>
 </div>
 
+<!-- Archive Card -->
 <div class="card archive" id="archive-card">
   <h2>
     Archive
@@ -137,6 +140,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   <div class="task-list" id="archive-tasks"></div>
 </div>
 
+<!-- New Card -->
 <div class="card new" id="new-card">
   <h2>
     New
@@ -187,7 +191,9 @@ function renderTasks() {
 
       const toolbar=document.createElement('div'); toolbar.className='task-toolbar';
 
+      // Toolbar logic
       if(card==='new'){
+        // Tasks in New Card can move to T/N/S/Archive
         const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=function(){ moveTask('new','today',idx); };
         const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=function(){ moveTask('new','next',idx); };
         const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=function(){ moveTask('new','someday',idx); };
@@ -196,6 +202,7 @@ function renderTasks() {
         highlightBtn.style.opacity = task.highlighted ? '1' : '0.3'; highlightBtn.onclick=function(){ toggleHighlight('new',idx); };
         toolbar.append(todayBtn,nextBtn,somedayBtn,delBtn,highlightBtn);
       } else if(card!=='archive'){
+        // Tasks in T/N/S can move normally but cannot move into New
         const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=function(){ moveTask(card,'today',idx); };
         const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=function(){ moveTask(card,'next',idx); };
         const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=function(){ moveTask(card,'someday',idx); };
