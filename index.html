@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.4.2b</title>
+<title>Today Tool - v1.4.2c</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -48,19 +48,6 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 .task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; cursor: pointer; }
 .task-top { display: flex; align-items: center; justify-content: space-between; }
-
-.signifier {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  margin-right: 4px;
-  font-size: 12px;
-  font-weight: bold;
-  color: #333;
-  flex-shrink: 0;
-}
 
 .circle { 
   width: 18px; 
@@ -173,16 +160,14 @@ function renderTasks() {
       if(task.highlighted) taskDiv.classList.add('highlighted');
 
       const topRow=document.createElement('div'); topRow.className='task-top';
-
       const leftGroup=document.createElement('div'); leftGroup.style.display='flex'; leftGroup.style.alignItems='center';
 
-      const signifier=document.createElement('span'); signifier.className='signifier'; signifier.textContent=task.signifier||'';
       const circle=document.createElement('span'); circle.className='circle';
       circle.textContent=task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
       circle.title=task.status||'No status'; circle.onclick=()=>toggleStatus(card,idx);
       const text=document.createElement('span'); text.className='task-text'; text.textContent=task.text;
 
-      leftGroup.append(signifier, circle, text);
+      leftGroup.append(circle, text);
 
       const chevron=document.createElement('span'); chevron.className='chevron'; chevron.textContent='>';
       topRow.append(leftGroup, chevron);
@@ -237,7 +222,7 @@ function addTask(card){
   const input=document.getElementById(card+'-input'); 
   const text=input.value.trim(); 
   if(!text) return;
-  tasks[card].push({text:text,status:'',highlighted:false,signifier:''}); 
+  tasks[card].push({text:text,status:'',highlighted:false}); 
   input.value=''; saveTasks(); renderTasks(); 
 }
 
@@ -258,7 +243,7 @@ function exportTasksTxt(){
   Object.keys(tasks).forEach(card=>{
     content+=`[${card}]\n`; 
     tasks[card].forEach(task=>{
-      content+=`${task.text} | ${task.status || ''} | ${task.highlighted?'highlighted':''} | ${task.signifier||''}\n`; 
+      content+=`${task.text} | ${task.status || ''} | ${task.highlighted?'highlighted':''}\n`; 
     }); 
     content+='\n'; 
   }); 
@@ -290,8 +275,7 @@ function importTasksTxt(){
           const taskText=parts[0].trim(); 
           const status=parts[1]?parts[1].trim():''; 
           const highlighted=parts[2]?parts[2].trim()==='highlighted':false; 
-          const signifier=parts[3]?parts[3].trim():''; 
-          newTasks[currentCard].push({text:taskText,status:status,highlighted:highlighted,signifier:signifier}); 
+          newTasks[currentCard].push({text:taskText,status:status,highlighted:highlighted}); 
         } 
       }); 
       tasks=newTasks; saveTasks(); renderTasks(); 
