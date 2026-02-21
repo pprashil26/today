@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.4.5</title>
+<title>Today Tool - v1.5.2 Stable</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -68,13 +68,19 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .add-task button { padding: 6px 12px; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
 .add-task button:hover { background: #555; }
 
-.switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+.switch { position: relative; display: inline-block; width: 40px; height: 20px; margin-left: 6px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 12px; transition: .2s; }
 .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .2s; }
 input:checked + .slider { background-color: #4caf50; }
 input:checked + .slider:before { transform: translateX(20px); }
 
+.help-icon { cursor: pointer; font-size: 1.2rem; margin-right: 6px; opacity: 0.6; transition: opacity 0.2s; }
+.help-icon:hover { opacity: 1; }
+
+.readme-panel { background: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 8px; margin-bottom: 8px; font-size: 0.8rem; color: #333; display: none; max-height: 120px; overflow-y: auto; }
+
+/* Archive tools */
 .archive-tools { display: flex; gap: 8px; }
 .archive-tools button { background: none; border: none; font-size: 12px; cursor: pointer; opacity: 0.6; padding: 0; }
 .archive-tools button:hover { opacity: 1; }
@@ -87,12 +93,29 @@ input:checked + .slider:before { transform: translateX(20px); }
 <!-- Today Card -->
 <div class="card today">
   <h2>
-    <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
-    <label class="switch" title="Show Next & Someday & Archive & New cards">
-      <input type="checkbox" id="toggle-cards" checked>
-      <span class="slider"></span>
-    </label>
+    <span style="display:flex; align-items:center;">
+      <span class="first">T</span><span class="rest">oday</span><span id="today-date"></span>
+    </span>
+    <span style="display:flex; align-items:center;">
+      <span class="help-icon" id="toggle-readme" title="Help / Readme">❔</span>
+      <label class="switch" title="Show Next & Someday & Archive & New cards">
+        <input type="checkbox" id="toggle-cards" checked>
+        <span class="slider"></span>
+      </label>
+    </span>
   </h2>
+
+  <!-- Readme panel -->
+  <div class="readme-panel" id="readme-panel">
+    <strong>Today Tool v1.5.2</strong><br>
+    Minimal, ADHD-friendly task manager.<br>
+    Visit <a href="https://pprashil26.github.io/today/" target="_blank">Today Tool</a> for full version.<br>
+    - Master switch shows/hides all other cards.<br>
+    - Individual hide buttons per card.<br>
+    - Tasks can be highlighted, moved, archived.<br>
+    - Scrollable task lists.
+  </div>
+
   <div class="task-list" id="today-tasks"></div>
   <div class="add-task">
     <input type="text" placeholder="New task..." id="today-input">
@@ -172,6 +195,12 @@ document.getElementById('toggle-cards').addEventListener('change',function(){
 
 // Individual hide
 function toggleHideCard(card){ hiddenCards[card]=!hiddenCards[card]; renderTasks(); }
+
+// Toggle Readme panel
+document.getElementById('toggle-readme').addEventListener('click',()=>{
+  const panel=document.getElementById('readme-panel');
+  panel.style.display = panel.style.display==='flex'?'none':'flex';
+});
 
 // Add task
 function addTask(card){ 
