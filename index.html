@@ -1,16 +1,17 @@
+ok 
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.5.2 Stable</title>
+<title>Today Tool - v1.4.5</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; position: relative; }
+body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
 
 .card { 
   width: 300px; 
-  height: 420px; 
+  height: 420px; /* fixed height for ~10 tasks */
   border-radius: 12px; 
   padding: 16px; 
   display: flex; 
@@ -20,6 +21,8 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   box-shadow: 0 6px 18px rgba(0,0,0,0.12); 
   overflow: hidden; 
 }
+
+/* Subtle paper texture overlay */
 .card::before { 
   content: ""; 
   position: absolute; 
@@ -29,6 +32,7 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   pointer-events: none; 
 }
 
+/* Lined background */
 .today { background-color: #ffffff; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
 .next, .new-card { background-color: #dffcf0; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
 .someday { background-color: #c8f7e2; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
@@ -40,7 +44,13 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .card h2 .rest { opacity: 0.3; font-weight: normal; }
 #today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
 
-.task-list { flex: 1; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.2) transparent; }
+.task-list { 
+  flex: 1; 
+  overflow-y: auto; 
+  padding-right: 4px; 
+  scrollbar-width: thin; 
+  scrollbar-color: rgba(0,0,0,0.2) transparent; 
+}
 .task-list::-webkit-scrollbar { width: 6px; }
 .task-list::-webkit-scrollbar-track { background: transparent; }
 .task-list::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.2); border-radius: 3px; }
@@ -59,51 +69,26 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .add-task button { padding: 6px 12px; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
 .add-task button:hover { background: #555; }
 
-.switch, #help-icon { display: inline-block; vertical-align: middle; }
-.switch { position: relative; width: 40px; height: 20px; }
+.switch { position: relative; display: inline-block; width: 40px; height: 20px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 12px; transition: .2s; }
 .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .2s; }
 input:checked + .slider { background-color: #4caf50; }
 input:checked + .slider:before { transform: translateX(20px); }
 
-#help-icon { cursor: pointer; margin-right: 8px; font-size: 1.1rem; }
-
 .archive-tools { display: flex; gap: 8px; }
 .archive-tools button { background: none; border: none; font-size: 12px; cursor: pointer; opacity: 0.6; padding: 0; }
 .archive-tools button:hover { opacity: 1; }
 
 .highlighted { background-color: #fff79a; color: #000; }
-
-/* Floating README panel */
-#readme-panel {
-  display: none;
-  position: fixed;
-  top: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 320px;
-  max-height: 400px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-  padding: 16px;
-  overflow-y: auto;
-  z-index: 999;
-}
-#readme-panel a { color: #4caf50; text-decoration: none; }
-#readme-panel a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
 
 <!-- Today Card -->
 <div class="card today">
-  <h2 style="display:flex;align-items:center;justify-content:space-between;">
-    <div style="display:flex;align-items:center;">
-      <span id="help-icon" title="Help">❔</span>
-      <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
-    </div>
+  <h2>
+    <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
     <label class="switch" title="Show Next & Someday & Archive & New cards">
       <input type="checkbox" id="toggle-cards" checked>
       <span class="slider"></span>
@@ -163,37 +148,10 @@ input:checked + .slider:before { transform: translateX(20px); }
   </div>
 </div>
 
-<!-- Floating README Panel -->
-<div id="readme-panel">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-    <h2>Today Tool Help</h2>
-    <span id="close-readme" style="cursor:pointer;font-weight:bold;font-size:1.2rem;">&times;</span>
-  </div>
-  <p>Welcome to <a href="https://pprashil26.github.io/today/" target="_blank">Today Tool</a> – your minimal ADHD-friendly task manager.</p>
-  <p><strong>Features:</strong></p>
-  <ul>
-    <li>Today, Next, Someday, Archive, and New task cards</li>
-    <li>Master switch to show/hide all cards at once</li>
-    <li>Individual hide per card</li>
-    <li>Highlight important tasks with ⭐</li>
-    <li>Move tasks between cards using T/N/S/✕ buttons</li>
-    <li>New card creation and navigation (Prev/Next)</li>
-    <li>Export/Import Archive tasks as .txt</li>
-    <li>Scrollbars for task overflow</li>
-  </ul>
-  <p>All tasks are saved automatically in your browser. Minimal layout keeps focus on tasks.</p>
-</div>
-
 <script>
 // Date
-document.getElementById('today-date').innerText = " " + new Date().toLocaleDateString(undefined,{day:'numeric',month:'short'});
-
-// Floating README open/close
-const helpIcon = document.getElementById('help-icon');
-const readmePanel = document.getElementById('readme-panel');
-const closeReadme = document.getElementById('close-readme');
-helpIcon.onclick = () => { readmePanel.style.display = 'block'; }
-closeReadme.onclick = () => { readmePanel.style.display = 'none'; }
+function todayDate() { const d=new Date(); return d.toLocaleDateString(undefined,{day:'numeric',month:'short'}); }
+document.getElementById('today-date').innerText=" "+todayDate();
 
 // Storage
 const storageKey='todayToolTasks';
@@ -233,8 +191,91 @@ function addTask(card){
   }
 }
 
-// Remaining renderTasks, moveTask, toggleHighlight etc. remain same as v1.5.2 stable
+// New card rename
+document.getElementById('new-card-title').addEventListener('input',function(){
+  newCards[currentAdhoc].title=this.value;
+  saveNewCards();
+});
+
+// Full render function
+function renderTasks(){
+  ['today','next','someday','archive'].forEach(card=>{
+    const container=document.getElementById(card+'-tasks'); container.innerHTML='';
+    const el=document.getElementById(card+'-card');
+    if(card!=='today'){ el.style.display=(hiddenCards[card] || !document.getElementById('toggle-cards').checked)?'none':'flex'; }
+    tasks[card].forEach((task,idx)=>{
+      const taskDiv=document.createElement('div'); taskDiv.className='task';
+      if(task.highlighted) taskDiv.classList.add('highlighted');
+      const topRow=document.createElement('div'); topRow.className='task-top';
+      const leftGroup=document.createElement('div'); leftGroup.style.display='flex'; leftGroup.style.alignItems='center';
+      const circle=document.createElement('span'); circle.className='circle';
+      circle.textContent=task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
+      circle.title=task.status||'No status'; circle.onclick=()=>toggleStatus(card,idx);
+      const text=document.createElement('span'); text.className='task-text'; text.textContent=task.text;
+      leftGroup.append(circle,text);
+      const chevron=document.createElement('span'); chevron.className='chevron'; chevron.textContent='>';
+      topRow.append(leftGroup,chevron);
+      const toolbar=document.createElement('div'); toolbar.className='task-toolbar';
+      if(card!=='archive'){
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=function(){ moveTask(card,'today',idx); };
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=function(){ moveTask(card,'next',idx); };
+        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=function(){ moveTask(card,'someday',idx); };
+        const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ moveTask(card,'archive',idx); };
+        const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐';
+        highlightBtn.style.opacity=task.highlighted?'1':'0.3'; highlightBtn.onclick=function(){ toggleHighlight(card,idx); };
+        if(card==='today'){ toolbar.append(nextBtn,somedayBtn,highlightBtn,delBtn); }
+        if(card==='next'){ toolbar.append(todayBtn,somedayBtn,highlightBtn,delBtn); }
+        if(card==='someday'){ toolbar.append(todayBtn,nextBtn,highlightBtn,delBtn); }
+      } else {
+        const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=function(){ moveTask('archive','today',idx); };
+        const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=function(){ moveTask('archive','next',idx); };
+        const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=function(){ moveTask('archive','someday',idx); };
+        const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ deleteTask('archive',idx); };
+        const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐';
+        highlightBtn.style.opacity=task.highlighted?'1':'0.3'; highlightBtn.onclick=function(){ toggleHighlight('archive',idx); };
+        toolbar.append(todayBtn,nextBtn,somedayBtn,delBtn,highlightBtn);
+      }
+      chevron.onclick=function(e){ e.stopPropagation(); toolbar.style.display=(toolbar.style.display==='flex')?'none':'flex'; chevron.style.transform=(toolbar.style.display==='flex')?'rotate(90deg)':'rotate(0deg)'; };
+      taskDiv.onclick=function(){ const isOpen=toolbar.style.display==='flex'; toolbar.style.display=isOpen?'none':'flex'; chevron.style.transform=isOpen?'rotate(0deg)':'rotate(90deg)'; };
+      taskDiv.append(topRow,toolbar); container.appendChild(taskDiv);
+    });
+  });
+
+  // New Card render
+  const newCardContainer=document.getElementById('new-card-tasks'); newCardContainer.innerHTML='';
+  const currentCard=newCards[currentAdhoc];
+  const newCardEl=document.getElementById('new-card');
+  newCardEl.style.display=(hiddenCards.new || !document.getElementById('toggle-cards').checked)?'none':'flex';
+  document.getElementById('new-card-title').value=currentCard.title;
+
+  currentCard.tasks.forEach((task,idx)=>{
+    const taskDiv=document.createElement('div'); taskDiv.className='task';
+    if(task.highlighted) taskDiv.classList.add('highlighted');
+    const topRow=document.createElement('div'); topRow.className='task-top';
+    const leftGroup=document.createElement('div'); leftGroup.style.display='flex'; leftGroup.style.alignItems='center';
+    const circle=document.createElement('span'); circle.className='circle';
+    circle.textContent=task.status==='completed'?'✓':task.status==='inprogress'?'→':'•';
+    circle.title=task.status||'No status'; circle.onclick=()=>toggleStatusNew(idx);
+    const text=document.createElement('span'); text.className='task-text'; text.textContent=task.text;
+    leftGroup.append(circle,text);
+    const chevron=document.createElement('span'); chevron.className='chevron'; chevron.textContent='>';
+    topRow.append(leftGroup,chevron);
+    const toolbar=document.createElement('div'); toolbar.className='task-toolbar';
+    const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=function(){ moveTaskNewToExisting('today',idx); };
+    const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=function(){ moveTaskNewToExisting('next',idx); };
+    const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=function(){ moveTaskNewToExisting('someday',idx); };
+    const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ moveTaskNewToExisting('archive',idx); };
+    const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐'; highlightBtn.style.opacity=task.highlighted?'1':'0.3'; highlightBtn.onclick=function(){ toggleHighlightNew(idx); };
+    toolbar.append(todayBtn,nextBtn,somedayBtn,delBtn,highlightBtn);
+    chevron.onclick=function(e){ e.stopPropagation(); toolbar.style.display=(toolbar.style.display==='flex')?'none':'flex'; chevron.style.transform=(toolbar.style.display==='flex')?'rotate(90deg)':'rotate(0deg)'; };
+    taskDiv.onclick=function(){ const isOpen=toolbar.style.display==='flex'; toolbar.style.display=isOpen?'none':'flex'; chevron.style.transform=isOpen?'rotate(0deg)':'rotate(90deg)'; };
+    taskDiv.append(topRow,toolbar); newCardContainer.appendChild(taskDiv);
+  });
+}
+
+// Initial render
 renderTasks();
 </script>
+
 </body>
 </html>
