@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.6</title>
+<title>Today Tool - v1.6 + Readable Export/Import</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -20,7 +20,6 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   box-shadow: 0 6px 18px rgba(0,0,0,0.12); 
   overflow: hidden; 
 }
-
 .card::before { 
   content: ""; 
   position: absolute; 
@@ -41,13 +40,7 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .card h2 .rest { opacity: 0.3; font-weight: normal; }
 #today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
 
-.task-list { 
-  flex: 1; 
-  overflow-y: auto; 
-  padding-right: 4px; 
-  scrollbar-width: thin; 
-  scrollbar-color: rgba(0,0,0,0.2) transparent; 
-}
+.task-list { flex: 1; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.2) transparent; }
 .task-list::-webkit-scrollbar { width: 6px; }
 .task-list::-webkit-scrollbar-track { background: transparent; }
 .task-list::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.2); border-radius: 3px; }
@@ -121,6 +114,7 @@ input:checked + .slider:before { transform: translateX(20px); }
     Archive
     <span class="archive-tools">
       <button onclick="exportTasksTxt()">Export</button>
+      <button onclick="exportReadableTxt()">Export (Readable)</button>
       <button onclick="importTasksTxt()">Import</button>
       <button onclick="toggleHideCard('archive')">hide</button>
     </span>
@@ -163,7 +157,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 ">
   <strong>Quick Guide</strong>
   <ul style="margin-top:8px; padding-left:18px;">
-    <li>Add task → Type + Add</li>
+    <li>Add task → Type + Add or press Enter</li>
     <li>Move task → T/N/S/✕</li>
     <li>Highlight → ⭐</li>
     <li>Toggle status → Click circle</li>
@@ -215,22 +209,78 @@ function nextNewCard(){ if(currentAdhoc<newCards.length-1){ currentAdhoc++; rend
 
 // ---------- EXPORT / IMPORT ----------
 function exportTasksTxt(){ const data={tasks,newCards}; const blob=new Blob([JSON.stringify(data,null,2)],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='today-tool-backup.txt'; a.click(); }
+
+function exportReadableTxt(){
+  let lines = ["# TODAY TOOL READABLE EXPORT"];
+  function writeSection(name,arr){
+    lines.push(name);
+    arr.forEach(t=>{
+      let s=" "; if(t.status==="inprogress") s="→"; if(t.status==="completed") s="✓"; if(t.highlighted) s="*";
+      lines.push(`- [${s}] ${t.text}`);
+    });
+    lines.push("");
+  }
+  writeSection("TODAY",tasks.today);
+  writeSection("NEXT",tasks.next);
+  writeSection("SOMEDAY",tasks.someday);
+  writeSection("ARCHIVE",tasks.archive);
+  newCards.forEach(c=>{
+    lines.push(`NEW CARD: ${c.title}`);
+    c.tasks.forEach(t=>{
+      let s=" "; if(t.status==="inprogress") s="→"; if(t.status==="completed") s="✓"; if(t.highlighted) s="*";
+      lines.push(`- [${s}] ${t.text}`);
+    });
+    lines.push("");
+  });
+  const blob=new Blob([lines.join("\n")],{type:'text/plain'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='today-tool-readable.txt';
+  a.click();
+}
+
 function importTasksTxt(){
   const input=document.createElement('input'); input.type='file'; input.accept='.txt';
   input.onchange=e=>{
     const file=e.target.files[0];
     const reader=new FileReader();
     reader.onload=function(evt){
-      try{
-        const data=JSON.parse(evt.target.result);
+      const content = evt.target.result.trim();
+      try {
+        const data=JSON.parse(content);
         if(data.tasks) tasks=data.tasks;
         if(data.newCards) newCards=data.newCards;
         saveTasks(); saveNewCards(); renderTasks();
-      }catch(err){ alert('Invalid file format'); }
+        return;
+      } catch {}
+      parseReadable(content);
     };
     reader.readAsText(file);
   };
   input.click();
+}
+
+function parseReadable(content){
+  tasks={today:[],next:[],someday:[],archive:[]};
+  newCards=[]; let section=null; let currentNew=null;
+  content.split("\n").forEach(line=>{
+    line=line.trim(); if(!line||line.startsWith("#")) return;
+    if(line==="TODAY"){ section="today"; return; }
+    if(line==="NEXT"){ section="next"; return; }
+    if(line==="SOMEDAY"){ section="someday"; return; }
+    if(line==="ARCHIVE"){ section="archive"; return; }
+    if(line.startsWith("NEW CARD:")){ currentNew={title:line.replace("NEW CARD:","").trim(),tasks:[]}; newCards.push(currentNew); section=null; return; }
+    if(line.startsWith("- [")){ 
+      const status=line[3]; const text=line.substring(6).trim(); 
+      const task={text,status:"",highlighted:false}; 
+      if(status==="→") task.status="inprogress"; 
+      if(status==="✓") task.status="completed"; 
+      if(status==="*") task.highlighted=true; 
+      if(section) tasks[section].push(task); else if(currentNew) currentNew.tasks.push(task);
+    }
+  });
+  if(newCards.length===0) newCards=[{title:"New Card",tasks:[]}];
+  saveTasks(); saveNewCards(); renderTasks();
 }
 
 // ---------- ADD TASK ----------
@@ -239,6 +289,10 @@ function addTask(card){
   if(card==='today'){ input=document.getElementById('today-input'); text=input.value.trim(); if(!text) return; tasks.today.push({text,status:'',highlighted:false}); input.value=''; saveTasks(); renderTasks(); }
   else if(card==='new'){ input=document.getElementById('new-card-input'); text=input.value.trim(); if(!text) return; newCards[currentAdhoc].tasks.push({text,status:'',highlighted:false}); input.value=''; saveNewCards(); renderTasks(); }
 }
+
+// Allow Enter key to add task
+document.getElementById('today-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('today'); });
+document.getElementById('new-card-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('new'); });
 
 // ---------- RENDER ----------
 document.getElementById('new-card-title').addEventListener('input',function(){ newCards[currentAdhoc].title=this.value; saveNewCards(); });
