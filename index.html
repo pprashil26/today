@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.9 Fixed</title>
+<title>Today Tool - v1.9 Fixed UI</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -49,8 +49,8 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .task-top { display: flex; align-items: center; justify-content: space-between; }
 .circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px; flex-shrink: 0; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition: all 0.2s ease; background: #fff; color: #333; }
 .task-text { flex: 1; word-break: break-word; font-size: 0.9rem; }
-.task-toolbar { display: flex; margin-left: 24px; margin-top: 2px; gap: 6px; flex-wrap: wrap; }
-.task-toolbar button { padding: 0 4px; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; transition: opacity 0.15s ease; }
+.task-toolbar { display: none; margin-left: 24px; margin-top: 2px; gap: 6px; }
+.task-toolbar button { padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; transition: opacity 0.15s ease; }
 .task-toolbar button:hover { opacity: 0.8; }
 .chevron { font-size: 12px; margin-left: 6px; transition: transform 0.2s ease; }
 
@@ -70,7 +70,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 .archive-tools button { background: none; border: none; font-size: 12px; cursor: pointer; opacity: 0.6; padding: 0; }
 .archive-tools button:hover { opacity: 1; }
 
-.new-card-index { background:none; border:none; font-size:12px; opacity:0.6; cursor:default; margin-top:6px; display:block; text-align:right; }
+.new-card-index { display:block; text-align:center; margin-top:6px; font-size:12px; color:#555; opacity:0.7; }
 
 .highlighted { background-color: #fff79a; color: #000; }
 </style>
@@ -140,24 +140,11 @@ input:checked + .slider:before { transform: translateX(20px); }
     <input type="text" placeholder="New task..." id="new-card-input">
     <button onclick="addTask('new')">Add</button>
   </div>
-  <button class="new-card-index" id="new-card-index">Card 1/1</button>
+  <span class="new-card-index" id="new-card-index">Card 1/1</span>
 </div>
 
 <!-- Help Overlay -->
-<div id="help-overlay" style="
-    display:none; 
-    position:fixed; 
-    top:50%; left:50%; 
-    transform:translate(-50%, -50%); 
-    background:#fff; 
-    border:1px solid #ccc; 
-    padding:16px; 
-    border-radius:8px; 
-    box-shadow:0 4px 12px rgba(0,0,0,0.2); 
-    z-index:9999;
-    font-size:0.9rem;
-    line-height:1.4;
-">
+<div id="help-overlay" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#fff; border:1px solid #ccc; padding:16px; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.2); z-index:9999; font-size:0.9rem; line-height:1.4;">
   <strong>Quick Guide</strong>
   <ul style="margin-top:8px; padding-left:18px;">
     <li>Add task → Type + Add or press Enter</li>
@@ -171,11 +158,11 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <script>
-// ------------------ DATE ------------------
+// ---------- DATE ----------
 function todayDate(){ const d=new Date(); return d.toLocaleDateString(undefined,{day:'numeric',month:'short'}); }
 document.getElementById('today-date').innerText=" "+todayDate();
 
-// ------------------ STORAGE ------------------
+// ---------- STORAGE ----------
 const storageKey='todayToolTasks';
 let tasks=JSON.parse(localStorage.getItem(storageKey))||{today:[],next:[],someday:[],archive:[]};
 function saveTasks(){ localStorage.setItem(storageKey,JSON.stringify(tasks)); }
@@ -187,22 +174,22 @@ function saveNewCards(){ localStorage.setItem(newCardsKey,JSON.stringify(newCard
 
 let hiddenCards={next:false,someday:false,archive:false,new:false};
 
-// ------------------ MASTER TOGGLE ------------------
+// ---------- MASTER TOGGLE ----------
 document.getElementById('toggle-cards').addEventListener('change',function(){
   if(this.checked){ hiddenCards={next:false,someday:false,archive:false,new:false}; }
   renderTasks();
 });
 
-// ------------------ INDIVIDUAL HIDE ------------------
+// ---------- INDIVIDUAL HIDE ----------
 function toggleHideCard(card){ hiddenCards[card]=!hiddenCards[card]; renderTasks(); }
 
-// ------------------ TASK FUNCTIONS ------------------
+// ---------- TASK FUNCTIONS ----------
 function moveTask(from,to,index){ const t=tasks[from].splice(index,1)[0]; tasks[to].push(t); saveTasks(); renderTasks(); }
 function deleteTask(card,index){ tasks[card].splice(index,1); saveTasks(); renderTasks(); }
 function toggleStatus(card,index){ const s=['','inprogress','completed']; const c=tasks[card][index].status; tasks[card][index].status=s[(s.indexOf(c)+1)%3]; saveTasks(); renderTasks(); }
 function toggleHighlight(card,index){ tasks[card][index].highlighted=!tasks[card][index].highlighted; saveTasks(); renderTasks(); }
 
-// ------------------ NEW CARD FUNCTIONS ------------------
+// ---------- NEW CARD FUNCTIONS ----------
 function moveTaskNewToExisting(target,index){
   const t=newCards[currentAdhoc].tasks.splice(index,1)[0]; 
   const cardName = newCards[currentAdhoc].title.trim();
@@ -215,7 +202,7 @@ function createNewCard(){ newCards.push({title:'New Card',tasks:[]}); currentAdh
 function prevNewCard(){ if(currentAdhoc>0){ currentAdhoc--; renderTasks(); } }
 function nextNewCard(){ if(currentAdhoc<newCards.length-1){ currentAdhoc++; renderTasks(); } }
 
-// ------------------ EXPORT / IMPORT ------------------
+// ---------- EXPORT / IMPORT ----------
 function exportTasksTxt(){ const data={tasks,newCards}; const blob=new Blob([JSON.stringify(data,null,2)],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='today-tool-backup.txt'; a.click(); }
 
 function exportReadableTxt(){
@@ -291,68 +278,63 @@ function parseReadable(content){
   saveTasks(); saveNewCards(); renderTasks();
 }
 
-// ------------------ ADD TASK ------------------
+// ---------- ADD TASK ----------
 function addTask(card){ 
   let input,text;
-  if(card==='today'){ input=document.getElementById('today-input'); text=input.value.trim(); input.value=''; }
-  else if(card==='new'){ input=document.getElementById('new-card-input'); text=input.value.trim(); input.value=''; }
-  if(!text) return;
-  if(card==='new'){ newCards[currentAdhoc].tasks.push({text,status:'',highlighted:false}); saveNewCards(); renderTasks(); }
-  else { tasks[card].push({text,status:'',highlighted:false}); saveTasks(); renderTasks(); }
+  if(card==='today'){ input=document.getElementById('today-input'); text=input.value.trim(); if(!text) return; tasks.today.push({text,status:'',highlighted:false}); input.value=''; saveTasks(); renderTasks(); }
+  else if(card==='new'){ input=document.getElementById('new-card-input'); text=input.value.trim(); if(!text) return; newCards[currentAdhoc].tasks.push({text,status:'',highlighted:false}); input.value=''; saveNewCards(); renderTasks(); }
 }
 
-// ------------------ RENDER ------------------
+// ---------- RENDER ----------
 function renderTasks(){
-  document.getElementById('today-tasks').innerHTML=''; document.getElementById('next-tasks').innerHTML=''; document.getElementById('someday-tasks').innerHTML=''; document.getElementById('archive-tasks').innerHTML=''; document.getElementById('new-card-tasks').innerHTML='';
-  
-  tasks.today.forEach((t,i)=>{ appendTask('today','today-tasks',t,i); });
-  if(!hiddenCards.next) tasks.next.forEach((t,i)=>{ appendTask('next','next-tasks',t,i); });
-  if(!hiddenCards.someday) tasks.someday.forEach((t,i)=>{ appendTask('someday','someday-tasks',t,i); });
-  if(!hiddenCards.archive) tasks.archive.forEach((t,i)=>{ appendTask('archive','archive-tasks',t,i); });
+  // TODAY
+  const todayDiv=document.getElementById('today-tasks'); todayDiv.innerHTML='';
+  tasks.today.forEach((t,i)=>{
+    const taskDiv=document.createElement('div'); taskDiv.className='task'; 
+    taskDiv.innerHTML=`<div class="task-top"><span class="circle" onclick="toggleStatus('today',${i})">${t.status==="inprogress"?"→":t.status==="completed"?"✓":""}</span><span class="task-text ${t.highlighted?'highlighted':''}">${t.text}</span><div class="task-toolbar"><button onclick="toggleHighlight('today',${i})">⭐</button><button onclick="deleteTask('today',${i})">✕</button></div></div>`;
+    todayDiv.appendChild(taskDiv);
+  });
 
-  const newCardDiv=document.getElementById('new-card');
-  if(!hiddenCards.new){
-    newCardDiv.style.display='flex';
-    const nc=newCards[currentAdhoc]; document.getElementById('new-card-title').value=nc.title;
-    nc.tasks.forEach((t,i)=>{
-      const div=document.createElement('div'); div.className='task';
-      const inner=`<div class="task-top"><span class="circle" onclick="toggleStatusNew(${i})">${t.status==="completed"?"✓":t.status==="inprogress"?"→":""}</span>
-      <span class="task-text">${t.text}</span></div>
-      <div class="task-toolbar">
-        <button onclick="moveTaskNewToExisting('today',${i})">T</button>
-        <button onclick="moveTaskNewToExisting('next',${i})">N</button>
-        <button onclick="moveTaskNewToExisting('someday',${i})">S</button>
-        <button onclick="moveTaskNewToExisting('archive',${i})">✕</button>
-        <button onclick="toggleHighlightNew(${i})">⭐</button>
-      </div>`;
-      div.innerHTML=inner;
-      if(t.highlighted) div.classList.add('highlighted');
-      document.getElementById('new-card-tasks').appendChild(div);
-    });
-    document.getElementById('new-card-index').innerText=`Card ${currentAdhoc+1}/${newCards.length}`;
-  } else { newCardDiv.style.display='none'; }
+  // NEXT
+  const nextDiv=document.getElementById('next-tasks'); nextDiv.innerHTML=''; 
+  if(!hiddenCards.next) tasks.next.forEach((t,i)=>{
+    const taskDiv=document.createElement('div'); taskDiv.className='task'; 
+    taskDiv.innerHTML=`<div class="task-top"><span class="circle" onclick="toggleStatus('next',${i})">${t.status==="inprogress"?"→":t.status==="completed"?"✓":""}</span><span class="task-text ${t.highlighted?'highlighted':''}">${t.text}</span><div class="task-toolbar"><button onclick="toggleHighlight('next',${i})">⭐</button><button onclick="deleteTask('next',${i})">✕</button></div></div>`;
+    nextDiv.appendChild(taskDiv);
+  });
+
+  // SOMEDAY
+  const somedayDiv=document.getElementById('someday-tasks'); somedayDiv.innerHTML='';
+  if(!hiddenCards.someday) tasks.someday.forEach((t,i)=>{
+    const taskDiv=document.createElement('div'); taskDiv.className='task'; 
+    taskDiv.innerHTML=`<div class="task-top"><span class="circle" onclick="toggleStatus('someday',${i})">${t.status==="inprogress"?"→":t.status==="completed"?"✓":""}</span><span class="task-text ${t.highlighted?'highlighted':''}">${t.text}</span><div class="task-toolbar"><button onclick="toggleHighlight('someday',${i})">⭐</button><button onclick="deleteTask('someday',${i})">✕</button></div></div>`;
+    somedayDiv.appendChild(taskDiv);
+  });
+
+  // ARCHIVE
+  const archiveDiv=document.getElementById('archive-tasks'); archiveDiv.innerHTML='';
+  if(!hiddenCards.archive) tasks.archive.forEach((t,i)=>{
+    const taskDiv=document.createElement('div'); taskDiv.className='task'; 
+    taskDiv.innerHTML=`<div class="task-top"><span class="circle" onclick="toggleStatus('archive',${i})">${t.status==="inprogress"?"→":t.status==="completed"?"✓":""}</span><span class="task-text ${t.highlighted?'highlighted':''}">${t.text}</span><div class="task-toolbar"><button onclick="toggleHighlight('archive',${i})">⭐</button><button onclick="deleteTask('archive',${i})">✕</button></div></div>`;
+    archiveDiv.appendChild(taskDiv);
+  });
+
+  // NEW CARD
+  const newCardDiv=document.getElementById('new-card-tasks'); newCardDiv.innerHTML=''; 
+  if(!hiddenCards.new) newCards[currentAdhoc].tasks.forEach((t,i)=>{
+    const taskDiv=document.createElement('div'); taskDiv.className='task'; 
+    taskDiv.innerHTML=`<div class="task-top"><span class="circle" onclick="toggleStatusNew(${i})">${t.status==="inprogress"?"→":t.status==="completed"?"✓":""}</span><span class="task-text ${t.highlighted?'highlighted':''}">${t.text}</span><div class="task-toolbar"><button onclick="toggleHighlightNew(${i})">⭐</button><button onclick="moveTaskNewToExisting('today',${i})">T</button><button onclick="moveTaskNewToExisting('next',${i})">N</button><button onclick="moveTaskNewToExisting('someday',${i})">S</button><button onclick="deleteTask('new',${i})">✕</button></div></div>`;
+    newCardDiv.appendChild(taskDiv);
+  });
+
+  // INDEX
+  document.getElementById('new-card-index').innerText=`Card ${currentAdhoc+1}/${newCards.length}`;
 }
-
-// ------------------ APPEND TASK ------------------
-function appendTask(card,divId,t,index){
-  const div=document.createElement('div'); div.className='task';
-  const inner=`<div class="task-top"><span class="circle" onclick="toggleStatus('${card}',${index})">${t.status==="completed"?"✓":t.status==="inprogress"?"→":""}</span>
-  <span class="task-text">${t.text}</span></div>
-  <div class="task-toolbar">
-    ${card!=='archive'?`<button onclick="moveTask('${card}','today',${index})">T</button><button onclick="moveTask('${card}','next',${index})">N</button><button onclick="moveTask('${card}','someday',${index})">S</button>`:""}
-    ${card!=='archive'?`<button onclick="moveTask('${card}','archive',${index})">✕</button>`:""}
-    <button onclick="toggleHighlight('${card}',${index})">⭐</button>
-  </div>`;
-  div.innerHTML=inner;
-  if(t.highlighted) div.classList.add('highlighted');
-  document.getElementById(divId).appendChild(div);
-}
-
-// ------------------ HELP ------------------
-document.getElementById('help-btn').addEventListener('click',()=>{document.getElementById('help-overlay').style.display='block';});
-document.getElementById('close-help').addEventListener('click',()=>{document.getElementById('help-overlay').style.display='none';});
-
 renderTasks();
+
+// ---------- HELP OVERLAY ----------
+document.getElementById('help-btn').onclick=()=>{document.getElementById('help-overlay').style.display='block';};
+document.getElementById('close-help').onclick=()=>{document.getElementById('help-overlay').style.display='none';};
 </script>
 </body>
 </html>
