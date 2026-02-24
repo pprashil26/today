@@ -8,18 +8,23 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
 
+/* ===== CARD BASE ===== */
 .card { 
-  width: 300px; 
-  height: 420px; 
-  border-radius: 12px; 
-  padding: 16px; 
+  width: 100%;                
+  max-width: 320px;           
+  height: 420px;              
   display: flex; 
   flex-direction: column; 
   gap: 8px; 
   position: relative; 
+  border-radius: 12px; 
+  padding: 16px; 
   box-shadow: 0 6px 18px rgba(0,0,0,0.12); 
-  overflow: hidden; 
+  overflow: hidden;           
+  background-clip: padding-box;
 }
+
+/* ===== CARD BACKGROUND PATTERNS ===== */
 .card::before { 
   content: ""; 
   position: absolute; 
@@ -29,22 +34,34 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   pointer-events: none; 
 }
 
-.today { background-color: #ffffff; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
-.next, .new-card { background-color: #dffcf0; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
-.someday { background-color: #c8f7e2; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
-.archive { background-color: #a0d9b7; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
+/* Background color by type */
+.today { background-color: #ffffff; }
+.next, .new-card { background-color: #dffcf0; }
+.someday { background-color: #c8f7e2; }
+.archive { background-color: #a0d9b7; }
 
+/* ===== TASK LIST SCROLL ===== */
+.task-list { 
+  flex: 1; 
+  overflow-y: auto; 
+  padding-right: 4px; 
+  scrollbar-width: thin; 
+  scrollbar-color: rgba(0,0,0,0.2) transparent; 
+}
+
+/* Webkit scrollbars */
+.task-list::-webkit-scrollbar { width: 6px; }
+.task-list::-webkit-scrollbar-track { background: transparent; }
+.task-list::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.2); border-radius: 3px; }
+
+/* ===== FONTS ===== */
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
 .card h2 .first { font-weight: bold; color: #666; }
 .card h2 .rest { opacity: 0.3; font-weight: normal; }
 #today-date { font-size: 0.8rem; color: #888; margin-left: 6px; }
 
-.task-list { flex: 1; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.2) transparent; }
-.task-list::-webkit-scrollbar { width: 6px; }
-.task-list::-webkit-scrollbar-track { background: transparent; }
-.task-list::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.2); border-radius: 3px; }
-
+/* ===== TASK ELEMENTS ===== */
 .task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; cursor: pointer; }
 .task-top { display: flex; align-items: center; justify-content: space-between; }
 .circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px; flex-shrink: 0; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition: all 0.2s ease; background: #fff; color: #333; }
@@ -54,11 +71,13 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .task-toolbar button:hover { opacity: 0.8; }
 .chevron { font-size: 12px; margin-left: 6px; transition: transform 0.2s ease; }
 
+/* ===== ADD TASK ===== */
 .add-task { display: flex; gap: 4px; margin-top: 8px; z-index: 1; position: relative; }
-.add-task input { flex: 1; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
+.add-task input { flex: 1; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; font-size:16px; }
 .add-task button { padding: 6px 12px; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
 .add-task button:hover { background: #555; }
 
+/* ===== SWITCH ===== */
 .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 12px; transition: .2s; }
@@ -66,117 +85,22 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 input:checked + .slider { background-color: #4caf50; }
 input:checked + .slider:before { transform: translateX(20px); }
 
-.archive-tools { display: flex; gap: 8px; }
-.archive-tools button { background: none; border: none; font-size: 12px; cursor: pointer; opacity: 0.6; padding: 0; }
-.archive-tools button:hover { opacity: 1; }
-
-.new-card-index { background:none; border:none; font-size:12px; opacity:0.6; cursor:pointer; margin-top:4px; display:block; text-align:center; }
-.new-card-index:hover { opacity:1; }
-
+/* ===== HIGHLIGHTS ===== */
 .highlighted { background-color: #fff79a; color: #000; }
 .red-highlighted { background-color: #FF746C; color: #000; }
 
-/* ===== MOBILE OPTIMIZATION PATCH ===== */
-
-/* 1. Responsive Card Width */
-.card {
-  width: 100%;
-  max-width: 320px;
-}
-
-/* 2. Adaptive Height */
-.card {
-  min-height: 420px;
-  height: auto;
-}
-
-/* 3. Improve Tap Targets (Toolbar Buttons) */
-.task-toolbar button {
-  padding: 2px 4px;
-  font-size: 0.8rem;
-}
-
-/* 4. Slightly Larger Circle for Touch */
-.circle {
-  width: 20px;
-  height: 20px;
-}
-
-/* 5. Prevent iOS Input Zoom */
-.add-task input {
-  font-size: 16px;
-}
-
-/* 6. Tighter Mobile Spacing */
+/* ===== MOBILE OPTIMIZATION ===== */
 @media (max-width: 480px) {
-  body {
-    padding: 12px;
-    gap: 12px;
-  }
+  body { padding: 12px; gap: 12px; }
+  .card { max-width: 100%; min-width: 200px; height: 420px; }
+  .task-toolbar button { padding: 2px 4px; font-size: 0.8rem; }
+  .circle { width: 20px; height: 20px; }
 }
-
-/* ===== TODAY OS — HELP OVERLAY ===== */
-
-#help-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.45);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
-
-#help-overlay .help-box {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 22px;
-  width: 100%;
-  max-width: 420px;
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.2);
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-.help-title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 14px;
-}
-
-.help-section {
-  margin-bottom: 14px;
-  opacity: 0.85;
-}
-
-.help-section span {
-  display: block;
-  margin-bottom: 6px;
-}
-
-.help-close {
-  margin-top: 18px;
-  padding: 8px 12px;
-  border: none;
-  background: #111;
-  color: #fff;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 100%;
-}
-
-/* subtle fade */
-#help-overlay { animation: fadeIn 0.15s ease; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
 </style>
 </head>
 <body>
 
-<!-- Today Card -->
+<!-- TODAY CARD -->
 <div class="card today">
   <h2>
     <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
@@ -184,17 +108,7 @@ input:checked + .slider:before { transform: translateX(20px); }
       <input type="checkbox" id="toggle-cards" checked>
       <span class="slider"></span>
     </label>
-    <button id="help-btn" style="
-  margin-left:8px;
-  padding:4px 8px;
-  border:1px solid #ccc;
-  background:#fff;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:0.8rem;
-">
-  ?
-</button>
+    <button id="help-btn" style="margin-left:8px; padding:4px 8px; border:1px solid #ccc; background:#fff; border-radius:8px; cursor:pointer; font-size:0.8rem;">?</button>
   </h2>
   <div class="task-list" id="today-tasks"></div>
   <div class="add-task">
@@ -203,7 +117,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   </div>
 </div>
 
-<!-- Next Card -->
+<!-- NEXT, SOMEDAY, ARCHIVE, NEW CARDS -->
 <div class="card next" id="next-card">
   <h2><span><span class="first">N</span><span class="rest">ext</span></span>
     <span class="archive-tools"><button onclick="toggleHideCard('next')">hide</button></span>
@@ -211,7 +125,6 @@ input:checked + .slider:before { transform: translateX(20px); }
   <div class="task-list" id="next-tasks"></div>
 </div>
 
-<!-- Someday Card -->
 <div class="card someday" id="someday-card">
   <h2><span><span class="first">S</span><span class="rest">omeday</span></span>
     <span class="archive-tools"><button onclick="toggleHideCard('someday')">hide</button></span>
@@ -219,10 +132,8 @@ input:checked + .slider:before { transform: translateX(20px); }
   <div class="task-list" id="someday-tasks"></div>
 </div>
 
-<!-- Archive Card -->
 <div class="card archive" id="archive-card">
-  <h2>
-    Archive
+  <h2>Archive
     <span class="archive-tools">
       <button onclick="exportTasksTxt()">Export</button>
       <button onclick="exportReadableTxt()">Export (Readable)</button>
@@ -233,7 +144,6 @@ input:checked + .slider:before { transform: translateX(20px); }
   <div class="task-list" id="archive-tasks"></div>
 </div>
 
-<!-- New Card Section -->
 <div class="card new-card" id="new-card">
   <h2>
     <input type="text" id="new-card-title" value="New Card" style="border:none;background:none;font-family:sans-serif;font-size:1.05rem; width: 140px;">
@@ -252,32 +162,27 @@ input:checked + .slider:before { transform: translateX(20px); }
   <button class="new-card-index" title="Current card index">Card 1/1</button>
 </div>
 
+<!-- HELP OVERLAY -->
 <div id="help-overlay">
   <div class="help-box">
-
     <div class="help-title">TODAY OS — Quick Guide</div>
-
     <div class="help-section">
       <span><strong>Add</strong> → Type + Enter</span>
       <span><strong>Toggle</strong> → Tap circle</span>
       <span><strong>Open tools</strong> → Tap task</span>
     </div>
-
     <div class="help-section">
       <span><strong>Move</strong> → T / N / S / ✕</span>
       <span><strong>Highlight</strong> → ⭐ / red ⭐</span>
       <span><strong>Edit</strong> → ✎</span>
     </div>
-
     <div class="help-section">
       <span><strong>Cards</strong> → Switch = show / hide</span>
       <span><strong>New Cards</strong> → Separate projects</span>
     </div>
-
     <button id="close-help" class="help-close">Close</button>
-
   </div>
-</div>	
+</div>
 
 <script>
 // -------------------- DATE --------------------
