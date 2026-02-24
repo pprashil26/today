@@ -129,32 +129,44 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 #help-overlay .help-box {
-  <div id="help-overlay">
-  <div class="help-box">
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 22px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
 
-    <div class="help-title">TODAY OS — Quick Guide</div>
+.help-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
 
-    <div class="help-section">
-      <span><strong>Add</strong> → Type + Enter</span>
-      <span><strong>Toggle</strong> → Tap circle</span>
-      <span><strong>Open tools</strong> → Tap task</span>
-    </div>
+.help-section {
+  margin-bottom: 14px;
+  opacity: 0.85;
+}
 
-    <div class="help-section">
-      <span><strong>Move</strong> → T / N / S / ✕</span>
-      <span><strong>Highlight</strong> → ⭐ / red ⭐</span>
-      <span><strong>Edit</strong> → ✎</span>
-    </div>
+.help-section span {
+  display: block;
+  margin-bottom: 6px;
+}
 
-    <div class="help-section">
-      <span><strong>Cards</strong> → Switch = show / hide</span>
-      <span><strong>New Cards</strong> → Separate projects</span>
-    </div>
-
-    <button id="close-help" class="help-close">Close</button>
-
-  </div>
-</div>
+.help-close {
+  margin-top: 18px;
+  padding: 8px 12px;
+  border: none;
+  background: #111;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+}
 
 /* subtle fade */
 #help-overlay { animation: fadeIn 0.15s ease; }
@@ -240,33 +252,32 @@ input:checked + .slider:before { transform: translateX(20px); }
   <button class="new-card-index" title="Current card index">Card 1/1</button>
 </div>
 
-<!-- Help Overlay -->
-<div id="help-overlay" style="
-    display:none; 
-    position:fixed; 
-    top:50%; left:50%; 
-    transform:translate(-50%, -50%); 
-    background:#fff; 
-    border:1px solid #ccc; 
-    padding:16px; 
-    border-radius:8px; 
-    box-shadow:0 4px 12px rgba(0,0,0,0.2); 
-    z-index:9999;
-    font-size:0.9rem;
-    line-height:1.4;
-">
-  <strong>Quick Guide</strong>
-  <ul style="margin-top:8px; padding-left:18px;">
-    <li>Add task → Type + Add or press Enter</li>
-    <li>Move task → T/N/S/✕</li>
-    <li>Highlight → ⭐ or red star</li>
-    <li>Edit task → ✎ button in toolbar</li>
-    <li>Toggle status → Click circle</li>
-    <li>Hide/show cards → Toggle switch</li>
-    <li><strong>New Cards → Manage multiple projects or categories</strong></li>
-  </ul>
-  <button id="close-help" style="margin-top:8px; padding:4px 8px; border:none; background:#333; color:#fff; border-radius:4px; cursor:pointer;">Close</button>
-</div>
+<div id="help-overlay">
+  <div class="help-box">
+
+    <div class="help-title">TODAY OS — Quick Guide</div>
+
+    <div class="help-section">
+      <span><strong>Add</strong> → Type + Enter</span>
+      <span><strong>Toggle</strong> → Tap circle</span>
+      <span><strong>Open tools</strong> → Tap task</span>
+    </div>
+
+    <div class="help-section">
+      <span><strong>Move</strong> → T / N / S / ✕</span>
+      <span><strong>Highlight</strong> → ⭐ / red ⭐</span>
+      <span><strong>Edit</strong> → ✎</span>
+    </div>
+
+    <div class="help-section">
+      <span><strong>Cards</strong> → Switch = show / hide</span>
+      <span><strong>New Cards</strong> → Separate projects</span>
+    </div>
+
+    <button id="close-help" class="help-close">Close</button>
+
+  </div>
+</div>	
 
 <script>
 // -------------------- DATE --------------------
