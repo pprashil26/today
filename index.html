@@ -272,7 +272,16 @@ function renderTasks(){
   // --- Render New Card ---
   const nc=document.getElementById('new-card'); const ncTasks=document.getElementById('new-card-tasks'); ncTasks.innerHTML='';
   nc.style.display=(hiddenCards.new||!document.getElementById('toggle-cards').checked)?'none':'flex';
-  const cardData=newCards[currentAdhoc]; document.getElementById('new-card-title').value=cardData.title;
+  const cardData=newCards[currentAdhoc]; 
+  const newCardTitleInput = document.getElementById('new-card-title');
+  newCardTitleInput.value = cardData.title;
+
+  // --- FIX: Save edited title to storage ---
+  newCardTitleInput.oninput = () => {
+    newCards[currentAdhoc].title = newCardTitleInput.value.trim() || 'New Card';
+    saveNewCards();
+  };
+
   cardData.tasks.forEach((t,i)=>{
     const taskDiv=document.createElement('div'); taskDiv.className='task'; 
     if(t.highlighted) taskDiv.classList.add('highlighted'); 
