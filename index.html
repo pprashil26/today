@@ -293,12 +293,67 @@ function renderTasks(){
     const text=document.createElement('span'); text.className='task-text'; text.textContent=t.text; left.append(circle,text);
     const chevron=document.createElement('span'); chevron.className='chevron'; chevron.textContent='>'; topRow.append(left,chevron);
 
-	const tb=document.createElement('div'); tb.className='task-toolbar';
-	const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ cardData.tasks.splice(i,1); saveNewCards(); renderTasks(); };
-	const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐'; highlightBtn.style.opacity=t.highlighted?'1':'0.3'; highlightBtn.onclick=function(){ toggleHighlightNew(i,'yellow'); };
-	const redHighlightBtn=document.createElement('button'); redHighlightBtn.innerHTML="⭐"; redHighlightBtn.style.color="#FF746C"; redHighlightBtn.style.opacity=t.red?'1':'0.3'; redHighlightBtn.onclick=function(){ toggleHighlightNew(i,'red'); };
-	const editBtn=document.createElement('button'); editBtn.textContent='✎'; editBtn.onclick=function(){ const newText=prompt('Edit task:',t.text); if(newText!==null){ t.text=newText; saveNewCards(); renderTasks(); }};
-	tb.append(highlightBtn,redHighlightBtn,delBtn,editBtn);
+const tb=document.createElement('div'); tb.className='task-toolbar';
+
+// Move Buttons
+const todayBtn=document.createElement('button');
+todayBtn.textContent='T';
+todayBtn.onclick=function(){
+  const moved=newCards[currentAdhoc].tasks.splice(i,1)[0];
+  tasks.today.push(moved);
+  saveTasks(); saveNewCards(); renderTasks();
+};
+
+const nextBtn=document.createElement('button');
+nextBtn.textContent='N';
+nextBtn.onclick=function(){
+  const moved=newCards[currentAdhoc].tasks.splice(i,1)[0];
+  tasks.next.push(moved);
+  saveTasks(); saveNewCards(); renderTasks();
+};
+
+const somedayBtn=document.createElement('button');
+somedayBtn.textContent='S';
+somedayBtn.onclick=function(){
+  const moved=newCards[currentAdhoc].tasks.splice(i,1)[0];
+  tasks.someday.push(moved);
+  saveTasks(); saveNewCards(); renderTasks();
+};
+
+// Move to Archive (✕ now matches other cards)
+const archiveBtn=document.createElement('button');
+archiveBtn.textContent='✕';
+archiveBtn.onclick=function(){
+  const moved=newCards[currentAdhoc].tasks.splice(i,1)[0];
+  tasks.archive.push(moved);
+  saveTasks(); saveNewCards(); renderTasks();
+};
+
+// Highlights
+const highlightBtn=document.createElement('button');
+highlightBtn.textContent='⭐';
+highlightBtn.style.opacity=t.highlighted?'1':'0.3';
+highlightBtn.onclick=function(){ toggleHighlightNew(i,'yellow'); };
+
+const redHighlightBtn=document.createElement('button');
+redHighlightBtn.innerHTML="⭐";
+redHighlightBtn.style.color="#FF746C";
+redHighlightBtn.style.opacity=t.red?'1':'0.3';
+redHighlightBtn.onclick=function(){ toggleHighlightNew(i,'red'); };
+
+// Edit
+const editBtn=document.createElement('button');
+editBtn.textContent='✎';
+editBtn.onclick=function(){
+  const newText=prompt('Edit task:',t.text);
+  if(newText!==null){
+    t.text=newText;
+    saveNewCards();
+    renderTasks();
+  }
+};
+
+tb.append(todayBtn,nextBtn,somedayBtn,highlightBtn,redHighlightBtn,archiveBtn,editBtn);
 
     topRow.onclick=function(){ tb.style.display=tb.style.display==='flex'?'none':'flex'; chevron.style.transform=tb.style.display==='flex'?'rotate(90deg)':'rotate(0deg)'; };
     taskDiv.append(topRow,tb); ncTasks.appendChild(taskDiv);
