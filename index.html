@@ -75,6 +75,46 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 .highlighted { background-color: #fff79a; color: #000; }
 .red-highlighted { background-color: #FF746C; color: #000; }
+
+/* ===== MOBILE OPTIMIZATION PATCH ===== */
+
+/* 1. Responsive Card Width */
+.card {
+  width: 100%;
+  max-width: 320px;
+}
+
+/* 2. Adaptive Height */
+.card {
+  min-height: 420px;
+  height: auto;
+}
+
+/* 3. Improve Tap Targets (Toolbar Buttons) */
+.task-toolbar button {
+  padding: 2px 4px;
+  font-size: 0.8rem;
+}
+
+/* 4. Slightly Larger Circle for Touch */
+.circle {
+  width: 20px;
+  height: 20px;
+}
+
+/* 5. Prevent iOS Input Zoom */
+.add-task input {
+  font-size: 16px;
+}
+
+/* 6. Tighter Mobile Spacing */
+@media (max-width: 480px) {
+  body {
+    padding: 12px;
+    gap: 12px;
+  }
+}
+
 </style>
 </head>
 <body>
