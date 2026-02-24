@@ -13,6 +13,7 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   width: 100%;                
   max-width: 320px;           
   height: 420px;              
+  min-height: 420px;          /* prevent collapse */
   display: flex; 
   flex-direction: column; 
   gap: 8px; 
@@ -42,7 +43,8 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 /* ===== TASK LIST SCROLL ===== */
 .task-list { 
-  flex: 1; 
+  flex: 1 1 auto;       /* grow/shrink correctly */
+  min-height: 0;        /* critical for flex scroll */
   overflow-y: auto; 
   padding-right: 4px; 
   scrollbar-width: thin; 
@@ -99,6 +101,9 @@ input:checked + .slider:before { transform: translateX(20px); }
 </style>
 </head>
 <body>
+
+<!-- ==== HTML unchanged ==== -->
+<!-- Paste your original HTML here (cards, new-card, help-overlay, etc.) -->
 
 <!-- TODAY CARD -->
 <div class="card today">
