@@ -115,6 +115,51 @@ input:checked + .slider:before { transform: translateX(20px); }
   }
 }
 
+/* ===== TODAY OS — HELP OVERLAY ===== */
+
+#help-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+#help-overlay .help-box {
+  <div id="help-overlay">
+  <div class="help-box">
+
+    <div class="help-title">TODAY OS — Quick Guide</div>
+
+    <div class="help-section">
+      <span><strong>Add</strong> → Type + Enter</span>
+      <span><strong>Toggle</strong> → Tap circle</span>
+      <span><strong>Open tools</strong> → Tap task</span>
+    </div>
+
+    <div class="help-section">
+      <span><strong>Move</strong> → T / N / S / ✕</span>
+      <span><strong>Highlight</strong> → ⭐ / red ⭐</span>
+      <span><strong>Edit</strong> → ✎</span>
+    </div>
+
+    <div class="help-section">
+      <span><strong>Cards</strong> → Switch = show / hide</span>
+      <span><strong>New Cards</strong> → Separate projects</span>
+    </div>
+
+    <button id="close-help" class="help-close">Close</button>
+
+  </div>
+</div>
+
+/* subtle fade */
+#help-overlay { animation: fadeIn 0.15s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
 </style>
 </head>
 <body>
@@ -127,7 +172,17 @@ input:checked + .slider:before { transform: translateX(20px); }
       <input type="checkbox" id="toggle-cards" checked>
       <span class="slider"></span>
     </label>
-    <button id="help-btn" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:0.9rem; color:#333;">How To</button>
+    <button id="help-btn" style="
+  margin-left:8px;
+  padding:4px 8px;
+  border:1px solid #ccc;
+  background:#fff;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:0.8rem;
+">
+  ?
+</button>
   </h2>
   <div class="task-list" id="today-tasks"></div>
   <div class="add-task">
@@ -252,7 +307,7 @@ document.getElementById('new-card-input').addEventListener('keypress', e=>{ if(e
 const helpBtn = document.getElementById('help-btn');
 const helpOverlay = document.getElementById('help-overlay');
 const closeHelp = document.getElementById('close-help');
-helpBtn.addEventListener('click', ()=>{ helpOverlay.style.display='block'; });
+helpBtn.addEventListener('click', ()=>{ helpOverlay.style.display='flex'; });
 closeHelp.addEventListener('click', ()=>{ helpOverlay.style.display='none'; });
 
 // -------------------- RENDER --------------------
