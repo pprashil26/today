@@ -293,12 +293,12 @@ function renderTasks(){
     const text=document.createElement('span'); text.className='task-text'; text.textContent=t.text; left.append(circle,text);
     const chevron=document.createElement('span'); chevron.className='chevron'; chevron.textContent='>'; topRow.append(left,chevron);
 
-    const tb=document.createElement('div'); tb.className='task-toolbar';
-    const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ cardData.tasks.splice(i,1); saveNewCards(); renderTasks(); };
-    const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐'; highlightBtn.style.opacity=t.highlighted?'1':'0.3'; highlightBtn.onclick=function(){ toggleHighlightNew(i,'yellow'); };
-    const redHighlightBtn=document.createElement('button'); redHighlightBtn.innerHTML="⭐"; redHighlightBtn.style.color="#FF746C"; redHighlightBtn.style.opacity=t.red?'1':'0.3'; redHighlightBtn.onclick=function(){ toggleHighlightNew(i,'red'); };
-    const editBtn=document.createElement('button'); editBtn.textContent='✎'; editBtn.onclick=function(){ const newText=prompt('Edit task:',t.text); if(newText!==null){ t.text=newText; saveNewCards(); renderTasks(); }};
-    tb.append(highlightBtn,redHighlightBtn,delBtn,editBtn);
+	const tb=document.createElement('div'); tb.className='task-toolbar';
+	const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ cardData.tasks.splice(i,1); saveNewCards(); renderTasks(); };
+	const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐'; highlightBtn.style.opacity=t.highlighted?'1':'0.3'; highlightBtn.onclick=function(){ toggleHighlightNew(i,'yellow'); };
+	const redHighlightBtn=document.createElement('button'); redHighlightBtn.innerHTML="⭐"; redHighlightBtn.style.color="#FF746C"; redHighlightBtn.style.opacity=t.red?'1':'0.3'; redHighlightBtn.onclick=function(){ toggleHighlightNew(i,'red'); };
+	const editBtn=document.createElement('button'); editBtn.textContent='✎'; editBtn.onclick=function(){ const newText=prompt('Edit task:',t.text); if(newText!==null){ t.text=newText; saveNewCards(); renderTasks(); }};
+	tb.append(highlightBtn,redHighlightBtn,delBtn,editBtn);
 
     topRow.onclick=function(){ tb.style.display=tb.style.display==='flex'?'none':'flex'; chevron.style.transform=tb.style.display==='flex'?'rotate(90deg)':'rotate(0deg)'; };
     taskDiv.append(topRow,tb); ncTasks.appendChild(taskDiv);
