@@ -242,7 +242,18 @@ function renderTasks(){
       const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ moveTask(isNew?'new':card,'archive',i); };
       const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐';
       highlightBtn.onclick=function(){ cycleHighlight(isNew?'new':card,i); };
-      tb.append(todayBtn,nextBtn,somedayBtn,highlightBtn,delBtn);
+     
+	  
+	 const editBtn = document.createElement('button');editBtn.textContent = '✎';editBtn.onclick = function() {
+  const newText = prompt('Edit task:', taskObj.text);
+  if (newText !== null && newText.trim() !== '') {  // <-- added trim check
+    taskObj.text = newText.trim();
+    if(card==='new'){ saveNewCards(); } else { saveTasks(); }
+    renderTasks();
+  }
+};
+tb.append(todayBtn, nextBtn, somedayBtn, highlightBtn, editBtn, delBtn);
+	  
     } else {
       // Archive
       ['today','next','someday'].forEach(dest=>{
