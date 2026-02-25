@@ -277,6 +277,9 @@ function renderTasks(){
     taskDiv.append(topRow,tb); container.appendChild(taskDiv);
   });
 
+// ---------------- NEW CARD TITLE LOAD ----------------
+document.getElementById('new-card-title').value = newCards[currentAdhoc].title;
+
   // ---------------- NEW CARD INDEX ----------------
   document.querySelector('.new-card-index').textContent=`Card ${currentAdhoc+1}/${newCards.length}`;
 }
@@ -294,6 +297,12 @@ function toggleHighlightNew(i,color){ const t=newCards[currentAdhoc].tasks[i]; i
 function createNewCard(){ newCards.push({title:'New Card',tasks:[]}); currentAdhoc=newCards.length-1; saveNewCards(); renderTasks(); }
 function prevNewCard(){ currentAdhoc=(currentAdhoc-1+newCards.length)%newCards.length; renderTasks(); }
 function nextNewCard(){ currentAdhoc=(currentAdhoc+1)%newCards.length; renderTasks(); }
+
+// ---------------- NEW CARD TITLE SAVE ----------------
+document.getElementById('new-card-title').addEventListener('input', function(){
+  newCards[currentAdhoc].title = this.value.trim() || 'New Card';
+  saveNewCards();
+});
 
 // -------------------- EXPORT/IMPORT --------------------
 function exportTasksTxt(){ const blob=new Blob([JSON.stringify(tasks)],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='todayToolTasks.txt'; a.click(); }
