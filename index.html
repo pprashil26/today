@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today Tool - v1.9.3</title>
+<title>Today Tool - v1.9.4 Ultra-Safe</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
@@ -218,13 +218,6 @@ closeHelp.addEventListener('click', ()=>{ helpOverlay.style.display='none'; });
 // -------------------- RENDER --------------------
 function renderTasks(){
 
-  function collapseAllToolbars(cardContainer){
-    const allToolbars = cardContainer.querySelectorAll('.task-toolbar');
-    const allChevrons = cardContainer.querySelectorAll('.chevron');
-    allToolbars.forEach(tb => tb.style.display = 'none');
-    allChevrons.forEach(ch => ch.style.transform = 'rotate(0deg)');
-  }
-
   ['today','next','someday','archive'].forEach((card)=>{
     const c=document.getElementById(card+'-card'); const container=document.getElementById(card+'-tasks'); container.innerHTML='';
     if(card!=='today'){ c.style.display=(hiddenCards[card]||!document.getElementById('toggle-cards').checked)?'none':'flex'; }
@@ -258,32 +251,25 @@ function renderTasks(){
         const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=function(){ moveTask('archive','today',i); };
         const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=function(){ moveTask('archive','next',i); };
         const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=function(){ moveTask('archive','someday',i); };
-        const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ deleteTask('archive',i); };
+        const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ 
+          if(confirm('Delete this task permanently?')){ deleteTask('archive',i); }
+        };
         const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐'; highlightBtn.style.opacity=t.highlighted?'1':'0.3'; highlightBtn.onclick=function(){ toggleHighlight('archive',i,'yellow'); };
         const redHighlightBtn=document.createElement('button'); redHighlightBtn.innerHTML="⭐"; redHighlightBtn.style.color="#FF746C"; redHighlightBtn.style.opacity=t.red?'1':'0.3'; redHighlightBtn.onclick=function(){ toggleHighlight('archive',i,'red'); };
         tb.append(todayBtn,nextBtn,somedayBtn,highlightBtn,redHighlightBtn,delBtn);
       }
 
-      topRow.onclick=function(){ tb.style.display=tb.style.display==='flex'?'none':'flex'; chevron.style.transform=tb.style.display==='flex'?'rotate(90deg)':'rotate(0deg)'; };
-      taskDiv.append(topRow,tb); container.appendChild(taskDiv);
+      taskDiv.append(topRow,tb); container.append(taskDiv);
+      topRow.onmouseover=function(){ tb.style.display='flex'; chevron.style.transform='rotate(90deg)'; };
+      topRow.onmouseout=function(){ tb.style.display='none'; chevron.style.transform='rotate(0deg)'; };
     });
   });
 
-  // --- Render New Card ---
-  const nc=document.getElementById('new-card'); const ncTasks=document.getElementById('new-card-tasks'); ncTasks.innerHTML='';
-  nc.style.display=(hiddenCards.new||!document.getElementById('toggle-cards').checked)?'none':'flex';
-  const cardData=newCards[currentAdhoc]; 
-  const newCardTitleInput = document.getElementById('new-card-title');
-  newCardTitleInput.value = cardData.title;
-
-  // --- FIX: Save edited title to storage ---
-  newCardTitleInput.oninput = () => {
-    newCards[currentAdhoc].title = newCardTitleInput.value.trim() || 'New Card';
-    saveNewCards();
-  };
-
-  cardData.tasks.forEach((t,i)=>{
-    const taskDiv=document.createElement('div'); taskDiv.className='task'; 
+  // New Card
+  const nc=document.getElementById('new-card'); nc.style.display=(hiddenCards.new||!document.getElementById('toggle-cards').checked)?'none':'flex';
+  const nct=document.getElementById('new-card-tasks'); nct.innerHTML='';
+  newCards[currentAdhoc].tasks.forEach((t,i)=>{
+    const taskDiv=document.createElement('div'); taskDiv.className='task';
     if(t.highlighted) taskDiv.classList.add('highlighted'); 
     if(t.red) taskDiv.classList.add('red-highlighted');
 
@@ -293,112 +279,68 @@ function renderTasks(){
     const text=document.createElement('span'); text.className='task-text'; text.textContent=t.text; left.append(circle,text);
     const chevron=document.createElement('span'); chevron.className='chevron'; chevron.textContent='>'; topRow.append(left,chevron);
 
-const tb=document.createElement('div'); tb.className='task-toolbar';
+    const tb=document.createElement('div'); tb.className='task-toolbar';
+    const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=function(){ moveTask('new','today',i); };
+    const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=function(){ moveTask('new','next',i); };
+    const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=function(){ moveTask('new','someday',i); };
+    const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ newCards[currentAdhoc].tasks.splice(i,1); saveNewCards(); renderTasks(); };
+    const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐'; highlightBtn.style.opacity=t.highlighted?'1':'0.3'; highlightBtn.onclick=function(){ toggleHighlightNew(i,'yellow'); };
+    const redHighlightBtn=document.createElement('button'); redHighlightBtn.innerHTML="⭐"; redHighlightBtn.style.color="#FF746C"; redHighlightBtn.style.opacity=t.red?'1':'0.3'; redHighlightBtn.onclick=function(){ toggleHighlightNew(i,'red'); };
+    tb.append(todayBtn,nextBtn,somedayBtn,highlightBtn,redHighlightBtn,delBtn);
 
-// Move Buttons
-const todayBtn=document.createElement('button');
-todayBtn.textContent='T';
-todayBtn.onclick=function(){
-  const moved=newCards[currentAdhoc].tasks.splice(i,1)[0];
-  tasks.today.push(moved);
-  saveTasks(); saveNewCards(); renderTasks();
-};
-
-const nextBtn=document.createElement('button');
-nextBtn.textContent='N';
-nextBtn.onclick=function(){
-  const moved=newCards[currentAdhoc].tasks.splice(i,1)[0];
-  tasks.next.push(moved);
-  saveTasks(); saveNewCards(); renderTasks();
-};
-
-const somedayBtn=document.createElement('button');
-somedayBtn.textContent='S';
-somedayBtn.onclick=function(){
-  const moved=newCards[currentAdhoc].tasks.splice(i,1)[0];
-  tasks.someday.push(moved);
-  saveTasks(); saveNewCards(); renderTasks();
-};
-
-// Move to Archive (✕ now matches other cards)
-const archiveBtn=document.createElement('button');
-archiveBtn.textContent='✕';
-archiveBtn.onclick=function(){
-  const moved=newCards[currentAdhoc].tasks.splice(i,1)[0];
-  tasks.archive.push(moved);
-  saveTasks(); saveNewCards(); renderTasks();
-};
-
-// Highlights
-const highlightBtn=document.createElement('button');
-highlightBtn.textContent='⭐';
-highlightBtn.style.opacity=t.highlighted?'1':'0.3';
-highlightBtn.onclick=function(){ toggleHighlightNew(i,'yellow'); };
-
-const redHighlightBtn=document.createElement('button');
-redHighlightBtn.innerHTML="⭐";
-redHighlightBtn.style.color="#FF746C";
-redHighlightBtn.style.opacity=t.red?'1':'0.3';
-redHighlightBtn.onclick=function(){ toggleHighlightNew(i,'red'); };
-
-// Edit
-const editBtn=document.createElement('button');
-editBtn.textContent='✎';
-editBtn.onclick=function(){
-  const newText=prompt('Edit task:',t.text);
-  if(newText!==null){
-    t.text=newText;
-    saveNewCards();
-    renderTasks();
-  }
-};
-
-tb.append(todayBtn,nextBtn,somedayBtn,highlightBtn,redHighlightBtn,archiveBtn,editBtn);
-
-    topRow.onclick=function(){ tb.style.display=tb.style.display==='flex'?'none':'flex'; chevron.style.transform=tb.style.display==='flex'?'rotate(90deg)':'rotate(0deg)'; };
-    taskDiv.append(topRow,tb); ncTasks.appendChild(taskDiv);
+    taskDiv.append(topRow,tb); nct.append(taskDiv);
+    topRow.onmouseover=function(){ tb.style.display='flex'; chevron.style.transform='rotate(90deg)'; };
+    topRow.onmouseout=function(){ tb.style.display='none'; chevron.style.transform='rotate(0deg)'; };
   });
-
-  // Update New Card Index
+  document.getElementById('new-card-title').value=newCards[currentAdhoc].title;
   document.querySelector('.new-card-index').textContent=`Card ${currentAdhoc+1}/${newCards.length}`;
 }
 
-renderTasks();
-
 // -------------------- MOVE TASK --------------------
 function moveTask(from,to,index){
-  const task=tasks[from].splice(index,1)[0];
-  tasks[to].push(task);
-  saveTasks(); renderTasks();
+  const t=from==='new'? newCards[currentAdhoc].tasks.splice(index,1)[0] : tasks[from].splice(index,1)[0];
+  if(to==='new'){ newCards[currentAdhoc].tasks.push(t); saveNewCards(); } 
+  else { tasks[to].push(t); saveTasks(); }
+  renderTasks();
 }
 function deleteTask(card,index){ tasks[card].splice(index,1); saveTasks(); renderTasks(); }
-function toggleStatus(card,index){ const t=tasks[card][index]; t.status=t.status==='completed'?'':'completed'; saveTasks(); renderTasks(); }
-function toggleStatusNew(index){ const t=newCards[currentAdhoc].tasks[index]; t.status=t.status==='completed'?'':'completed'; saveNewCards(); renderTasks(); }
 
-// -------------------- HIGHLIGHT --------------------
-function toggleHighlight(card,index,color){
-  let t=tasks[card][index];
-  if(color==='yellow'){ t.highlighted=!t.highlighted; if(t.highlighted) t.red=false; }
-  if(color==='red'){ t.red=!t.red; if(t.red) t.highlighted=false; }
+// -------------------- STATUS TOGGLE --------------------
+function toggleStatus(card,i){
+  let t=tasks[card][i];
+  t.status=t.status==='completed'?'inprogress':t.status==='inprogress'?'':'completed';
   saveTasks(); renderTasks();
 }
-function toggleHighlightNew(index,color){
-  let t=newCards[currentAdhoc].tasks[index];
-  if(color==='yellow'){ t.highlighted=!t.highlighted; if(t.highlighted) t.red=false; }
-  if(color==='red'){ t.red=!t.red; if(t.red) t.highlighted=false; }
+function toggleStatusNew(i){ 
+  let t=newCards[currentAdhoc].tasks[i]; 
+  t.status=t.status==='completed'?'inprogress':t.status==='inprogress'?'':'completed';
+  saveNewCards(); renderTasks();
+}
+
+// -------------------- HIGHLIGHT --------------------
+function toggleHighlight(card,i,color){ 
+  if(color==='yellow'){ tasks[card][i].highlighted=!tasks[card][i].highlighted; if(tasks[card][i].highlighted) tasks[card][i].red=false; } 
+  else { tasks[card][i].red=!tasks[card][i].red; if(tasks[card][i].red) tasks[card][i].highlighted=false; } 
+  saveTasks(); renderTasks(); 
+}
+function toggleHighlightNew(i,color){ 
+  if(color==='yellow'){ newCards[currentAdhoc].tasks[i].highlighted=!newCards[currentAdhoc].tasks[i].highlighted; if(newCards[currentAdhoc].tasks[i].highlighted) newCards[currentAdhoc].tasks[i].red=false; } 
+  else{ newCards[currentAdhoc].tasks[i].red=!newCards[currentAdhoc].tasks[i].red; if(newCards[currentAdhoc].tasks[i].red) newCards[currentAdhoc].tasks[i].highlighted=false; }
   saveNewCards(); renderTasks();
 }
 
 // -------------------- NEW CARD NAV --------------------
-function nextNewCard(){ if(currentAdhoc<newCards.length-1) currentAdhoc++; renderTasks(); }
-function prevNewCard(){ if(currentAdhoc>0) currentAdhoc--; renderTasks(); }
+function nextNewCard(){ if(currentAdhoc<newCards.length-1){currentAdhoc++; renderTasks();} }
+function prevNewCard(){ if(currentAdhoc>0){currentAdhoc--; renderTasks();} }
 function createNewCard(){ newCards.push({title:'New Card',tasks:[]}); currentAdhoc=newCards.length-1; saveNewCards(); renderTasks(); }
 
-// -------------------- EXPORT / IMPORT --------------------
-function exportTasksTxt(){ const dataStr=JSON.stringify(tasks,null,2); const blob=new Blob([dataStr],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='today-data.json'; a.click(); }
-function exportReadableTxt(){ let str=''; Object.keys(tasks).forEach(k=>{ str+=k.toUpperCase()+'\n'; tasks[k].forEach(t=>{ str+=`- [${t.status||' '}] ${t.text} ${t.highlighted?'⭐':''} ${t.red?'★':''}\n`; }); str+='\n'; }); const blob=new Blob([str],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='today-data.txt'; a.click(); }
-function importTasksFile(){ const input=document.createElement('input'); input.type='file'; input.accept='.json,.txt'; input.onchange=e=>{ const file=e.target.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=function(evt){ try{ const c=evt.target.result; tasks=JSON.parse(c); saveTasks(); renderTasks(); }catch(err){alert('Invalid file');} }; reader.readAsText(file); }; input.click();
-}
+// -------------------- EXPORT/IMPORT --------------------
+function exportTasksTxt(){ const all=JSON.stringify(tasks); navigator.clipboard.writeText(all); alert('Copied JSON to clipboard'); }
+function exportReadableTxt(){ let str=''; Object.keys(tasks).forEach(k=>{ str+=k.toUpperCase()+'\n'; tasks[k].forEach(t=>{ str+="- "+t.text+'\n'; }); str+='\n'; }); navigator.clipboard.writeText(str); alert('Copied readable text'); }
+function importTasksFile(){ const f=document.createElement('input'); f.type='file'; f.accept='.json'; f.onchange=function(e){ const reader=new FileReader(); reader.onload=function(ev){ try{ const imported=JSON.parse(ev.target.result); if(imported.today && imported.next){ tasks=imported; saveTasks(); renderTasks(); alert('Import successful'); }else{ alert('Invalid file'); } }catch(err){ alert('Invalid JSON'); } }; reader.readAsText(f.files[0]); }; f.click(); }
+
+// -------------------- INITIAL RENDER --------------------
+renderTasks();
 </script>
 
 </body>
