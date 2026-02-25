@@ -117,8 +117,9 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* ===== TODAY OS — HELP OVERLAY ===== */
 
+/* ===== HELP OVERLAY FIXED ===== */
 #help-overlay {
-  display: none;
+  display: none; /* hidden initially */
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.45);
@@ -126,39 +127,51 @@ input:checked + .slider:before { transform: translateX(20px); }
   align-items: center;
   justify-content: center;
   padding: 16px;
+  animation: fadeIn 0.15s ease;
 }
 
 #help-overlay .help-box {
-  <div id="help-overlay">
-  <div class="help-box">
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  max-width: 90%;
+  width: 320px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  position: relative;
+}
 
-    <div class="help-title">TODAY OS — Quick Guide</div>
+#help-overlay button#close-help {
+  margin-top: 12px;
+  padding: 6px 12px;
+  border: none;
+  background: #333;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
 
-    <div class="help-section">
-      <span><strong>Add</strong> → Type + Enter</span>
-      <span><strong>Toggle</strong> → Tap circle</span>
-      <span><strong>Open tools</strong> → Tap task</span>
-    </div>
+/* Fade-in keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-    <div class="help-section">
-      <span><strong>Move</strong> → T / N / S / ✕</span>
-      <span><strong>Highlight</strong> → ⭐ / red ⭐</span>
-      <span><strong>Edit</strong> → ✎</span>
-    </div>
-
-    <div class="help-section">
-      <span><strong>Cards</strong> → Switch = show / hide</span>
-      <span><strong>New Cards</strong> → Separate projects</span>
-    </div>
-
-    <button id="close-help" class="help-close">Close</button>
-
-  </div>
-</div>
-
-/* subtle fade */
-#help-overlay { animation: fadeIn 0.15s ease; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* Help button */
+#help-btn {
+  margin-left: 8px;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  transition: background 0.2s, opacity 0.2s;
+}
+#help-btn:hover { background: #f0f0f0; opacity: 0.9; }
 
 </style>
 </head>
@@ -172,17 +185,7 @@ input:checked + .slider:before { transform: translateX(20px); }
       <input type="checkbox" id="toggle-cards" checked>
       <span class="slider"></span>
     </label>
-    <button id="help-btn" style="
-  margin-left:8px;
-  padding:4px 8px;
-  border:1px solid #ccc;
-  background:#fff;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:0.8rem;
-">
-  ?
-</button>
+
   </h2>
   <div class="task-list" id="today-tasks"></div>
   <div class="add-task">
@@ -241,31 +244,20 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <!-- Help Overlay -->
-<div id="help-overlay" style="
-    display:none; 
-    position:fixed; 
-    top:50%; left:50%; 
-    transform:translate(-50%, -50%); 
-    background:#fff; 
-    border:1px solid #ccc; 
-    padding:16px; 
-    border-radius:8px; 
-    box-shadow:0 4px 12px rgba(0,0,0,0.2); 
-    z-index:9999;
-    font-size:0.9rem;
-    line-height:1.4;
-">
-  <strong>Quick Guide</strong>
-  <ul style="margin-top:8px; padding-left:18px;">
-    <li>Add task → Type + Add or press Enter</li>
-    <li>Move task → T/N/S/✕</li>
-    <li>Highlight → ⭐ or red star</li>
-    <li>Edit task → ✎ button in toolbar</li>
-    <li>Toggle status → Click circle</li>
-    <li>Hide/show cards → Toggle switch</li>
-    <li><strong>New Cards → Manage multiple projects or categories</strong></li>
-  </ul>
-  <button id="close-help" style="margin-top:8px; padding:4px 8px; border:none; background:#333; color:#fff; border-radius:4px; cursor:pointer;">Close</button>
+<div id="help-overlay">
+  <div class="help-box">
+    <strong>Quick Guide</strong>
+    <ul>
+      <li>Add task → Type + Add or press Enter</li>
+      <li>Move task → T/N/S/✕</li>
+      <li>Highlight → ⭐ or red star</li>
+      <li>Edit task → ✎ button in toolbar</li>
+      <li>Toggle status → Click circle</li>
+      <li>Hide/show cards → Toggle switch</li>
+      <li><strong>New Cards → Manage multiple projects or categories</strong></li>
+    </ul>
+    <button id="close-help">Close</button>
+  </div>
 </div>
 
 <script>
@@ -303,12 +295,34 @@ function addTask(card){
 document.getElementById('today-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('today'); });
 document.getElementById('new-card-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('new'); });
 
-// -------------------- HELP BUTTON --------------------
+// -------------------- HELP BUTTON (CLEAN FIX) --------------------
 const helpBtn = document.getElementById('help-btn');
 const helpOverlay = document.getElementById('help-overlay');
 const closeHelp = document.getElementById('close-help');
-helpBtn.addEventListener('click', ()=>{ helpOverlay.style.display='flex'; });
-closeHelp.addEventListener('click', ()=>{ helpOverlay.style.display='none'; });
+
+// Show overlay
+helpBtn.addEventListener('click', () => {
+  helpOverlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden'; // prevent background scroll
+});
+
+// Close overlay button
+closeHelp.addEventListener('click', closeHelpOverlay);
+
+// Close by clicking outside the box
+helpOverlay.addEventListener('click', (e) => {
+  if (e.target === helpOverlay) closeHelpOverlay();
+});
+
+// Close by pressing Esc key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && helpOverlay.style.display === 'flex') closeHelpOverlay();
+});
+
+function closeHelpOverlay() {
+  helpOverlay.style.display = 'none';
+  document.body.style.overflow = ''; // restore scroll
+}
 
 // -------------------- RENDER --------------------
 function renderTasks(){
