@@ -98,10 +98,9 @@ input:checked + .slider:before { transform: translateX(20px); }
 <div class="card today">
   <h2>
     <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
-    <label class="switch" title="Show Next & Someday & Archive & New cards">
-      <input type="checkbox" id="toggle-cards" checked>
-      <span class="slider"></span>
-    </label>
+    <button id="toggle-cards-btn" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:0.9rem; color:#333;">
+  hide all
+</button>
     <button id="help-btn" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:0.9rem; color:#333;">How To</button>
   </h2>
   <div class="task-list" id="today-tasks"></div>
@@ -193,8 +192,16 @@ function saveNewCards(){ localStorage.setItem(newCardsKey,JSON.stringify(newCard
 let hiddenCards={next:false,someday:false,archive:false,new:false};
 
 // --- MASTER TOGGLE ---
-document.getElementById('toggle-cards').addEventListener('change',function(){
-  if(this.checked){ hiddenCards={next:false,someday:false,archive:false,new:false}; }
+document.getElementById('toggle-cards-btn').addEventListener('click', function(){
+  // toggle hide/show all cards
+  const allHidden = hiddenCards.next && hiddenCards.someday && hiddenCards.archive && hiddenCards.new;
+  if(allHidden){
+    hiddenCards = {next:false,someday:false,archive:false,new:false};
+    this.textContent = 'Hide All';
+  } else {
+    hiddenCards = {next:true,someday:true,archive:true,new:true};
+    this.textContent = 'Show All';
+  }
   renderTasks();
 });
 
