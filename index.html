@@ -99,7 +99,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   <h2>
     <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
     <button id="toggle-cards-btn" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:0.9rem; color:#333;">
-  hide all
+  focus mode
 </button>
     <button id="help-btn" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:0.9rem; color:#333;">How To</button>
   </h2>
@@ -192,18 +192,33 @@ function saveNewCards(){ localStorage.setItem(newCardsKey,JSON.stringify(newCard
 let hiddenCards={next:false,someday:false,archive:false,new:false};
 
 // --- MASTER TOGGLE ---
-document.getElementById('toggle-cards-btn').addEventListener('click', function(){
-  // toggle hide/show all cards
-  const allHidden = hiddenCards.next && hiddenCards.someday && hiddenCards.archive && hiddenCards.new;
-  if(allHidden){
-    hiddenCards = {next:false,someday:false,archive:false,new:false};
-    this.textContent = 'Hide All';
-  } else {
-    hiddenCards = {next:true,someday:true,archive:true,new:true};
-    this.textContent = 'Show All';
-  }
-  renderTasks();
+// --- MASTER TOGGLE (Intuitive) ---
+const toggleBtn = document.getElementById('toggle-cards-btn');
+
+function updateToggleBtn() {
+    // If any card other than Today is hidden, show "Show All"; else "Focus Mode"
+    const anyHidden = hiddenCards.next || hiddenCards.someday || hiddenCards.archive || hiddenCards.new;
+    toggleBtn.textContent = anyHidden ? 'Show All' : 'Focus Mode';
+}
+
+toggleBtn.addEventListener('click', function() {
+    // Toggle hidden state
+    const anyHidden = hiddenCards.next || hiddenCards.someday || hiddenCards.archive || hiddenCards.new;
+    
+    if(anyHidden){
+        // Show all cards
+        hiddenCards = { next: false, someday: false, archive: false, new: false };
+    } else {
+        // Hide all except Today
+        hiddenCards = { next: true, someday: true, archive: true, new: true };
+    }
+
+    renderTasks();
+    updateToggleBtn();
 });
+
+// Set initial button label on page load
+updateToggleBtn();
 
 // --- INDIVIDUAL HIDE ---
 function toggleHideCard(card){ hiddenCards[card]=!hiddenCards[card]; renderTasks(); }
@@ -280,13 +295,14 @@ tb.append(todayBtn, nextBtn, somedayBtn, highlightBtn, editBtn, delBtn);
   // --- Render all cards ---
   ['today','next','someday','archive'].forEach(card=>{
     const c=document.getElementById(card+'-card'); const container=document.getElementById(card+'-tasks'); container.innerHTML='';
-    if(card!=='today'){ c.style.display=(hiddenCards[card]||!document.getElementById('toggle-cards').checked)?'none':'flex'; }
+    if(card!=='today'){ c.style.display = hiddenCards[card] ? 'none' : 'flex'; 
+}
     tasks[card].forEach((t,i)=>container.appendChild(createTaskDiv(t,card,i)));
   });
 
   // --- New Card ---
   const nc=document.getElementById('new-card'); const ncTasks=document.getElementById('new-card-tasks'); ncTasks.innerHTML='';
-  nc.style.display=(hiddenCards.new||!document.getElementById('toggle-cards').checked)?'none':'flex';
+  nc.style.display = hiddenCards.new ? 'none' : 'flex';
   const cardData=newCards[currentAdhoc]; 
   document.getElementById('new-card-title').value=cardData.title;
   cardData.tasks.forEach((t,i)=>ncTasks.appendChild(createTaskDiv(t,'new',i,true)));
