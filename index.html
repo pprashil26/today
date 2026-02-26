@@ -173,14 +173,15 @@ input:checked + .slider:before { transform: translateX(20px); }
   <button class="new-card-index" title="Current card index">Card 1/1</button>
 </div>
 
-<!-- 2048 Game Card - Fits Today Tool Styling -->
+<!-- 2048 Game Card - Responsive for Today Tool -->
 <div class="card" style="max-width:520px; margin:20px auto; padding:20px; border-radius:12px; background:#fff; box-shadow:0 4px 8px rgba(0,0,0,0.1); text-align:center;">
   <h2 style="margin-bottom:15px; color:#333; font-size:1.5rem;">Play 2048!</h2>
-  <iframe src="https://play2048.co/" 
-          width="100%" 
-          height="600" 
-          style="border:2px solid #333; border-radius:8px;">
-  </iframe>
+  <div style="position:relative; width:100%; padding-top:120%; /* 16:9 aspect ratio approximation */">
+    <iframe src="https://gabrielecirulli.github.io/2048/" 
+            style="position:absolute; top:0; left:0; width:100%; height:100%; border:2px solid #333; border-radius:8px;"
+            allowfullscreen>
+    </iframe>
+  </div>
 </div>
 
 <!-- Help Overlay -->
