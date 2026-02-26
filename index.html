@@ -146,6 +146,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   <h2>
     <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
     <button id="toggle-cards-btn">focus mode</button>
+	<button id="today-sort-btn" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:0.75rem; color:#333;">Sort A→Z</button>
     <button id="help-btn" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:0.9rem; color:#333;">How To</button>
   </h2>
   <div class="task-list" id="today-tasks"></div>
@@ -248,6 +249,9 @@ function saveNewCards(){ localStorage.setItem(newCardsKey,JSON.stringify(newCard
 
 let hiddenCards={next:false,someday:false,archive:false,new:false};
 
+// --- TODAY TEMP SORT STATE ---
+let todaySortActive = false;
+
 const somedayReviewKey = 'somedayLastReviewed';
 
 // --- MASTER TOGGLE ---
@@ -264,6 +268,14 @@ toggleBtn.addEventListener('click', function() {
     updateToggleBtn();
 });
 updateToggleBtn();
+
+// --- TODAY SORT TOGGLE ---
+const todaySortBtn = document.getElementById('today-sort-btn');
+todaySortBtn.addEventListener('click', function(){
+    todaySortActive = !todaySortActive;
+    todaySortBtn.textContent = todaySortActive ? 'Unsort' : 'Sort A→Z';
+    renderTasks();
+});
 
 // --- INDIVIDUAL HIDE ---
 function toggleHideCard(card){ hiddenCards[card]=!hiddenCards[card]; renderTasks(); }
@@ -414,7 +426,19 @@ function renderTasks(){
   ['today','next','someday','archive'].forEach(card=>{
     const c=document.getElementById(card+'-card'); const container=document.getElementById(card+'-tasks'); container.innerHTML='';
     if(card!=='today'){ c.style.display = hiddenCards[card] ? 'none' : 'flex'; }
-    tasks[card].forEach((t,i)=>container.appendChild(createTaskDiv(t,card,i)));
+    if(card === 'today' && todaySortActive){
+  const sorted = tasks.today
+    .map((t,i)=>({task:t, originalIndex:i}))
+    .sort((a,b)=>a.task.text.localeCompare(b.task.text));
+
+  sorted.forEach(item=>{
+    container.appendChild(createTaskDiv(item.task,card,item.originalIndex));
+  });
+} else {
+  tasks[card].forEach((t,i)=>{
+    container.appendChild(createTaskDiv(t,card,i));
+  });
+}
   });
   
   // --- TODAY TASK SUMMARY ---
