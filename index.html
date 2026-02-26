@@ -378,7 +378,7 @@ const todayTasks = tasks.today;
 const pending = todayTasks.filter(t => t.status === '').length;
 const inProgress = todayTasks.filter(t => t.status === 'inprogress').length;
 const completed = todayTasks.filter(t => t.status === 'completed').length;
-todaySummaryDiv.textContent = `✓ ${completed}   → ${inProgress}   • ${pending}`;
+todaySummaryDiv.textContent = `• ${pending}   → ${inProgress}   ✓ ${completed}`;
 
   const nc=document.getElementById('new-card'); const ncTasks=document.getElementById('new-card-tasks'); ncTasks.innerHTML='';
   nc.style.display = hiddenCards.new ? 'none' : 'flex';
