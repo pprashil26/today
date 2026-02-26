@@ -375,9 +375,9 @@ function renderTasks(){
   // --- TODAY TASK SUMMARY ---
 const todaySummaryDiv = document.getElementById('today-summary');
 const todayTasks = tasks.today;
-const completed = todayTasks.filter(t => t.status === 'completed').length;
-const inProgress = todayTasks.filter(t => t.status === 'inprogress').length;
 const pending = todayTasks.filter(t => t.status === '').length;
+const inProgress = todayTasks.filter(t => t.status === 'inprogress').length;
+const completed = todayTasks.filter(t => t.status === 'completed').length;
 todaySummaryDiv.textContent = `✓ ${completed}   → ${inProgress}   • ${pending}`;
 
   const nc=document.getElementById('new-card'); const ncTasks=document.getElementById('new-card-tasks'); ncTasks.innerHTML='';
