@@ -117,6 +117,7 @@ input:checked + .slider:before { transform: translateX(20px); }
     <button id="help-btn" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:0.9rem; color:#333;">How To</button>
   </h2>
   <div class="task-list" id="today-tasks"></div>
+  <div id="today-summary" style="margin-top:6px; font-size:0.85rem; color:#555;"></div>
   <div class="add-task">
     <input type="text" placeholder="New task..." id="today-input">
     <button onclick="addTask('today')">Add</button>
@@ -370,6 +371,14 @@ function renderTasks(){
     if(card!=='today'){ c.style.display = hiddenCards[card] ? 'none' : 'flex'; }
     tasks[card].forEach((t,i)=>container.appendChild(createTaskDiv(t,card,i)));
   });
+  
+  // --- TODAY TASK SUMMARY ---
+const todaySummaryDiv = document.getElementById('today-summary');
+const todayTasks = tasks.today;
+const completed = todayTasks.filter(t => t.status === 'completed').length;
+const inProgress = todayTasks.filter(t => t.status === 'inprogress').length;
+const pending = todayTasks.filter(t => t.status === '').length;
+todaySummaryDiv.textContent = `✓ ${completed}   → ${inProgress}   • ${pending}`;
 
   const nc=document.getElementById('new-card'); const ncTasks=document.getElementById('new-card-tasks'); ncTasks.innerHTML='';
   nc.style.display = hiddenCards.new ? 'none' : 'flex';
