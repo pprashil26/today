@@ -105,6 +105,38 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 .circle.completed { background: #34c759; border: none; color: white; }
 .task-text.completed { opacity: 0.65; text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: #c7c7cc; transition: all 0.25s ease; }
+
+/* Make Someday card flex column and full height */
+.card.someday {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollable task list */
+.card.someday .task-list.scrollable {
+  flex: 1;           /* fills available space */
+  overflow-y: auto;  /* allows vertical scrolling */
+  padding-right: 4px; /* optional, matches your other task-lists */
+}
+
+/* Footer at bottom */
+.someday-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 8px; /* spacing above footer */
+}
+
+.someday-footer button {
+  font-size: 0.75rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #999;
+}
 </style>
 </head>
 <body>
@@ -133,8 +165,6 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <!-- Someday Card -->
-
-<!-- Someday Card -->
 <div class="card someday" id="someday-card">
   <h2>
     <span><span class="first">S</span><span class="rest">omeday</span></span>
@@ -143,13 +173,14 @@ input:checked + .slider:before { transform: translateX(20px); }
     </span>
   </h2>
 
-  <!-- Last Reviewed Field -->
-  <div style="margin-bottom:6px; font-size:0.85rem; color:#555; display:flex; align-items:center; gap:4px;">
-    <span id="someday-timestamp">Last reviewed: —</span>
-    <button id="someday-timestamp-btn" style="font-size:0.9rem; border:none; background:none; cursor:pointer;">⏰</button>
-  </div>
+  <!-- Scrollable task list -->
+  <div class="task-list scrollable" id="someday-tasks"></div>
 
-  <div class="task-list" id="someday-tasks"></div>
+  <!-- Last Reviewed Field (pinned at bottom) -->
+  <div class="someday-footer">
+    <span id="someday-timestamp">Last reviewed: —</span>
+    <button id="someday-timestamp-btn">⏰</button>
+  </div>
 </div>
 
 <!-- Archive Card -->
@@ -216,6 +247,8 @@ let currentAdhoc=0;
 function saveNewCards(){ localStorage.setItem(newCardsKey,JSON.stringify(newCards)); }
 
 let hiddenCards={next:false,someday:false,archive:false,new:false};
+
+const somedayReviewKey = 'somedayLastReviewed';
 
 // --- MASTER TOGGLE ---
 const toggleBtn = document.getElementById('toggle-cards-btn');
@@ -416,12 +449,22 @@ function prevNewCard(){ currentAdhoc=(currentAdhoc-1+newCards.length)%newCards.l
 const somedayTimestampBtn = document.getElementById('someday-timestamp-btn');
 const somedayTimestampSpan = document.getElementById('someday-timestamp');
 
+// Load saved timestamp if exists
+const savedReview = localStorage.getItem(somedayReviewKey);
+if (savedReview) {
+  somedayTimestampSpan.textContent = savedReview;
+}
+
 somedayTimestampBtn.addEventListener('click', () => {
   const d = new Date();
   const day = String(d.getDate()).padStart(2,'0');
   const month = String(d.getMonth()+1).padStart(2,'0');
   const hour = String(d.getHours()).padStart(2,'0');
-  somedayTimestampSpan.textContent = `Last reviewed: ${day}.${month} ${hour}:00`;
+
+  const text = `Last reviewed: ${day}.${month} ${hour}:00`;
+  somedayTimestampSpan.textContent = text;
+
+  localStorage.setItem(somedayReviewKey, text);
 });
 
 renderTasks();
