@@ -133,10 +133,22 @@ input:checked + .slider:before { transform: translateX(20px); }
 </div>
 
 <!-- Someday Card -->
+
+<!-- Someday Card -->
 <div class="card someday" id="someday-card">
-  <h2><span><span class="first">S</span><span class="rest">omeday</span></span>
-    <span class="archive-tools"><button onclick="toggleHideCard('someday')">hide</button></span>
+  <h2>
+    <span><span class="first">S</span><span class="rest">omeday</span></span>
+    <span class="archive-tools">
+      <button onclick="toggleHideCard('someday')">hide</button>
+    </span>
   </h2>
+
+  <!-- Last Reviewed Field -->
+  <div style="margin-bottom:6px; font-size:0.85rem; color:#555; display:flex; align-items:center; gap:4px;">
+    <span id="someday-timestamp">Last reviewed: —</span>
+    <button id="someday-timestamp-btn" style="font-size:0.9rem; border:none; background:none; cursor:pointer;">⏰</button>
+  </div>
+
   <div class="task-list" id="someday-tasks"></div>
 </div>
 
@@ -399,6 +411,18 @@ function cycleHighlight(card,i){ let t=card==='new'?newCards[currentAdhoc].tasks
 function createNewCard(){ newCards.push({title:'New Card',tasks:[]}); currentAdhoc=newCards.length-1; saveNewCards(); renderTasks(); }
 function nextNewCard(){ currentAdhoc=(currentAdhoc+1)%newCards.length; renderTasks(); }
 function prevNewCard(){ currentAdhoc=(currentAdhoc-1+newCards.length)%newCards.length; renderTasks(); }
+
+// --- Someday Timestamp Button ---
+const somedayTimestampBtn = document.getElementById('someday-timestamp-btn');
+const somedayTimestampSpan = document.getElementById('someday-timestamp');
+
+somedayTimestampBtn.addEventListener('click', () => {
+  const d = new Date();
+  const day = String(d.getDate()).padStart(2,'0');
+  const month = String(d.getMonth()+1).padStart(2,'0');
+  const hour = String(d.getHours()).padStart(2,'0');
+  somedayTimestampSpan.textContent = `Last reviewed: ${day}.${month} ${hour}:00`;
+});
 
 renderTasks();
 </script>
