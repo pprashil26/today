@@ -460,8 +460,9 @@ somedayTimestampBtn.addEventListener('click', () => {
   const day = String(d.getDate()).padStart(2,'0');
   const month = String(d.getMonth()+1).padStart(2,'0');
   const hour = String(d.getHours()).padStart(2,'0');
+  const minutes = String(d.getMinutes()).padStart(2,'0');
 
-  const text = `Last reviewed: ${day}.${month} ${hour}:00`;
+  const text = `Last reviewed: ${day}.${month} ${hour}:${minutes}`;
   somedayTimestampSpan.textContent = text;
 
   localStorage.setItem(somedayReviewKey, text);
