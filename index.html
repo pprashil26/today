@@ -232,6 +232,13 @@ function addTask(card){
 }
 document.getElementById('today-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('today'); });
 document.getElementById('new-card-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('new'); });
+// --- SAVE NEW CARD TITLE ---
+const newCardTitleInput = document.getElementById('new-card-title');
+
+newCardTitleInput.addEventListener('input', function() {
+  newCards[currentAdhoc].title = this.value.trim() || 'New Card';
+  saveNewCards();
+});
 
 // --- HELP BUTTON ---
 const helpBtn = document.getElementById('help-btn');
