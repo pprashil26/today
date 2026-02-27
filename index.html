@@ -267,12 +267,23 @@ input:checked + .slider:before { transform: translateX(20px); }
     <li>Toggle status → Click circle</li>
     <li>Hide/show cards → Toggle switch</li>
     <li><strong>New Cards → Manage multiple projects or categories</strong></li>
-    <li>Task Notes → 📝 button to add/view notes</li>
   </ul>
   <button id="close-help" style="margin-top:8px; padding:4px 8px; border:none; background:#333; color:#fff; border-radius:4px; cursor:pointer;">Close</button>
 </div>
 
 <script>
+// --- INITIAL NEW CARDS FIX ---
+const newCardsKey='newCards';
+let newCards=JSON.parse(localStorage.getItem(newCardsKey))||[{title:'New Card',tasks:[]}];
+let currentAdhoc=0;
+function saveNewCards(){ localStorage.setItem(newCardsKey,JSON.stringify(newCards)); }
+// Ensure at least one new card exists
+if(!newCards.length){
+    newCards=[{title:'New Card',tasks:[]}];
+    currentAdhoc=0;
+    saveNewCards();
+}
+
 // --- DATE ---
 function todayDate(){ const d=new Date(); return d.toLocaleDateString(undefined,{day:'numeric',month:'short'}); }
 document.getElementById('today-date').innerText=" "+todayDate();
@@ -281,11 +292,6 @@ document.getElementById('today-date').innerText=" "+todayDate();
 const storageKey='todayToolTasks';
 let tasks=JSON.parse(localStorage.getItem(storageKey))||{today:[],next:[],someday:[],archive:[]};
 function saveTasks(){ localStorage.setItem(storageKey,JSON.stringify(tasks)); }
-
-const newCardsKey='newCards';
-let newCards=JSON.parse(localStorage.getItem(newCardsKey))||[{title:'New Card',tasks:[]}];
-let currentAdhoc=0;
-function saveNewCards(){ localStorage.setItem(newCardsKey,JSON.stringify(newCards)); }
 
 let hiddenCards={next:false,someday:false,archive:false,new:false};
 
@@ -309,82 +315,85 @@ toggleBtn.addEventListener('click', function() {
 });
 updateToggleBtn();
 
-// --- TODAY SORT TOGGLE ---
-const todaySortBtn = document.getElementById('today-sort-btn');
-todaySortBtn.addEventListener('click', function(){
-    todaySortActive = !todaySortActive;
-    todaySortBtn.textContent = todaySortActive ? 'Unsort' : 'Sort A→Z';
-    renderTasks();
-});
-
-// --- INDIVIDUAL HIDE ---
-function toggleHideCard(card){ hiddenCards[card]=!hiddenCards[card]; renderTasks(); }
+// --- HELP OVERLAY ---
+document.getElementById('help-btn').addEventListener('click',()=>{document.getElementById('help-overlay').style.display='block';});
+document.getElementById('close-help').addEventListener('click',()=>{document.getElementById('help-overlay').style.display='none';});
 
 // --- ADD TASK ---
 function addTask(card){ 
   let input,text;
-  if(card==='today'){ input=document.getElementById('today-input'); text=input.value.trim(); if(!text) return; tasks.today.push({text,status:'',highlighted:false,red:false}); input.value=''; saveTasks(); renderTasks(); }
-  else if(card==='new'){ input=document.getElementById('new-card-input'); text=input.value.trim(); if(!text) return; newCards[currentAdhoc].tasks.push({text,status:'',highlighted:false,red:false}); input.value=''; saveNewCards(); renderTasks(); }
+  if(card==='today'){ 
+    input=document.getElementById('today-input'); 
+    text=input.value.trim(); 
+    if(!text) return; 
+    tasks.today.push({text,status:'',highlighted:false,red:false}); 
+    input.value=''; 
+    saveTasks(); 
+    renderTasks(); 
+  }
+  else if(card==='new'){ 
+    input=document.getElementById('new-card-input'); 
+    text=input.value.trim(); 
+    if(!text) return; 
+    newCards[currentAdhoc].tasks.push({text,status:'',highlighted:false,red:false}); 
+    input.value=''; 
+    saveNewCards(); 
+    renderTasks(); 
+  }
 }
-document.getElementById('today-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('today'); });
-document.getElementById('new-card-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('new'); });
 
-// --- SAVE NEW CARD TITLE ---
-const newCardTitleInput = document.getElementById('new-card-title');
-newCardTitleInput.addEventListener('input', function() {
-  newCards[currentAdhoc].title = this.value.trim() || 'New Card';
-  saveNewCards();
+// ENTER KEY ADD
+document.getElementById('today-input').addEventListener('keypress',e=>{if(e.key==='Enter') addTask('today');});
+document.getElementById('new-card-input').addEventListener('keypress',e=>{if(e.key==='Enter') addTask('new');});
+
+// --- RENDER TASKS FUNCTION ---
+function renderTasks(){ 
+  // TODAY
+  const todayDiv=document.getElementById('today-tasks'); todayDiv.innerHTML='';
+  tasks.today.forEach((t,i)=>{
+    const div=document.createElement('div'); div.className='task';
+    const top=document.createElement('div'); top.className='task-top';
+    const circle=document.createElement('div'); circle.className='circle'+(t.status==='done'?' completed':''); circle.addEventListener('click',()=>{t.status=t.status==='done'?'':'done';saveTasks();renderTasks();});
+    circle.innerHTML = t.status==='done'?'✓':'';
+    const text=document.createElement('div'); text.className='task-text'+(t.status==='done'?' completed':''); text.innerText=t.text;
+    top.appendChild(circle); top.appendChild(text);
+    div.appendChild(top); todayDiv.appendChild(div);
+  });
+  // NEW CARD
+  const ncDiv=document.getElementById('new-card-tasks'); ncDiv.innerHTML='';
+  const card=newCards[currentAdhoc];
+  if(card && card.tasks){
+    card.tasks.forEach((t,i)=>{
+      const div=document.createElement('div'); div.className='task';
+      const top=document.createElement('div'); top.className='task-top';
+      const circle=document.createElement('div'); circle.className='circle'+(t.status==='done'?' completed':''); circle.addEventListener('click',()=>{t.status=t.status==='done'?'':'done';saveNewCards();renderTasks();});
+      circle.innerHTML = t.status==='done'?'✓':'';
+      const text=document.createElement('div'); text.className='task-text'+(t.status==='done'?' completed':''); text.innerText=t.text;
+      top.appendChild(circle); top.appendChild(text);
+      div.appendChild(top); ncDiv.appendChild(div);
+    });
+    document.getElementById('new-card-title').value=card.title;
+    document.querySelector('.new-card-index').innerText=`Card ${currentAdhoc+1}/${newCards.length}`;
+  }
+}
+renderTasks();
+
+// --- NEW CARD NAV ---
+function createNewCard(){ newCards.push({title:'New Card',tasks:[]}); currentAdhoc=newCards.length-1; saveNewCards(); renderTasks();}
+function prevNewCard(){ if(currentAdhoc>0){currentAdhoc--; saveNewCards(); renderTasks(); } }
+function nextNewCard(){ if(currentAdhoc<newCards.length-1){currentAdhoc++; saveNewCards(); renderTasks(); } }
+document.getElementById('new-card-title').addEventListener('change', e=>{ newCards[currentAdhoc].title=e.target.value; saveNewCards(); renderTasks(); });
+
+// --- HIDE/SHOW CARDS ---
+function toggleHideCard(c){ hiddenCards[c]=!hiddenCards[c]; renderTasks(); }
+
+// --- SORT TODAY A→Z ---
+document.getElementById('today-sort-btn').addEventListener('click',()=>{
+  todaySortActive=!todaySortActive;
+  if(todaySortActive) tasks.today.sort((a,b)=>a.text.localeCompare(b.text));
+  renderTasks();
 });
 
-// --- HELP BUTTON ---
-const helpBtn = document.getElementById('help-btn');
-const helpOverlay = document.getElementById('help-overlay');
-const closeHelp = document.getElementById('close-help');
-helpBtn.addEventListener('click', ()=>{ helpOverlay.style.display='block'; });
-closeHelp.addEventListener('click', ()=>{ helpOverlay.style.display='none'; });
-
-// --- EXPORT / IMPORT ---
-function exportTasksTxt(){ const blob=new Blob([JSON.stringify(tasks)],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='todayToolTasks.txt'; a.click(); }
-function exportReadableTxt(){ let text=''; for(let c in tasks){ text += `--- ${c.toUpperCase()} ---\n`; tasks[c].forEach((t,i)=>text += `${i+1}. [${t.status||' '}] ${t.text}\n`); text+='\n'; } const blob=new Blob([text],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='todayToolTasks_readable.txt'; a.click(); }
-function importTasksFile(){ const input=document.createElement('input'); input.type='file'; input.accept='.txt'; input.onchange=e=>{ const file=e.target.files[0]; const reader=new FileReader(); reader.onload=function(ev){ try{ const imported=JSON.parse(ev.target.result); if(imported.today && imported.next && imported.someday && imported.archive){ tasks=imported; saveTasks(); renderTasks(); alert('Tasks imported successfully!'); } else { alert('Invalid file format.'); } } catch(err){ alert('Failed to import: '+err.message); } }; reader.readAsText(file); }; input.click(); }
-
-// --- RENDER FUNCTION WITH INLINE @originTitle ---
-function renderTasks(){
-  // function to create task element with notes & originTitle
-  function createTaskDiv(taskObj, card, i, isNew=false){
-    const taskDiv=document.createElement('div'); taskDiv.className='task';
-    if(taskObj.highlighted) taskDiv.classList.add('highlighted');
-    if(taskObj.red) taskDiv.classList.add('red-highlighted');
-
-    const topRow=document.createElement('div'); topRow.className='task-top';
-    const left=document.createElement('div'); left.style.display='flex'; left.style.alignItems='center';
-
-    const circle=document.createElement('span'); circle.className='circle';
-    circle.textContent=taskObj.status==='completed'?'✓':taskObj.status==='inprogress'?'→':'•';
-    if(taskObj.status==='completed'){ circle.classList.add('completed'); }
-
-    const text=document.createElement('span'); text.className='task-text';
-    text.textContent=taskObj.text;
-    if(taskObj.status==='completed'){ text.classList.add('completed'); }
-
-    if(taskObj.originTitle){
-      const originSpan=document.createElement('span');
-      originSpan.textContent=' @'+taskObj.originTitle;
-      originSpan.style.fontSize='0.75rem';
-      originSpan.style.opacity='0.6';
-      originSpan.style.marginLeft='6px';
-      text.appendChild(originSpan);
-    }
-
-    left.append(circle,text);
-    topRow.appendChild(left);
-
-    taskDiv.appendChild(topRow);
-    return taskDiv;
-  }
-
-  // Render all cards...
-}
 </script>
 
 </body>
