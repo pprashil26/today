@@ -422,6 +422,16 @@ function renderTasks(){
     };
 
     left.append(circle,text);
+	// Show subtle origin reference
+if(taskObj.originTitle){
+  const origin = document.createElement('div');
+  origin.textContent = '@ ' + taskObj.originTitle;
+  origin.style.fontSize = '11px';
+  origin.style.opacity = '0.6';
+  origin.style.marginLeft = '24px';
+  origin.style.marginTop = '2px';
+  taskDiv.appendChild(origin);
+}
     topRow.append(left);
 
     const chevron = document.createElement('span');
@@ -535,7 +545,27 @@ todaySummaryDiv.textContent = `• ${pending}   → ${inProgress}   ✓ ${comple
 // --- TASK ACTIONS ---
 function toggleStatus(card,i){ const t=tasks[card][i]; t.status=t.status==='completed'?'':t.status==='inprogress'?'completed':'inprogress'; saveTasks(); renderTasks(); }
 function toggleStatusNew(i){ const t=newCards[currentAdhoc].tasks[i]; t.status=t.status==='completed'?'':t.status==='inprogress'?'completed':'inprogress'; saveNewCards(); renderTasks(); }
-function moveTask(from,to,i){ let item; if(from==='new'){ item=newCards[currentAdhoc].tasks.splice(i,1)[0]; if(to==='today'||to==='next'||to==='someday') tasks[to].push(item); else if(to==='archive') tasks.archive.push(item); saveTasks(); saveNewCards(); } else{ item=tasks[from].splice(i,1)[0]; tasks[to].push(item); saveTasks(); } renderTasks(); }
+function moveTask(from,to,i){ 
+  let item; 
+  if(from==='new'){ 
+    item=newCards[currentAdhoc].tasks.splice(i,1)[0];
+
+    // Attach origin title once
+    if(!item.originTitle){
+      item.originTitle = newCards[currentAdhoc].title;
+    }
+
+    if(to==='today'||to==='next'||to==='someday') tasks[to].push(item); 
+    else if(to==='archive') tasks.archive.push(item); 
+    saveTasks(); 
+    saveNewCards(); 
+  } else{ 
+    item=tasks[from].splice(i,1)[0]; 
+    tasks[to].push(item); 
+    saveTasks(); 
+  } 
+  renderTasks(); 
+}
 function deleteTask(card,i){ tasks[card].splice(i,1); saveTasks(); renderTasks(); }
 function cycleHighlight(card,i){ let t=card==='new'?newCards[currentAdhoc].tasks[i]:tasks[card][i]; if(!t.highlighted&&!t.red){ t.highlighted=true;t.red=false; } else if(t.highlighted&&!t.red){ t.highlighted=false;t.red=true; } else { t.highlighted=false;t.red=false; } if(card==='new'){saveNewCards();} else{saveTasks();} renderTasks(); }
 
