@@ -157,6 +157,19 @@ input:checked + .slider:before { transform: translateX(20px); }
   margin-left: 4px;
 }
 
+.task-notes { 
+  font-size: 0.8rem; 
+  color: #555; 
+  margin-left: 24px; 
+  margin-top: 2px; 
+  white-space: pre-wrap; 
+}
+.task-notes a { 
+  color: #007bff; 
+  cursor: pointer; 
+  text-decoration: underline; 
+}
+
 </style>
 </head>
 <body>
@@ -433,7 +446,19 @@ function renderTasks(){
           renderTasks(); 
         } 
       };
-      tb.append(todayBtn,nextBtn,somedayBtn,highlightBtn,editBtn,delBtn);
+	  const notesBtn = document.createElement('button');
+notesBtn.textContent = '📝';
+notesBtn.onclick = function(e){
+    e.stopPropagation(); // prevent toolbar toggle
+    const currentNote = taskObj.notes || '';
+    let newNote = prompt('Enter notes for this task:', currentNote);
+    if(newNote !== null){
+        taskObj.notes = newNote.trim();
+        if(card==='new'){ saveNewCards(); } else { saveTasks(); }
+        renderTasks();
+    }
+};
+      tb.append(todayBtn,nextBtn,somedayBtn,highlightBtn,editBtn,notesBtn,delBtn);
     } else {
       ['today','next','someday'].forEach(dest=>{
         const b=document.createElement('button'); b.textContent=dest[0].toUpperCase(); b.onclick=function(){ moveTask('archive',dest,i); };
@@ -446,6 +471,30 @@ function renderTasks(){
 
     topRow.onclick = function(){ tb.style.display = tb.style.display==='flex'?'none':'flex'; chevron.style.transform = tb.style.display==='flex'?'rotate(90deg)':'rotate(0deg)'; };
     taskDiv.append(topRow, tb);
+	if(taskObj.notes && taskObj.notes.trim() !== ''){
+    const notesDiv = document.createElement('div');
+    notesDiv.className = 'task-notes';
+    const maxLength = 60;
+    if(taskObj.notes.length > maxLength){
+        const preview = taskObj.notes.slice(0,maxLength) + '... ';
+        const viewFull = document.createElement('a');
+        viewFull.textContent = '(view full)';
+        viewFull.onclick = function(e){
+            e.stopPropagation();
+            const fullNote = prompt('Full note:', taskObj.notes);
+            if(fullNote !== null){
+                taskObj.notes = fullNote.trim();
+                if(card==='new'){ saveNewCards(); } else { saveTasks(); }
+                renderTasks();
+            }
+        };
+        notesDiv.textContent = preview;
+        notesDiv.appendChild(viewFull);
+    } else {
+        notesDiv.textContent = taskObj.notes;
+    }
+    taskDiv.appendChild(notesDiv);
+}
     return taskDiv;
   }
 
