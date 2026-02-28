@@ -97,9 +97,9 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* Scrollable task list */
 .card.someday .task-list.scrollable {
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 4px;
+  flex: 1;           /* fills available space */
+  overflow-y: auto;  /* allows vertical scrolling */
+  padding-right: 4px; /* optional, matches your other task-lists */
 }
 
 /* Footer at bottom */
@@ -110,7 +110,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   gap: 4px;
   font-size: 0.75rem;
   color: #999;
-  margin-top: 8px;
+  margin-top: 8px; /* spacing above footer */
 }
 
 .someday-footer button {
@@ -125,13 +125,13 @@ input:checked + .slider:before { transform: translateX(20px); }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
+  gap: 6px; /* spacing between elements */
 }
 
 .card.today h2 span:first-child {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 4px; /* spacing between "T" and "oday" and date */
 }
 
 #today-date {
@@ -153,24 +153,99 @@ input:checked + .slider:before { transform: translateX(20px); }
   text-decoration: underline; 
 }
 
-/* MOBILE – FIXED SIZE CARDS */
+/* =========================
+   MOBILE – FIXED SIZE CARDS
+   ========================= */
 @media (max-width: 600px) {
-  #toggle-cards-btn { font-size: 0.65rem; }
-  body { padding: 14px; gap: 18px; flex-direction: column; align-items: center; background: #f2f2f7; }
-  .card { width: 100%; max-width: 420px; height: 480px; border-radius: 18px; display: flex; flex-direction: column; }
-  .card h2 { flex-shrink: 0; }
-  .task-list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
-  #today-summary, .add-task { flex-shrink: 0; }
-  .task { padding: 10px 6px; }
-  .circle { width: 22px; height: 22px; font-size: 14px; }
-  .task-text { font-size: 1rem; }
-  .task-toolbar button { font-size: 0.95rem; padding: 6px 4px; }
-  .add-task input { padding: 10px 12px; font-size: 1rem; border-radius: 10px; }
-  .add-task button { padding: 10px 14px; border-radius: 10px; font-size: 0.95rem; }
-  .archive-tools { flex-wrap: wrap; gap: 8px; }
-  #new-card h2 { flex-wrap: wrap; gap: 8px; }
-  #new-card-title { width: 100%; }
-  #help-overlay { width: 92vw; max-width: 92vw; border-radius: 16px; }
+
+  /* Toggle button size */
+  #toggle-cards-btn {
+    font-size: 0.65rem;
+  }
+
+  body {
+    padding: 14px;
+    gap: 18px;
+    flex-direction: column;
+    align-items: center;
+    background: #f2f2f7;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 420px;
+    height: 480px;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card h2 {
+    flex-shrink: 0;
+  }
+
+  .task-list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  #today-summary,
+  .add-task {
+    flex-shrink: 0;
+  }
+
+  .task {
+    padding: 10px 6px;
+  }
+
+  .circle {
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+  }
+
+  .task-text {
+    font-size: 1rem;
+  }
+
+  .task-toolbar button {
+    font-size: 0.95rem;
+    padding: 6px 4px;
+  }
+
+  .add-task input {
+    padding: 10px 12px;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  .add-task button {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+  }
+
+  .archive-tools {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  #new-card h2 {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  #new-card-title {
+    width: 100%;
+  }
+
+  #help-overlay {
+    width: 92vw;
+    max-width: 92vw;
+    border-radius: 16px;
+  }
 }
 
 /* --- Floating Help Button --- */
@@ -193,12 +268,22 @@ input:checked + .slider:before { transform: translateX(20px); }
   z-index: 9999;
   transition: transform 0.2s, box-shadow 0.2s;
 }
+
 #help-btn:hover {
   transform: scale(1.1);
   box-shadow: 0 6px 18px rgba(0,0,0,0.35);
 }
-#help-btn svg { width: 26px; height: 26px; fill: #fff; }
-#help-btn.pulse { animation: pulse 1.5s infinite; }
+
+#help-btn svg {
+  width: 26px;
+  height: 26px;
+  fill: #fff;
+}
+
+/* Optional: subtle pulse animation */
+#help-btn.pulse {
+  animation: pulse 1.5s infinite;
+}
 @keyframes pulse {
   0% { transform: scale(1); box-shadow: 0 0 0 rgba(0,123,255,0.7); }
   70% { transform: scale(1.1); box-shadow: 0 0 10px rgba(0,123,255,0); }
@@ -213,7 +298,13 @@ input:checked + .slider:before { transform: translateX(20px); }
   <h2>
     <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
     <button id="toggle-cards-btn">focus mode</button>
-    <button id="today-sort-btn" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:0.75rem; color:#333;">Sort A→Z</button>
+	<button id="today-sort-btn" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:0.75rem; color:#333;">Sort A→Z</button>
+    <button id="help-btn" title="Help">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+    <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 12.933A5.933 5.933 0 1 1 8 2.067a5.933 5.933 0 0 1 0 11.866z"/>
+    <path d="M5.255 5.786c.18-.72.738-1.2 1.745-1.2.694 0 1.113.324 1.113.84 0 .476-.302.736-.736 1.032-.464.314-.605.544-.605 1.152v.25h1v-.22c0-.36.105-.605.554-.93.566-.387.935-.69.935-1.444 0-.873-.672-1.497-1.762-1.497-1.064 0-1.713.552-1.926 1.296l.998.247zM8 11h-.002v1h.004v-1z"/>
+  </svg>
+</button>
   </h2>
   <div class="task-list" id="today-tasks"></div>
   <div id="today-summary" style="margin-top:6px; font-size:0.85rem; color:#555;"></div>
@@ -239,7 +330,11 @@ input:checked + .slider:before { transform: translateX(20px); }
       <button onclick="toggleHideCard('someday')">hide</button>
     </span>
   </h2>
+
+  <!-- Scrollable task list -->
   <div class="task-list scrollable" id="someday-tasks"></div>
+
+  <!-- Last Reviewed Field (pinned at bottom) -->
   <div class="someday-footer">
     <span id="someday-timestamp">Last reviewed: —</span>
     <button id="someday-timestamp-btn">⏰</button>
@@ -294,36 +389,326 @@ input:checked + .slider:before { transform: translateX(20px); }
   <button id="close-help" style="margin-top:8px; padding:4px 8px; border:none; background:#333; color:#fff; border-radius:4px; cursor:pointer;">Close</button>
 </div>
 
-<!-- ✅ Floating Help Button (moved outside h2) -->
-<button id="help-btn" title="Help">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-    <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 12.933A5.933 5.933 0 1 1 8 2.067a5.933 5.933 0 0 1 0 11.866z"/>
-    <path d="M5.255 5.786c.18-.72.738-1.2 1.745-1.2.694 0 1.113.324 1.113.84 0 .476-.302.736-.736 1.032-.464.314-.605.544-.605 1.152v.25h1v-.22c0-.36.105-.605.554-.93.566-.387.935-.69.935-1.444 0-.873-.672-1.497-1.762-1.497-1.064 0-1.713.552-1.926 1.296l.998.247zM8 11h-.002v1h.004v-1z"/>
-  </svg>
-</button>
-
 <script>
 // --- DATE ---
 function todayDate(){ const d=new Date(); return d.toLocaleDateString(undefined,{day:'numeric',month:'short'}); }
-document.getElementById('today-date').textContent = todayDate();
+document.getElementById('today-date').innerText=" "+todayDate();
+
+// --- STORAGE ---
+const storageKey='todayToolTasks';
+let tasks=JSON.parse(localStorage.getItem(storageKey))||{today:[],next:[],someday:[],archive:[]};
+function saveTasks(){ localStorage.setItem(storageKey,JSON.stringify(tasks)); }
+
+const newCardsKey='newCards';
+let newCards=JSON.parse(localStorage.getItem(newCardsKey))||[{title:'New Card',tasks:[]}];
+let currentAdhoc=0;
+function saveNewCards(){ localStorage.setItem(newCardsKey,JSON.stringify(newCards)); }
+
+let hiddenCards={next:false,someday:false,archive:false,new:false};
+
+// --- TODAY TEMP SORT STATE ---
+let todaySortActive = false;
+
+const somedayReviewKey = 'somedayLastReviewed';
+
+// --- MASTER TOGGLE ---
+const toggleBtn = document.getElementById('toggle-cards-btn');
+function updateToggleBtn() {
+    const anyHidden = hiddenCards.next || hiddenCards.someday || hiddenCards.archive || hiddenCards.new;
+    toggleBtn.textContent = anyHidden ? 'Show All' : 'Focus Mode';
+}
+toggleBtn.addEventListener('click', function() {
+    const anyHidden = hiddenCards.next || hiddenCards.someday || hiddenCards.archive || hiddenCards.new;
+    if(anyHidden){ hiddenCards = { next:false,someday:false,archive:false,new:false }; }
+    else { hiddenCards = { next:true,someday:true,archive:true,new:true }; }
+    renderTasks();
+    updateToggleBtn();
+});
+updateToggleBtn();
+
+// --- TODAY SORT TOGGLE ---
+const todaySortBtn = document.getElementById('today-sort-btn');
+todaySortBtn.addEventListener('click', function(){
+    todaySortActive = !todaySortActive;
+    todaySortBtn.textContent = todaySortActive ? 'Unsort' : 'Sort A→Z';
+    renderTasks();
+});
+
+// --- INDIVIDUAL HIDE ---
+function toggleHideCard(card){ hiddenCards[card]=!hiddenCards[card]; renderTasks(); }
+
+// --- ADD TASK ---
+function addTask(card){ 
+  let input,text;
+  if(card==='today'){ input=document.getElementById('today-input'); text=input.value.trim(); if(!text) return; tasks.today.push({text,status:'',highlighted:false,red:false}); input.value=''; saveTasks(); renderTasks(); }
+  else if(card==='new'){ input=document.getElementById('new-card-input'); text=input.value.trim(); if(!text) return; newCards[currentAdhoc].tasks.push({text,status:'',highlighted:false,red:false}); input.value=''; saveNewCards(); renderTasks(); }
+}
+document.getElementById('today-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('today'); });
+document.getElementById('new-card-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('new'); });
+
+// --- SAVE NEW CARD TITLE ---
+const newCardTitleInput = document.getElementById('new-card-title');
+newCardTitleInput.addEventListener('input', function() {
+  newCards[currentAdhoc].title = this.value.trim() || 'New Card';
+  saveNewCards();
+});
 
 // --- Help button ---
 const helpBtn = document.getElementById('help-btn');
 const helpOverlay = document.getElementById('help-overlay');
 const closeHelp = document.getElementById('close-help');
-helpBtn.addEventListener('click', ()=>{ helpOverlay.style.display='block'; });
-closeHelp.addEventListener('click', ()=>{ helpOverlay.style.display='none'; });
 
-// --- Placeholder functions ---
-function addTask(card){ alert('Add task to '+card); }
-function toggleHideCard(card){ alert('Toggle hide '+card); }
-function prevNewCard(){ alert('Prev new card'); }
-function nextNewCard(){ alert('Next new card'); }
-function createNewCard(){ alert('Create new card'); }
-function exportTasksTxt(){ alert('Export TXT'); }
-function exportReadableTxt(){ alert('Export readable TXT'); }
-function importTasksFile(){ alert('Import tasks'); }
+helpBtn.addEventListener('click', () => {
+  helpOverlay.style.display = 'block';
+  helpOverlay.style.opacity = 0;
+  helpOverlay.style.transition = 'opacity 0.2s';
+  requestAnimationFrame(() => { helpOverlay.style.opacity = 1; });
+});
 
+// Close button inside overlay
+closeHelp.addEventListener('click', closeHelpOverlay);
+
+// Close on clicking outside overlay
+window.addEventListener('click', (e) => {
+  if(e.target === helpOverlay) closeHelpOverlay();
+});
+
+// Close on Escape key
+window.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') closeHelpOverlay();
+});
+
+function closeHelpOverlay() {
+  helpOverlay.style.opacity = 0;
+  setTimeout(() => { helpOverlay.style.display = 'none'; }, 200);
+}
+
+// --- EXPORT / IMPORT ---
+function exportTasksTxt(){
+  const blob = new Blob([JSON.stringify(tasks)], {type: 'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'todayToolTasks.txt';
+  a.click();
+}
+function exportReadableTxt(){
+  let text = '';
+  for(let c in tasks){
+    text += `--- ${c.toUpperCase()} ---\n`;
+    tasks[c].forEach((t,i)=>text += `${i+1}. [${t.status||' '}] ${t.text}\n`);
+    text+='\n';
+  }
+  const blob = new Blob([text], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'todayToolTasks_readable.txt';
+  a.click();
+}
+function importTasksFile(){
+  const input = document.createElement('input');
+  input.type='file';
+  input.accept='.txt';
+  input.onchange=e=>{
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      try{
+        const imported = JSON.parse(ev.target.result);
+        if(imported.today && imported.next && imported.someday && imported.archive){
+          tasks=imported;
+          saveTasks();
+          renderTasks();
+          alert('Tasks imported successfully!');
+        } else { alert('Invalid file format.'); }
+      } catch(err){ alert('Failed to import: '+err.message); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// --- RENDER ---
+function renderTasks(){
+  function createTaskDiv(taskObj, card, i, isNew=false){
+    const taskDiv = document.createElement('div');
+    taskDiv.className = 'task';
+    if(taskObj.highlighted) taskDiv.classList.add('highlighted');
+    if(taskObj.red) taskDiv.classList.add('red-highlighted');
+
+    const topRow = document.createElement('div');
+    topRow.className = 'task-top';
+
+    const left = document.createElement('div');
+    left.style.display = 'flex';
+    left.style.alignItems = 'center';
+
+    const circle = document.createElement('span');
+    circle.className = 'circle';
+    circle.textContent = taskObj.status === 'completed' ? '✓' : taskObj.status === 'inprogress' ? '→' : '•';
+    if(taskObj.status === 'completed'){
+      circle.classList.add('completed');
+    }
+
+    const text = document.createElement('span');
+    text.className = 'task-text';
+    text.textContent = taskObj.text;
+    if(taskObj.status === 'completed'){
+      text.classList.add('completed');
+    }
+
+    // ✅ Fix: Click circle to toggle status
+    circle.onclick = function(e){
+      e.stopPropagation(); // prevent toolbar toggle
+      if(isNew){ toggleStatusNew(i); } else { toggleStatus(card,i); }
+    };
+
+    left.append(circle,text);
+    topRow.append(left);
+
+    const chevron = document.createElement('span');
+    chevron.className = 'chevron';
+    chevron.textContent = '>';
+    topRow.appendChild(chevron);
+
+    const tb = document.createElement('div');
+    tb.className = 'task-toolbar';
+    
+    if(card !== 'archive'){
+      const todayBtn = document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick = function(){ moveTask(isNew?'new':card,'today',i); };
+      const nextBtn = document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick = function(){ moveTask(isNew?'new':card,'next',i); };
+      const somedayBtn = document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick = function(){ moveTask(isNew?'new':card,'someday',i); };
+      const delBtn = document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick = function(){ moveTask(isNew?'new':card,'archive',i); };
+      const highlightBtn = document.createElement('button'); highlightBtn.textContent='⭐'; highlightBtn.onclick = function(){ cycleHighlight(isNew?'new':card,i); };
+      const editBtn = document.createElement('button'); editBtn.textContent='✎'; editBtn.onclick = function(){ 
+        const newText = prompt('Edit task:', taskObj.text); 
+        if(newText && newText.trim() !== ''){ 
+          taskObj.text = newText.trim(); 
+          if(card==='new'){ saveNewCards(); } else { saveTasks(); } 
+          renderTasks(); 
+        } 
+      };
+	  const notesBtn = document.createElement('button');
+notesBtn.textContent = '📝';
+notesBtn.onclick = function(e){
+    e.stopPropagation(); // prevent toolbar toggle
+    const currentNote = taskObj.notes || '';
+    let newNote = prompt('Enter notes for this task:', currentNote);
+    if(newNote !== null){
+        taskObj.notes = newNote.trim();
+        if(card==='new'){ saveNewCards(); } else { saveTasks(); }
+        renderTasks();
+    }
+};
+      tb.append(todayBtn,nextBtn,somedayBtn,highlightBtn,editBtn,notesBtn,delBtn);
+    } else {
+      ['today','next','someday'].forEach(dest=>{
+        const b=document.createElement('button'); b.textContent=dest[0].toUpperCase(); b.onclick=function(){ moveTask('archive',dest,i); };
+        tb.appendChild(b);
+      });
+      const delBtn = document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick = function(){ deleteTask('archive',i); };
+      const highlightBtn = document.createElement('button'); highlightBtn.textContent='⭐'; highlightBtn.onclick=function(){ cycleHighlight('archive',i); };
+      tb.append(delBtn, highlightBtn);
+    }
+
+    topRow.onclick = function(){ tb.style.display = tb.style.display==='flex'?'none':'flex'; chevron.style.transform = tb.style.display==='flex'?'rotate(90deg)':'rotate(0deg)'; };
+    taskDiv.append(topRow, tb);
+	if(taskObj.notes && taskObj.notes.trim() !== ''){
+    const notesDiv = document.createElement('div');
+    notesDiv.className = 'task-notes';
+    const maxLength = 60;
+    if(taskObj.notes.length > maxLength){
+        const preview = taskObj.notes.slice(0,maxLength) + '... ';
+        const viewFull = document.createElement('a');
+        viewFull.textContent = '(view full)';
+        viewFull.onclick = function(e){
+            e.stopPropagation();
+            const fullNote = prompt('Full note:', taskObj.notes);
+            if(fullNote !== null){
+                taskObj.notes = fullNote.trim();
+                if(card==='new'){ saveNewCards(); } else { saveTasks(); }
+                renderTasks();
+            }
+        };
+        notesDiv.textContent = preview;
+        notesDiv.appendChild(viewFull);
+    } else {
+        notesDiv.textContent = taskObj.notes;
+    }
+    taskDiv.appendChild(notesDiv);
+}
+    return taskDiv;
+  }
+
+  ['today','next','someday','archive'].forEach(card=>{
+    const c=document.getElementById(card+'-card'); const container=document.getElementById(card+'-tasks'); container.innerHTML='';
+    if(card!=='today'){ c.style.display = hiddenCards[card] ? 'none' : 'flex'; }
+    if(card === 'today' && todaySortActive){
+  const sorted = tasks.today
+    .map((t,i)=>({task:t, originalIndex:i}))
+    .sort((a,b)=>a.task.text.localeCompare(b.task.text));
+
+  sorted.forEach(item=>{
+    container.appendChild(createTaskDiv(item.task,card,item.originalIndex));
+  });
+} else {
+  tasks[card].forEach((t,i)=>{
+    container.appendChild(createTaskDiv(t,card,i));
+  });
+}
+  });
+  
+  // --- TODAY TASK SUMMARY ---
+const todaySummaryDiv = document.getElementById('today-summary');
+const todayTasks = tasks.today;
+const pending = todayTasks.filter(t => t.status === '').length;
+const inProgress = todayTasks.filter(t => t.status === 'inprogress').length;
+const completed = todayTasks.filter(t => t.status === 'completed').length;
+todaySummaryDiv.textContent = `• ${pending}   → ${inProgress}   ✓ ${completed}`;
+
+  const nc=document.getElementById('new-card'); const ncTasks=document.getElementById('new-card-tasks'); ncTasks.innerHTML='';
+  nc.style.display = hiddenCards.new ? 'none' : 'flex';
+  const cardData=newCards[currentAdhoc]; 
+  document.getElementById('new-card-title').value=cardData.title;
+  cardData.tasks.forEach((t,i)=>ncTasks.appendChild(createTaskDiv(t,'new',i,true)));
+  document.querySelector('.new-card-index').textContent=`Card ${currentAdhoc+1}/${newCards.length}`;
+}
+
+// --- TASK ACTIONS ---
+function toggleStatus(card,i){ const t=tasks[card][i]; t.status=t.status==='completed'?'':t.status==='inprogress'?'completed':'inprogress'; saveTasks(); renderTasks(); }
+function toggleStatusNew(i){ const t=newCards[currentAdhoc].tasks[i]; t.status=t.status==='completed'?'':t.status==='inprogress'?'completed':'inprogress'; saveNewCards(); renderTasks(); }
+function moveTask(from,to,i){ let item; if(from==='new'){ item=newCards[currentAdhoc].tasks.splice(i,1)[0]; if(to==='today'||to==='next'||to==='someday') tasks[to].push(item); else if(to==='archive') tasks.archive.push(item); saveTasks(); saveNewCards(); } else{ item=tasks[from].splice(i,1)[0]; tasks[to].push(item); saveTasks(); } renderTasks(); }
+function deleteTask(card,i){ tasks[card].splice(i,1); saveTasks(); renderTasks(); }
+function cycleHighlight(card,i){ let t=card==='new'?newCards[currentAdhoc].tasks[i]:tasks[card][i]; if(!t.highlighted&&!t.red){ t.highlighted=true;t.red=false; } else if(t.highlighted&&!t.red){ t.highlighted=false;t.red=true; } else { t.highlighted=false;t.red=false; } if(card==='new'){saveNewCards();} else{saveTasks();} renderTasks(); }
+
+// --- NEW CARDS NAV ---
+function createNewCard(){ newCards.push({title:'New Card',tasks:[]}); currentAdhoc=newCards.length-1; saveNewCards(); renderTasks(); }
+function nextNewCard(){ currentAdhoc=(currentAdhoc+1)%newCards.length; renderTasks(); }
+function prevNewCard(){ currentAdhoc=(currentAdhoc-1+newCards.length)%newCards.length; renderTasks(); }
+
+// --- Someday Timestamp Button ---
+const somedayTimestampBtn = document.getElementById('someday-timestamp-btn');
+const somedayTimestampSpan = document.getElementById('someday-timestamp');
+
+// Load saved timestamp if exists
+const savedReview = localStorage.getItem(somedayReviewKey);
+if (savedReview) {
+  somedayTimestampSpan.textContent = savedReview;
+}
+
+somedayTimestampBtn.addEventListener('click', () => {
+  const d = new Date();
+  const day = String(d.getDate()).padStart(2,'0');
+  const month = String(d.getMonth()+1).padStart(2,'0');
+  const hour = String(d.getHours()).padStart(2,'0');
+  const minutes = String(d.getMinutes()).padStart(2,'0');
+
+  const text = `Last reviewed: ${day}.${month} ${hour}:${minutes}`;
+  somedayTimestampSpan.textContent = text;
+
+  localStorage.setItem(somedayReviewKey, text);
+});
+
+renderTasks();
 </script>
 </body>
-</html>
+</html>	
