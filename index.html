@@ -247,6 +247,48 @@ input:checked + .slider:before { transform: translateX(20px); }
     border-radius: 16px;
   }
 }
+
+/* --- Floating Help Button --- */
+#help-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: #007bff;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.6rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 9999;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#help-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+
+#help-btn svg {
+  width: 26px;
+  height: 26px;
+  fill: #fff;
+}
+
+/* Optional: subtle pulse animation */
+#help-btn.pulse {
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(0,123,255,0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 10px rgba(0,123,255,0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 rgba(0,123,255,0); }
+}
 </style>
 </head>
 <body>
@@ -257,9 +299,8 @@ input:checked + .slider:before { transform: translateX(20px); }
     <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
     <button id="toggle-cards-btn">focus mode</button>
 	<button id="today-sort-btn" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:0.75rem; color:#333;">Sort A→Z</button>
-    <button id="help-btn" title="Help" 
-    style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:1.2rem; color:#333; display:flex; align-items:center; justify-content:center; transition:0.2s;">
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+    <button id="help-btn" title="Help">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
     <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 12.933A5.933 5.933 0 1 1 8 2.067a5.933 5.933 0 0 1 0 11.866z"/>
     <path d="M5.255 5.786c.18-.72.738-1.2 1.745-1.2.694 0 1.113.324 1.113.84 0 .476-.302.736-.736 1.032-.464.314-.605.544-.605 1.152v.25h1v-.22c0-.36.105-.605.554-.93.566-.387.935-.69.935-1.444 0-.873-.672-1.497-1.762-1.497-1.064 0-1.713.552-1.926 1.296l.998.247zM8 11h-.002v1h.004v-1z"/>
   </svg>
