@@ -44,11 +44,6 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   padding: 0;
 }
 
-@media (max-width: 600px) {
-  #toggle-cards-btn {
-    font-size: 0.65rem;
-  }
-}
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
@@ -90,18 +85,6 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 .highlighted { background-color: #fff79a; color: #000; }
 .red-highlighted { background-color: #FF746C; color: #000; }
-
-@media (max-width: 600px) {
-  body { padding: 12px; gap: 16px; }
-  .card { width: 100%; max-width: 100%; }
-  .task-toolbar button { padding: 4px 6px; font-size: 0.85rem; }
-  .add-task input { padding: 8px 10px; font-size: 1rem; }
-  .add-task button { padding: 8px 12px; }
-  .archive-tools { flex-wrap: wrap; gap: 6px; }
-  #new-card h2 { flex-wrap: wrap; gap: 6px; }
-  #new-card-title { width: 100%; }
-  #help-overlay { width: 90vw; max-width: 90vw; }
-}
 
 .circle.completed { background: #34c759; border: none; color: white; }
 .task-text.completed { opacity: 0.65; text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: #c7c7cc; transition: all 0.25s ease; }
@@ -170,6 +153,100 @@ input:checked + .slider:before { transform: translateX(20px); }
   text-decoration: underline; 
 }
 
+/* =========================
+   MOBILE – FIXED SIZE CARDS
+   ========================= */
+@media (max-width: 600px) {
+
+  /* Toggle button size */
+  #toggle-cards-btn {
+    font-size: 0.65rem;
+  }
+
+  body {
+    padding: 14px;
+    gap: 18px;
+    flex-direction: column;
+    align-items: center;
+    background: #f2f2f7;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 420px;
+    height: 480px;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card h2 {
+    flex-shrink: 0;
+  }
+
+  .task-list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  #today-summary,
+  .add-task {
+    flex-shrink: 0;
+  }
+
+  .task {
+    padding: 10px 6px;
+  }
+
+  .circle {
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+  }
+
+  .task-text {
+    font-size: 1rem;
+  }
+
+  .task-toolbar button {
+    font-size: 0.95rem;
+    padding: 6px 4px;
+  }
+
+  .add-task input {
+    padding: 10px 12px;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  .add-task button {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+  }
+
+  .archive-tools {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  #new-card h2 {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  #new-card-title {
+    width: 100%;
+  }
+
+  #help-overlay {
+    width: 92vw;
+    max-width: 92vw;
+    border-radius: 16px;
+  }
+}
 </style>
 </head>
 <body>
@@ -570,4 +647,4 @@ somedayTimestampBtn.addEventListener('click', () => {
 renderTasks();
 </script>
 </body>
-</html>
+</html>	
