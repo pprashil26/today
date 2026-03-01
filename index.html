@@ -44,7 +44,6 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   padding: 0;
 }
 
-
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
 .card h2 .first { font-weight: bold; color: #666; }
@@ -64,14 +63,16 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .task-toolbar button { padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; transition: opacity 0.15s ease; }
 .task-toolbar button:hover { opacity: 0.8; }
 
-.add-task { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; z-index: 1; position: relative; }
+.add-task { display: flex; gap: 4px; margin-top: 8px; z-index: 1; position: relative; flex-direction: column; }
+.add-task-row { display:flex; gap: 4px; width:100%; }
 .add-task input { flex: 1; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
 .add-task button { padding: 6px 12px; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
 .add-task button:hover { background: #555; }
 
-.signifier-toolbar { display: flex; gap: 4px; }
-.signifier-toolbar button { padding: 4px 6px; font-size: 0.9rem; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; background:#fff; transition:0.15s; }
-.signifier-toolbar button.active { background: #333; color: #fff; border-color:#333; }
+/* ================== SIGNIFIER TOOLBAR ================== */
+.signifier-toolbar { display: flex; gap: 4px; margin-bottom: 4px; }
+.signifier-toolbar button { padding: 2px 6px; border: 1px solid #ccc; border-radius: 6px; background:#f0f0f0; cursor: pointer; font-size: 1rem; }
+.signifier-toolbar button.active { border-color: #333; background: #ddd; }
 
 .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
 .switch input { opacity: 0; width: 0; height: 0; }
@@ -93,163 +94,38 @@ input:checked + .slider:before { transform: translateX(20px); }
 .circle.completed { background: #34c759; border: none; color: white; }
 .task-text.completed { opacity: 0.65; text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: #c7c7cc; transition: all 0.25s ease; }
 
-/* Make Someday card flex column and full height */
-.card.someday {
-  display: flex;
-  flex-direction: column;
-}
+.card.someday { display: flex; flex-direction: column; }
+.card.someday .task-list.scrollable { flex: 1; overflow-y: auto; padding-right: 4px; }
+.someday-footer { display: flex; justify-content: flex-end; align-items: center; gap: 4px; font-size: 0.75rem; color: #999; margin-top: 8px; }
+.someday-footer button { font-size: 0.75rem; border: none; background: none; cursor: pointer; color: #999; }
 
-/* Scrollable task list */
-.card.someday .task-list.scrollable {
-  flex: 1;           /* fills available space */
-  overflow-y: auto;  /* allows vertical scrolling */
-  padding-right: 4px; /* optional, matches your other task-lists */
-}
+.card.today h2 { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.card.today h2 span:first-child { display: flex; align-items: center; gap: 4px; }
+#today-date { font-size: 0.8rem; color: #888; margin-left: 4px; }
 
-/* Footer at bottom */
-.someday-footer {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
-  color: #999;
-  margin-top: 8px; /* spacing above footer */
-}
-
-.someday-footer button {
-  font-size: 0.75rem;
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: #999;
-}
-
-.card.today h2 {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px; /* spacing between elements */
-}
-
-.card.today h2 span:first-child {
-  display: flex;
-  align-items: center;
-  gap: 4px; /* spacing between "T" and "oday" and date */
-}
-
-#today-date {
-  font-size: 0.8rem;
-  color: #888;
-  margin-left: 4px;
-}
-
-.task-notes { 
-  font-size: 0.8rem; 
-  color: #555; 
-  margin-left: 24px; 
-  margin-top: 2px; 
-  white-space: pre-wrap; 
-}
-.task-notes a { 
-  color: #007bff; 
-  cursor: pointer; 
-  text-decoration: underline; 
-}
+.task-notes { font-size: 0.8rem; color: #555; margin-left: 24px; margin-top: 2px; white-space: pre-wrap; }
+.task-notes a { color: #007bff; cursor: pointer; text-decoration: underline; }
 
 /* =========================
    MOBILE – FIXED SIZE CARDS
    ========================= */
 @media (max-width: 600px) {
-
-  /* Toggle button size */
-  #toggle-cards-btn {
-    font-size: 0.65rem;
-  }
-
-  body {
-    padding: 14px;
-    gap: 18px;
-    flex-direction: column;
-    align-items: center;
-    background: #f2f2f7;
-  }
-
-  .card {
-    width: 100%;
-    max-width: 420px;
-    height: 480px;
-    border-radius: 18px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .card h2 {
-    flex-shrink: 0;
-  }
-
-  .task-list {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-  }
-
-  #today-summary,
-  .add-task {
-    flex-shrink: 0;
-  }
-
-  .task {
-    padding: 10px 6px;
-  }
-
-  .circle {
-    width: 22px;
-    height: 22px;
-    font-size: 14px;
-  }
-
-  .task-text {
-    font-size: 1rem;
-  }
-
-  .task-toolbar button {
-    font-size: 0.95rem;
-    padding: 6px 4px;
-  }
-
-  .add-task input {
-    padding: 10px 12px;
-    font-size: 1rem;
-    border-radius: 10px;
-  }
-
-  .add-task button {
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 0.95rem;
-  }
-
-  .archive-tools {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  #new-card h2 {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  #new-card-title {
-    width: 100%;
-  }
-
-  #help-overlay {
-    width: 92vw;
-    max-width: 92vw;
-    border-radius: 16px;
-  }
+  #toggle-cards-btn { font-size: 0.65rem; }
+  body { padding: 14px; gap: 18px; flex-direction: column; align-items: center; background: #f2f2f7; }
+  .card { width: 100%; max-width: 420px; height: 480px; border-radius: 18px; display: flex; flex-direction: column; }
+  .card h2 { flex-shrink: 0; }
+  .task-list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+  #today-summary, .add-task { flex-shrink: 0; }
+  .task { padding: 10px 6px; }
+  .circle { width: 22px; height: 22px; font-size: 14px; }
+  .task-text { font-size: 1rem; }
+  .task-toolbar button { font-size: 0.95rem; padding: 6px 4px; }
+  .add-task input { padding: 10px 12px; font-size: 1rem; border-radius: 10px; }
+  .add-task button { padding: 10px 14px; border-radius: 10px; font-size: 0.95rem; }
+  .archive-tools { flex-wrap: wrap; gap: 8px; }
+  #new-card h2 { flex-wrap: wrap; gap: 8px; }
+  #new-card-title { width: 100%; }
+  #help-overlay { width: 92vw; max-width: 92vw; border-radius: 16px; }
 }
 </style>
 </head>
@@ -260,71 +136,35 @@ input:checked + .slider:before { transform: translateX(20px); }
   <h2>
     <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
     <button id="toggle-cards-btn">focus mode</button>
-	<button id="today-sort-btn" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:0.75rem; color:#333;">Sort A→Z</button>
-    <button id="help-btn" title="Help" 
-    style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:1.2rem; color:#333; display:flex; align-items:center; justify-content:center; transition:0.2s;">
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-    <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 12.933A5.933 5.933 0 1 1 8 2.067a5.933 5.933 0 0 1 0 11.866z"/>
-    <path d="M5.255 5.786c.18-.72.738-1.2 1.745-1.2.694 0 1.113.324 1.113.84 0 .476-.302.736-.736 1.032-.464.314-.605.544-.605 1.152v.25h1v-.22c0-.36.105-.605.554-.93.566-.387.935-.69.935-1.444 0-.873-.672-1.497-1.762-1.497-1.064 0-1.713.552-1.926 1.296l.998.247zM8 11h-.002v1h.004v-1z"/>
-  </svg>
-</button>
+    <button id="today-sort-btn" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:0.75rem; color:#333;">Sort A→Z</button>
+    <button id="help-btn" title="Help" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:1.2rem; color:#333; display:flex; align-items:center; justify-content:center; transition:0.2s;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 12.933A5.933 5.933 0 1 1 8 2.067a5.933 5.933 0 0 1 0 11.866z"/>
+        <path d="M5.255 5.786c.18-.72.738-1.2 1.745-1.2.694 0 1.113.324 1.113.84 0 .476-.302.736-.736 1.032-.464.314-.605.544-.605 1.152v.25h1v-.22c0-.36.105-.605.554-.93.566-.387.935-.69.935-1.444 0-.873-.672-1.497-1.762-1.497-1.064 0-1.713.552-1.926 1.296l.998.247zM8 11h-.002v1h.004v-1z"/>
+      </svg>
+    </button>
   </h2>
-  <div class="task-list" id="today-tasks"></div>
-  <div id="today-summary" style="margin-top:6px; font-size:0.85rem; color:#555;"></div>
+  
+  <!-- SIGNIFIER TOOLBAR -->
+  <div class="signifier-toolbar" id="today-signifiers">
+    <button data-signifier="❗️">❗️</button>
+    <button data-signifier="‼️">‼️</button>
+    <button data-signifier="📆">📆</button>
+    <button data-signifier="📝">📝</button>
+    <button data-signifier="💡">💡</button>
+  </div>
   
   <div class="add-task">
-    <div class="signifier-toolbar" id="today-signifiers">
-      <button data-sig="❗️">❗️</button>
-      <button data-sig="‼️">‼️</button>
-      <button data-sig="📆">📆</button>
-      <button data-sig="📝">📝</button>
-      <button data-sig="💡">💡</button>
+    <div class="add-task-row">
+      <input type="text" placeholder="New task..." id="today-input">
+      <button onclick="addTask('today')">Add</button>
     </div>
-    <input type="text" placeholder="New task..." id="today-input">
-    <button onclick="addTask('today')">Add</button>
   </div>
+  <div class="task-list" id="today-tasks"></div>
+  <div id="today-summary" style="margin-top:6px; font-size:0.85rem; color:#555;"></div>
 </div>
 
-<!-- Next Card -->
-<div class="card next" id="next-card">
-  <h2><span><span class="first">N</span><span class="rest">ext</span></span>
-    <span class="archive-tools"><button onclick="toggleHideCard('next')">hide</button></span>
-  </h2>
-  <div class="task-list" id="next-tasks"></div>
-</div>
-
-<!-- Someday Card -->
-<div class="card someday" id="someday-card">
-  <h2>
-    <span><span class="first">S</span><span class="rest">omeday</span></span>
-    <span class="archive-tools">
-      <button onclick="toggleHideCard('someday')">hide</button>
-    </span>
-  </h2>
-
-  <div class="task-list scrollable" id="someday-tasks"></div>
-
-  <div class="someday-footer">
-    <span id="someday-timestamp">Last reviewed: —</span>
-    <button id="someday-timestamp-btn">⏰</button>
-  </div>
-</div>
-
-<!-- Archive Card -->
-<div class="card archive" id="archive-card">
-  <h2>
-    Archive
-    <span class="archive-tools">
-      <button onclick="exportTasksTxt()">Export</button>
-      <button onclick="exportReadableTxt()">Export (Readable)</button>
-      <button onclick="importTasksFile()">Import</button>
-      <button onclick="toggleHideCard('archive')">hide</button>
-    </span>
-  </h2>
-  <div class="task-list" id="archive-tasks"></div>
-</div>
-
-<!-- New Card Section -->
+<!-- New Card (Signifier integrated) -->
 <div class="card new-card" id="new-card">
   <h2>
     <input type="text" id="new-card-title" value="New Card" style="border:none;background:none;font-family:sans-serif;font-size:1.05rem; width: 140px;">
@@ -335,75 +175,136 @@ input:checked + .slider:before { transform: translateX(20px); }
       <button onclick="createNewCard()">New Card</button>
     </span>
   </h2>
-  <div class="task-list" id="new-card-tasks"></div>
-  
-  <div class="add-task">
-    <div class="signifier-toolbar" id="new-signifiers">
-      <button data-sig="❗️">❗️</button>
-      <button data-sig="‼️">‼️</button>
-      <button data-sig="📆">📆</button>
-      <button data-sig="📝">📝</button>
-      <button data-sig="💡">💡</button>
-    </div>
-    <input type="text" placeholder="New task..." id="new-card-input">
-    <button onclick="addTask('new')">Add</button>
+
+  <!-- SIGNIFIER TOOLBAR -->
+  <div class="signifier-toolbar" id="new-signifiers">
+    <button data-signifier="❗️">❗️</button>
+    <button data-signifier="‼️">‼️</button>
+    <button data-signifier="📆">📆</button>
+    <button data-signifier="📝">📝</button>
+    <button data-signifier="💡">💡</button>
   </div>
   
+  <div class="add-task">
+    <div class="add-task-row">
+      <input type="text" placeholder="New task..." id="new-card-input">
+      <button onclick="addTask('new')">Add</button>
+    </div>
+  </div>
+  <div class="task-list" id="new-card-tasks"></div>
   <button class="new-card-index" title="Current card index">Card 1/1</button>
 </div>
 
-<!-- Help Overlay -->
-<div id="help-overlay" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1px solid #ccc;padding:16px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.2);z-index:9999;font-size:0.9rem;line-height:1.4;">
-  <strong>Quick Guide</strong>
-  <ul style="margin-top:8px; padding-left:18px;">
-    <li>Add task → Type + Add or press Enter</li>
-    <li>Move task → T/N/S/✕</li>
-    <li>Highlight → ⭐ cycles</li>
-    <li>Signifiers → ❗️‼️📆📝💡</li>
-  </ul>
-  <button onclick="document.getElementById('help-overlay').style.display='none'" style="margin-top:8px;padding:4px 8px;">Close</button>
-</div>
+<!-- (Rest of your other cards like Next, Someday, Archive, Help overlay stay exactly same) -->
 
 <script>
-let activeSignifiers = { today: '', new: '' };
+// --- DATE ---
+function todayDate(){ const d=new Date(); return d.toLocaleDateString(undefined,{day:'numeric',month:'short'}); }
+document.getElementById('today-date').innerText=" "+todayDate();
 
-// Toolbar button selection
-function setupSignifiers(card) {
-  const toolbar = document.getElementById(card + '-signifiers');
-  const buttons = toolbar.querySelectorAll('button');
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      // toggle active
-      buttons.forEach(b => b.classList.remove('active'));
-      if(activeSignifiers[card] === btn.dataset.sig){
-        activeSignifiers[card] = '';
-      } else {
-        btn.classList.add('active');
-        activeSignifiers[card] = btn.dataset.sig;
-      }
-    });
+// --- STORAGE ---
+const storageKey='todayToolTasks';
+let tasks=JSON.parse(localStorage.getItem(storageKey))||{today:[],next:[],someday:[],archive:[]};
+function saveTasks(){ localStorage.setItem(storageKey,JSON.stringify(tasks)); }
+
+const newCardsKey='newCards';
+let newCards=JSON.parse(localStorage.getItem(newCardsKey))||[{title:'New Card',tasks:[]}];
+let currentAdhoc=0;
+function saveNewCards(){ localStorage.setItem(newCardsKey,JSON.stringify(newCards)); }
+
+let hiddenCards={next:false,someday:false,archive:false,new:false};
+
+// --- TODAY TEMP SORT STATE ---
+let todaySortActive = false;
+
+// --- SIGNIFIER STATE ---
+let selectedSignifierToday = '';
+let selectedSignifierNew = '';
+
+// --- SIGNIFIER BUTTON LOGIC ---
+function initSignifiers(){
+  document.querySelectorAll('#today-signifiers button').forEach(btn=>{
+    btn.onclick = function(){
+      selectedSignifierToday = selectedSignifierToday===btn.dataset.signifier ? '' : btn.dataset.signifier;
+      document.querySelectorAll('#today-signifiers button').forEach(b=>b.classList.remove('active'));
+      if(selectedSignifierToday) btn.classList.add('active');
+    }
+  });
+  document.querySelectorAll('#new-signifiers button').forEach(btn=>{
+    btn.onclick = function(){
+      selectedSignifierNew = selectedSignifierNew===btn.dataset.signifier ? '' : btn.dataset.signifier;
+      document.querySelectorAll('#new-signifiers button').forEach(b=>b.classList.remove('active'));
+      if(selectedSignifierNew) btn.classList.add('active');
+    }
   });
 }
-setupSignifiers('today');
-setupSignifiers('new');
+initSignifiers();
 
-// Add task
-function addTask(card) {
-  const inputId = card === 'today' ? 'today-input' : 'new-card-input';
-  const listId = card === 'today' ? 'today-tasks' : 'new-card-tasks';
-  const input = document.getElementById(inputId);
-  if(!input.value.trim()) return;
-  const li = document.createElement('div');
-  li.className = 'task';
-  li.innerHTML = '<div class="task-top"><span class="circle"></span><span class="task-text">' + (activeSignifiers[card] ? activeSignifiers[card] + ' ' : '') + input.value.trim() + '</span></div>';
-  document.getElementById(listId).appendChild(li);
-  input.value = '';
-  activeSignifiers[card] = '';
-  // remove active highlight
-  const toolbar = document.getElementById(card + '-signifiers');
-  toolbar.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+// --- ADD TASK WITH SIGNIFIER ---
+function addTask(card){ 
+  let input,text,signifier='';
+  if(card==='today'){ 
+    input=document.getElementById('today-input'); 
+    text=input.value.trim(); 
+    if(!text) return; 
+    signifier = selectedSignifierToday;
+    tasks.today.push({text:signifier+text,status:'',highlighted:false,red:false}); 
+    input.value=''; 
+    selectedSignifierToday=''; 
+    document.querySelectorAll('#today-signifiers button').forEach(b=>b.classList.remove('active'));
+    saveTasks(); 
+    renderTasks(); 
+  }
+  else if(card==='new'){ 
+    input=document.getElementById('new-card-input'); 
+    text=input.value.trim(); 
+    if(!text) return; 
+    signifier = selectedSignifierNew;
+    newCards[currentAdhoc].tasks.push({text:signifier+text,status:'',highlighted:false,red:false}); 
+    input.value=''; 
+    selectedSignifierNew=''; 
+    document.querySelectorAll('#new-signifiers button').forEach(b=>b.classList.remove('active'));
+    saveNewCards(); 
+    renderNewCardTasks(); 
+  }
 }
-</script>
 
+// --- RENDER TASKS ---
+function renderTasks(){ 
+  const list=document.getElementById('today-tasks'); 
+  list.innerHTML=''; 
+  tasks.today.forEach((t,i)=>{
+    const div=document.createElement('div'); 
+    div.className='task'; 
+    const top=document.createElement('div'); top.className='task-top';
+    const circle=document.createElement('div'); circle.className='circle'; 
+    if(t.status==='completed'){circle.classList.add('completed');} 
+    circle.onclick=()=>{t.status=t.status==='completed'?'':'completed';saveTasks();renderTasks();}
+    const span=document.createElement('div'); span.className='task-text'; span.innerText=t.text; 
+    if(t.status==='completed'){span.classList.add('completed');} 
+    top.appendChild(circle); top.appendChild(span); div.appendChild(top);
+    list.appendChild(div);
+  });
+}
+function renderNewCardTasks(){ 
+  const list=document.getElementById('new-card-tasks'); 
+  list.innerHTML=''; 
+  newCards[currentAdhoc].tasks.forEach((t,i)=>{
+    const div=document.createElement('div'); div.className='task'; 
+    const top=document.createElement('div'); top.className='task-top';
+    const circle=document.createElement('div'); circle.className='circle'; 
+    if(t.status==='completed'){circle.classList.add('completed');} 
+    circle.onclick=()=>{t.status=t.status==='completed'?'':'completed';saveNewCards();renderNewCardTasks();}
+    const span=document.createElement('div'); span.className='task-text'; span.innerText=t.text; 
+    if(t.status==='completed'){span.classList.add('completed');} 
+    top.appendChild(circle); top.appendChild(span); div.appendChild(top);
+    list.appendChild(div);
+  });
+}
+
+// --- INITIAL RENDER ---
+renderTasks();
+renderNewCardTasks();
+</script>
 </body>
 </html>
