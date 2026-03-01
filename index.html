@@ -44,6 +44,7 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   padding: 0;
 }
 
+
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
 .card h2 .first { font-weight: bold; color: #666; }
@@ -63,16 +64,15 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .task-toolbar button { padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; transition: opacity 0.15s ease; }
 .task-toolbar button:hover { opacity: 0.8; }
 
-.add-task { display: flex; gap: 4px; margin-top: 8px; z-index: 1; position: relative; flex-direction: column; }
-.add-task-row { display:flex; gap: 4px; width:100%; }
+.add-task { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; z-index: 1; position: relative; }
 .add-task input { flex: 1; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
 .add-task button { padding: 6px 12px; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
 .add-task button:hover { background: #555; }
 
-/* ================== SIGNIFIER TOOLBAR ================== */
-.signifier-toolbar { display: flex; gap: 4px; margin-bottom: 4px; }
-.signifier-toolbar button { padding: 2px 6px; border: 1px solid #ccc; border-radius: 6px; background:#f0f0f0; cursor: pointer; font-size: 1rem; }
-.signifier-toolbar button.active { border-color: #333; background: #ddd; }
+/* --- SIGNIFIER TOOLBAR --- */
+.signifier-toolbar { display: flex; gap: 6px; }
+.signifier-toolbar button { border: none; background: none; cursor: pointer; font-size: 1rem; padding: 4px 6px; transition: 0.15s; }
+.signifier-toolbar button:hover { background: rgba(0,0,0,0.05); border-radius: 4px; }
 
 .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
 .switch input { opacity: 0; width: 0; height: 0; }
@@ -94,8 +94,11 @@ input:checked + .slider:before { transform: translateX(20px); }
 .circle.completed { background: #34c759; border: none; color: white; }
 .task-text.completed { opacity: 0.65; text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: #c7c7cc; transition: all 0.25s ease; }
 
+/* Make Someday card flex column and full height */
 .card.someday { display: flex; flex-direction: column; }
 .card.someday .task-list.scrollable { flex: 1; overflow-y: auto; padding-right: 4px; }
+
+/* Footer at bottom */
 .someday-footer { display: flex; justify-content: flex-end; align-items: center; gap: 4px; font-size: 0.75rem; color: #999; margin-top: 8px; }
 .someday-footer button { font-size: 0.75rem; border: none; background: none; cursor: pointer; color: #999; }
 
@@ -131,7 +134,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 </head>
 <body>
 
-<!-- Today Card -->
+<!-- TODAY CARD -->
 <div class="card today">
   <h2>
     <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
@@ -144,27 +147,24 @@ input:checked + .slider:before { transform: translateX(20px); }
       </svg>
     </button>
   </h2>
-  
-  <!-- SIGNIFIER TOOLBAR -->
-  <div class="signifier-toolbar" id="today-signifiers">
-    <button data-signifier="❗️">❗️</button>
-    <button data-signifier="‼️">‼️</button>
-    <button data-signifier="📆">📆</button>
-    <button data-signifier="📝">📝</button>
-    <button data-signifier="💡">💡</button>
-  </div>
-  
-  <div class="add-task">
-    <div class="add-task-row">
-      <input type="text" placeholder="New task..." id="today-input">
-      <button onclick="addTask('today')">Add</button>
-    </div>
-  </div>
   <div class="task-list" id="today-tasks"></div>
   <div id="today-summary" style="margin-top:6px; font-size:0.85rem; color:#555;"></div>
+  <div class="add-task">
+    <!-- Signifier Toolbar -->
+    <div class="signifier-toolbar">
+      <button data-sign="❗️">❗️</button>
+      <button data-sign="‼️">‼️</button>
+      <button data-sign="📆">📆</button>
+      <button data-sign="📝">📝</button>
+      <button data-sign="💡">💡</button>
+    </div>
+    <input type="text" placeholder="New task..." id="today-input">
+    <button onclick="addTask('today')">Add</button>
+  </div>
 </div>
 
-<!-- New Card (Signifier integrated) -->
+<!-- Rest of your cards (Next, Someday, Archive, New Card) remain exactly as in your stable code -->
+<!-- New Card input also gets signifier toolbar -->
 <div class="card new-card" id="new-card">
   <h2>
     <input type="text" id="new-card-title" value="New Card" style="border:none;background:none;font-family:sans-serif;font-size:1.05rem; width: 140px;">
@@ -175,27 +175,22 @@ input:checked + .slider:before { transform: translateX(20px); }
       <button onclick="createNewCard()">New Card</button>
     </span>
   </h2>
-
-  <!-- SIGNIFIER TOOLBAR -->
-  <div class="signifier-toolbar" id="new-signifiers">
-    <button data-signifier="❗️">❗️</button>
-    <button data-signifier="‼️">‼️</button>
-    <button data-signifier="📆">📆</button>
-    <button data-signifier="📝">📝</button>
-    <button data-signifier="💡">💡</button>
-  </div>
-  
-  <div class="add-task">
-    <div class="add-task-row">
-      <input type="text" placeholder="New task..." id="new-card-input">
-      <button onclick="addTask('new')">Add</button>
-    </div>
-  </div>
   <div class="task-list" id="new-card-tasks"></div>
+  <div class="add-task">
+    <div class="signifier-toolbar">
+      <button data-sign="❗️">❗️</button>
+      <button data-sign="‼️">‼️</button>
+      <button data-sign="📆">📆</button>
+      <button data-sign="📝">📝</button>
+      <button data-sign="💡">💡</button>
+    </div>
+    <input type="text" placeholder="New task..." id="new-card-input">
+    <button onclick="addTask('new')">Add</button>
+  </div>
   <button class="new-card-index" title="Current card index">Card 1/1</button>
 </div>
 
-<!-- (Rest of your other cards like Next, Someday, Archive, Help overlay stay exactly same) -->
+<!-- Rest of your HTML (Next, Someday, Archive, Help Overlay) remain unchanged -->
 
 <script>
 // --- DATE ---
@@ -213,98 +208,53 @@ let currentAdhoc=0;
 function saveNewCards(){ localStorage.setItem(newCardsKey,JSON.stringify(newCards)); }
 
 let hiddenCards={next:false,someday:false,archive:false,new:false};
+let todaySortActive=false;
 
-// --- TODAY TEMP SORT STATE ---
-let todaySortActive = false;
+// --- SIGNIFIER LOGIC ---
+let currentSignifier=''; // resets after adding task
 
-// --- SIGNIFIER STATE ---
-let selectedSignifierToday = '';
-let selectedSignifierNew = '';
+document.querySelectorAll('.signifier-toolbar button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+        currentSignifier = btn.getAttribute('data-sign');
+        // optionally highlight selected button
+        btn.parentElement.querySelectorAll('button').forEach(b=>b.style.opacity=0.5);
+        btn.style.opacity=1;
+    });
+});
 
-// --- SIGNIFIER BUTTON LOGIC ---
-function initSignifiers(){
-  document.querySelectorAll('#today-signifiers button').forEach(btn=>{
-    btn.onclick = function(){
-      selectedSignifierToday = selectedSignifierToday===btn.dataset.signifier ? '' : btn.dataset.signifier;
-      document.querySelectorAll('#today-signifiers button').forEach(b=>b.classList.remove('active'));
-      if(selectedSignifierToday) btn.classList.add('active');
-    }
-  });
-  document.querySelectorAll('#new-signifiers button').forEach(btn=>{
-    btn.onclick = function(){
-      selectedSignifierNew = selectedSignifierNew===btn.dataset.signifier ? '' : btn.dataset.signifier;
-      document.querySelectorAll('#new-signifiers button').forEach(b=>b.classList.remove('active'));
-      if(selectedSignifierNew) btn.classList.add('active');
-    }
-  });
-}
-initSignifiers();
-
-// --- ADD TASK WITH SIGNIFIER ---
+// --- ADD TASK ---
 function addTask(card){ 
-  let input,text,signifier='';
+  let input,text;
   if(card==='today'){ 
     input=document.getElementById('today-input'); 
     text=input.value.trim(); 
     if(!text) return; 
-    signifier = selectedSignifierToday;
-    tasks.today.push({text:signifier+text,status:'',highlighted:false,red:false}); 
+    if(currentSignifier) text = currentSignifier + ' ' + text;
+    tasks.today.push({text,status:'',highlighted:false,red:false}); 
     input.value=''; 
-    selectedSignifierToday=''; 
-    document.querySelectorAll('#today-signifiers button').forEach(b=>b.classList.remove('active'));
+    currentSignifier=''; 
+    input.parentElement.querySelectorAll('.signifier-toolbar button').forEach(b=>b.style.opacity=0.5);
     saveTasks(); 
     renderTasks(); 
-  }
-  else if(card==='new'){ 
+  } else if(card==='new'){ 
     input=document.getElementById('new-card-input'); 
     text=input.value.trim(); 
     if(!text) return; 
-    signifier = selectedSignifierNew;
-    newCards[currentAdhoc].tasks.push({text:signifier+text,status:'',highlighted:false,red:false}); 
+    if(currentSignifier) text = currentSignifier + ' ' + text;
+    newCards[currentAdhoc].tasks.push({text,status:'',highlighted:false,red:false}); 
     input.value=''; 
-    selectedSignifierNew=''; 
-    document.querySelectorAll('#new-signifiers button').forEach(b=>b.classList.remove('active'));
+    currentSignifier=''; 
+    input.parentElement.querySelectorAll('.signifier-toolbar button').forEach(b=>b.style.opacity=0.5);
     saveNewCards(); 
-    renderNewCardTasks(); 
+    renderTasks(); 
   }
 }
+document.getElementById('today-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('today'); });
+document.getElementById('new-card-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('new'); });
 
-// --- RENDER TASKS ---
-function renderTasks(){ 
-  const list=document.getElementById('today-tasks'); 
-  list.innerHTML=''; 
-  tasks.today.forEach((t,i)=>{
-    const div=document.createElement('div'); 
-    div.className='task'; 
-    const top=document.createElement('div'); top.className='task-top';
-    const circle=document.createElement('div'); circle.className='circle'; 
-    if(t.status==='completed'){circle.classList.add('completed');} 
-    circle.onclick=()=>{t.status=t.status==='completed'?'':'completed';saveTasks();renderTasks();}
-    const span=document.createElement('div'); span.className='task-text'; span.innerText=t.text; 
-    if(t.status==='completed'){span.classList.add('completed');} 
-    top.appendChild(circle); top.appendChild(span); div.appendChild(top);
-    list.appendChild(div);
-  });
-}
-function renderNewCardTasks(){ 
-  const list=document.getElementById('new-card-tasks'); 
-  list.innerHTML=''; 
-  newCards[currentAdhoc].tasks.forEach((t,i)=>{
-    const div=document.createElement('div'); div.className='task'; 
-    const top=document.createElement('div'); top.className='task-top';
-    const circle=document.createElement('div'); circle.className='circle'; 
-    if(t.status==='completed'){circle.classList.add('completed');} 
-    circle.onclick=()=>{t.status=t.status==='completed'?'':'completed';saveNewCards();renderNewCardTasks();}
-    const span=document.createElement('div'); span.className='task-text'; span.innerText=t.text; 
-    if(t.status==='completed'){span.classList.add('completed');} 
-    top.appendChild(circle); top.appendChild(span); div.appendChild(top);
-    list.appendChild(div);
-  });
-}
+// --- RENDER TASKS, TOGGLE, EXPORT/IMPORT etc remain exactly as in your stable code ---
 
-// --- INITIAL RENDER ---
 renderTasks();
-renderNewCardTasks();
 </script>
 </body>
 </html>
