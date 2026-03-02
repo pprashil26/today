@@ -309,6 +309,60 @@ input:checked + .slider:before { transform: translateX(20px); }
   border: 1px solid #ccc;
   border-radius: 6px;
 }
+/* =========================
+   SIGNIFIER TOOLBAR
+   ========================= */
+.signifier-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.signifier-toggle {
+  padding: 4px 6px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  opacity: 0.5;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.signifier-toggle:hover {
+  opacity: 0.8;
+  transform: scale(1.1);
+}
+
+.signifier-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  display: flex;            /* horizontal layout */
+  flex-direction: row;
+  gap: 4px;                 /* space between buttons */
+  padding: 4px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.signifier-menu button {
+  padding: 4px 6px;
+  font-size: 0.85rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.signifier-menu button:hover {
+  opacity: 0.8;
+  transform: scale(1.1);
+}
 </style>
 </head>
 <body>
@@ -330,18 +384,21 @@ input:checked + .slider:before { transform: translateX(20px); }
   <div class="task-list" id="today-tasks"></div>
   <div id="today-summary" style="margin-top:6px; font-size:0.85rem; color:#555;"></div>
   <div class="add-task">
-  <select id="today-category">
-    <option value="">add category</option>
-    <option value="❗️">❗️ Important</option>
-    <option value="‼️">‼️ Critical</option>
-    <option value="📆">📆 Event</option>
-    <option value="📝">📝 Note</option>
-    <option value="💡">💡 Idea</option>
-  </select>
+  <div class="signifier-wrapper">
+    <button class="signifier-toggle">⚡</button>
+    <div class="signifier-menu">
+      <button data-value="❗️">❗️</button>
+      <button data-value="‼️">‼️</button>
+      <button data-value="📆">📆</button>
+      <button data-value="📝">📝</button>
+      <button data-value="💡">💡</button>
+    </div>
+  </div>
 
   <input type="text" placeholder="New task..." id="today-input">
   <button onclick="addTask('today')">Add</button>
 </div>
+
 </div>
 
 <!-- Next Card -->
@@ -399,14 +456,16 @@ input:checked + .slider:before { transform: translateX(20px); }
   <div class="task-list" id="new-card-tasks"></div>
   <button class="new-card-index"></button>
   <div class="add-task">
-  <select id="new-category">
-    <option value="">add category</option>
-    <option value="❗️">❗️ Important</option>
-    <option value="‼️">‼️ Critical</option>
-    <option value="📆">📆 Event</option>
-    <option value="📝">📝 Note</option>
-    <option value="💡">💡 Idea</option>
-  </select>
+  <div class="signifier-wrapper">
+    <button class="signifier-toggle">⚡</button>
+    <div class="signifier-menu">
+      <button data-value="❗️">❗️</button>
+      <button data-value="‼️">‼️</button>
+      <button data-value="📆">📆</button>
+      <button data-value="📝">📝</button>
+      <button data-value="💡">💡</button>
+    </div>
+  </div>
 
   <input type="text" placeholder="New task..." id="new-card-input">
   <button onclick="addTask('new')">Add</button>
@@ -477,45 +536,42 @@ todaySortBtn.addEventListener('click', function(){
 function toggleHideCard(card){ hiddenCards[card]=!hiddenCards[card]; renderTasks(); }
 
 // --- ADD TASK ---
+// --- ADD TASK ---
 function addTask(card){ 
-  let input, text, category;
+  let input, text;
 
-  if(card==='today'){ 
+  if(card === 'today'){ 
     input = document.getElementById('today-input');
-    category = document.getElementById('today-category').value;
     text = input.value.trim();
     if(!text) return;
 
-    const finalText = category ? category + ' ' + text : text;
-
-    tasks.today.push({text: finalText, status:'', highlighted:false, red:false});
+    tasks.today.push({text: text, status:'', highlighted:false, red:false, notes:''});
     
-    input.value = '';
-    document.getElementById('today-category').value = ''; // reset dropdown
-
+    input.value = ''; // reset input
     saveTasks();
     renderTasks();
   }
 
-  else if(card==='new'){ 
+  else if(card === 'new'){ 
     input = document.getElementById('new-card-input');
-    category = document.getElementById('new-category').value;
     text = input.value.trim();
     if(!text) return;
 
-    const finalText = category ? category + ' ' + text : text;
-
-    newCards[currentAdhoc].tasks.push({text: finalText, status:'', highlighted:false, red:false});
+    newCards[currentAdhoc].tasks.push({text: text, status:'', highlighted:false, red:false, notes:''});
     
-    input.value = '';
-    document.getElementById('new-category').value = ''; // reset dropdown
-
+    input.value = ''; // reset input
     saveNewCards();
     renderTasks();
   }
-}document.getElementById('today-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('today'); });
-document.getElementById('new-card-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('new'); });
+}
 
+// Enable Enter key to add task
+document.getElementById('today-input').addEventListener('keypress', e => { 
+  if(e.key === 'Enter') addTask('today'); 
+});
+document.getElementById('new-card-input').addEventListener('keypress', e => { 
+  if(e.key === 'Enter') addTask('new'); 
+});
 // --- SAVE NEW CARD TITLE ---
 const newCardTitleInput = document.getElementById('new-card-title');
 newCardTitleInput.addEventListener('input', function() {
@@ -756,6 +812,36 @@ somedayTimestampBtn.addEventListener('click', () => {
 });
 
 renderTasks();
+// --- SIGNIFIER TOOLBAR FUNCTIONALITY ---
+document.querySelectorAll('.signifier-wrapper').forEach(wrapper => {
+  const toggle = wrapper.querySelector('.signifier-toggle');
+  const menu = wrapper.querySelector('.signifier-menu');
+  const input = wrapper.parentElement.querySelector('input');
+
+  toggle.addEventListener('click', e => {
+    e.stopPropagation();
+    // Close all other menus
+    document.querySelectorAll('.signifier-menu').forEach(m => {
+      if (m !== menu) m.style.display = 'none';
+    });
+    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+  });
+
+  menu.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const val = btn.dataset.value;
+      // Prepend emoji to current input
+      input.value = val + ' ' + input.value.trim();
+      menu.style.display = 'none';
+      input.focus();
+    });
+  });
+});
+
+// Close all signifier menus when clicking outside
+document.addEventListener('click', () => {
+  document.querySelectorAll('.signifier-menu').forEach(menu => menu.style.display = 'none');
+});
 </script>
 </body>
 </html>	
