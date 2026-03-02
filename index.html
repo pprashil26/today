@@ -384,24 +384,25 @@ input:checked + .slider:before { transform: translateX(20px); }
   </svg>
 </button>
   </h2>
+  <div class="task-list" id="today-tasks"></div>
+<div class="add-task">...</div>
+<div id="today-summary" style="margin-top:6px; font-size:0.85rem; color:#555;"></div>
   <div class="signifier-wrapper">
-  <button class="signifier-toggle">⚡</button>
-  <div class="signifier-menu">
-    <button data-value="❗️">❗️</button>
-    <button data-value="‼️">‼️</button>
-    <button data-value="📆">📆</button>
-    <button data-value="📝">📝</button>
-    <button data-value="💡">💡</button>
+    <button class="signifier-toggle">⚡</button>
+    <div class="signifier-menu">
+      <button data-value="❗️">❗️</button>
+      <button data-value="‼️">‼️</button>
+      <button data-value="📆">📆</button>
+      <button data-value="📝">📝</button>
+      <button data-value="💡">💡</button>
+    </div>
   </div>
-</div>
 
-<div class="add-task">
   <input type="text" placeholder="New task..." id="today-input">
   <button onclick="addTask('today')">Add</button>
 </div>
 
-<div class="task-list" id="today-tasks"></div>
-<div id="today-summary" style="margin-top:6px; font-size:0.85rem; color:#555;"></div>
+</div>
 
 <!-- Next Card -->
 <div class="card next" id="next-card">
@@ -455,24 +456,24 @@ input:checked + .slider:before { transform: translateX(20px); }
       <button onclick="createNewCard()">New Card</button>
     </span>
   </h2>
+  <div class="task-list" id="new-card-tasks"></div>
+  <button class="new-card-index"></button>
+  <div class="add-task">
   <div class="signifier-wrapper">
-  <button class="signifier-toggle">⚡</button>
-  <div class="signifier-menu">
-    <button data-value="❗️">❗️</button>
-    <button data-value="‼️">‼️</button>
-    <button data-value="📆">📆</button>
-    <button data-value="📝">📝</button>
-    <button data-value="💡">💡</button>
+    <button class="signifier-toggle">⚡</button>
+    <div class="signifier-menu">
+      <button data-value="❗️">❗️</button>
+      <button data-value="‼️">‼️</button>
+      <button data-value="📆">📆</button>
+      <button data-value="📝">📝</button>
+      <button data-value="💡">💡</button>
+    </div>
   </div>
-</div>
 
-<div class="add-task">
   <input type="text" placeholder="New task..." id="new-card-input">
   <button onclick="addTask('new')">Add</button>
 </div>
-
-<div class="task-list" id="new-card-tasks"></div>
-<button class="new-card-index"></button>
+</div>
 
 <!-- Help Overlay -->
 <div id="help-overlay" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1px solid #ccc;padding:16px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.2);z-index:9999;font-size:0.9rem;line-height:1.4;">
