@@ -302,6 +302,25 @@ input:checked + .slider:before { transform: translateX(20px); }
     font-size: 0.75rem; /* smaller than 0.8rem */
   }
 }
+
+.signifiers {
+  margin-top: 4px;
+  display: flex;
+  gap: 6px;
+}
+
+.signifiers button {
+  padding: 2px 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f9f9f9;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.signifiers button:hover {
+  background: #eee;
+}
 </style>
 </head>
 <body>
@@ -326,7 +345,15 @@ input:checked + .slider:before { transform: translateX(20px); }
     <input type="text" placeholder="New task..." id="today-input">
     <button onclick="addTask('today')">Add</button>
   </div>
+  
+  <div class="signifiers" id="today-signifiers">
+  <button onclick="selectSignifier('today','❗️')">❗️</button>
+  <button onclick="selectSignifier('today','‼️')">‼️</button>
+  <button onclick="selectSignifier('today','📆')">📆</button>
+  <button onclick="selectSignifier('today','📝')">📝</button>
+  <button onclick="selectSignifier('today','💡')">💡</button>
 </div>
+
 
 <!-- Next Card -->
 <div class="card next" id="next-card">
@@ -385,6 +412,14 @@ input:checked + .slider:before { transform: translateX(20px); }
     <input type="text" placeholder="New task..." id="new-card-input">
     <button onclick="addTask('new')">Add</button>
   </div>
+  
+  <div class="signifiers" id="new-signifiers">
+  <button onclick="selectSignifier('new','❗️')">❗️</button>
+  <button onclick="selectSignifier('new','‼️')">‼️</button>
+  <button onclick="selectSignifier('new','📆')">📆</button>
+  <button onclick="selectSignifier('new','📝')">📝</button>
+  <button onclick="selectSignifier('new','💡')">💡</button>
+</div>
   <button class="new-card-index" title="Current card index">Card 1/1</button>
 </div>
 
@@ -452,13 +487,36 @@ todaySortBtn.addEventListener('click', function(){
 function toggleHideCard(card){ hiddenCards[card]=!hiddenCards[card]; renderTasks(); }
 
 // --- ADD TASK ---
+// Track selected signifier for Today and New cards
+let selectedSignifier = { today: '', new: '' };
 function addTask(card){ 
-  let input,text;
-  if(card==='today'){ input=document.getElementById('today-input'); text=input.value.trim(); if(!text) return; tasks.today.push({text,status:'',highlighted:false,red:false}); input.value=''; saveTasks(); renderTasks(); }
-  else if(card==='new'){ input=document.getElementById('new-card-input'); text=input.value.trim(); if(!text) return; newCards[currentAdhoc].tasks.push({text,status:'',highlighted:false,red:false}); input.value=''; saveNewCards(); renderTasks(); }
+  let input, text, sign;
+
+  if(card==='today'){ 
+    input = document.getElementById('today-input'); 
+    text = input.value.trim(); 
+    sign = selectedSignifier.today || '';  // prepend if selected
+    if(!text) return; 
+    tasks.today.push({text: sign + text, status:'', highlighted:false, red:false}); 
+    input.value=''; 
+    selectedSignifier.today = '';  // reset
+    document.getElementById('today-signifiers').querySelectorAll('button').forEach(b => b.style.border='1px solid #ccc');
+    saveTasks(); 
+    renderTasks(); 
+  }
+  else if(card==='new'){ 
+    input = document.getElementById('new-card-input'); 
+    text = input.value.trim(); 
+    sign = selectedSignifier.new || ''; 
+    if(!text) return; 
+    newCards[currentAdhoc].tasks.push({text: sign + text, status:'', highlighted:false, red:false}); 
+    input.value=''; 
+    selectedSignifier.new = '';  // reset
+    document.getElementById('new-signifiers').querySelectorAll('button').forEach(b => b.style.border='1px solid #ccc');
+    saveNewCards(); 
+    renderTasks(); 
+  }
 }
-document.getElementById('today-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('today'); });
-document.getElementById('new-card-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('new'); });
 
 // --- SAVE NEW CARD TITLE ---
 const newCardTitleInput = document.getElementById('new-card-title');
@@ -700,6 +758,16 @@ somedayTimestampBtn.addEventListener('click', () => {
 });
 
 renderTasks();
+
+function selectSignifier(card, symbol){
+  selectedSignifier[card] = symbol;
+
+  // Highlight the selected button visually
+  const container = document.getElementById(card + '-signifiers');
+  Array.from(container.children).forEach(btn => {
+    btn.style.border = btn.textContent === symbol ? '2px solid #333' : '1px solid #ccc';
+  });
+}
 </script>
 </body>
 </html>	
