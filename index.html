@@ -277,6 +277,31 @@ input:checked + .slider:before { transform: translateX(20px); }
     border-radius: 16px;
   }
 }
+
+/* Desktop/Web only – reduce font size slightly */
+@media (min-width: 601px) {
+  .task-text {
+    font-size: 0.8rem; /* smaller than default 0.9rem */
+  }
+  .task-notes {
+    font-size: 0.7rem; /* smaller than default 0.8rem */
+  }
+  .add-task button {
+    font-size: 0.8rem; /* slightly smaller button font */
+  }
+  #today-summary {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 601px) {
+  .card h2 {
+    font-size: 1rem; /* slightly smaller than 1.05rem */
+  }
+  #today-date {
+    font-size: 0.75rem; /* smaller than 0.8rem */
+  }
+}
 </style>
 </head>
 <body>
