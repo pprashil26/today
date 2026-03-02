@@ -46,6 +46,36 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+/* =========================
+   FONT FIX – INTER for TASKS
+   ========================= */
+
+/* 1️⃣ Import Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
+
+/* 2️⃣ Apply Inter to task text, notes, and input */
+.task-text, 
+.task-notes, 
+.add-task input {
+  font-family: 'Inter', sans-serif;
+}
+
+.task-text {
+  font-size: 0.85rem; /* slightly smaller for compact layout */
+  line-height: 1.4;
+}
+
+.task-notes {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: #555;
+}
+
+/* Optional: slightly smaller add-task button font to match */
+.add-task button {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+}
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
 .card h2 .first { font-weight: bold; color: #666; }
 .card h2 .rest { opacity: 0.3; font-weight: normal; }
