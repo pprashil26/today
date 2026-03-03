@@ -758,12 +758,20 @@ function updateMasterSearchInfo() {
   let totalMatches = 0;
 
   cardKeys.forEach(card => {
-    const taskArray = card === 'new' ? newCards[currentAdhoc].tasks : tasks[card];
+    let taskArray;
+    if(card === 'new') {
+      // Flatten all new cards
+      taskArray = newCards.flatMap(c => c.tasks);
+    } else {
+      taskArray = tasks[card];
+    }
+
     counts[card] = taskArray.filter(t => {
       const textMatch = t.text.toLowerCase().includes(masterSearchQuery);
       const notesMatch = t.notes && t.notes.toLowerCase().includes(masterSearchQuery);
       return textMatch || notesMatch;
     }).length;
+
     totalMatches += counts[card];
   });
 
