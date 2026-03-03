@@ -8,6 +8,34 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
 
+/* =========================
+   MASTER TOOLBAR
+   ========================= */
+
+#master-toolbar {
+  width: 100%;
+  max-width: 1400px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+#master-search {
+  width: 100%;
+  max-width: 500px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  background: #fff;
+}
+
+#master-search:focus {
+  outline: none;
+  border-color: #555;
+}
+
 .card { 
   width: 300px; 
   height: 420px; 
@@ -306,6 +334,11 @@ input:checked + .slider:before { transform: translateX(20px); }
 </head>
 <body>
 
+<!-- MASTER TOOLBAR -->
+<div id="master-toolbar">
+  <input type="text" id="master-search" placeholder="Search all tasks... (Ctrl + /)">
+</div>
+
 <!-- Today Card -->
 <div class="card today">
   <h2>
@@ -430,6 +463,8 @@ let hiddenCards={next:false,someday:false,archive:false,new:false};
 let todaySortActive = false;
 let todayTasksHidden = false;
 
+let masterSearchQuery = '';
+
 const somedayReviewKey = 'somedayLastReviewed';
 
 // --- MASTER TOGGLE ---
@@ -490,6 +525,13 @@ const closeHelp = document.getElementById('close-help');
 helpBtn.addEventListener('click', ()=>{ helpOverlay.style.display='block'; });
 closeHelp.addEventListener('click', ()=>{ helpOverlay.style.display='none'; });
 
+const masterSearchInput = document.getElementById('master-search');
+
+masterSearchInput.addEventListener('input', function(){
+  masterSearchQuery = this.value.trim().toLowerCase();
+  renderTasks();
+});
+
 // --- EXPORT / IMPORT ---
 function exportTasksTxt(){
   const blob = new Blob([JSON.stringify(tasks)], {type: 'text/plain'});
@@ -537,6 +579,15 @@ function importTasksFile(){
 // --- RENDER ---
 function renderTasks(){
   function createTaskDiv(taskObj, card, i, isNew=false){
+  // --- SEARCH FILTER ---
+if(masterSearchQuery){
+  const textMatch = taskObj.text.toLowerCase().includes(masterSearchQuery);
+  const notesMatch = taskObj.notes && taskObj.notes.toLowerCase().includes(masterSearchQuery);
+
+ if(!textMatch && !notesMatch){
+  return null;
+}
+}
     const taskDiv = document.createElement('div');
     taskDiv.className = 'task';
     if(taskObj.highlighted) taskDiv.classList.add('highlighted');
@@ -558,7 +609,13 @@ function renderTasks(){
 
     const text = document.createElement('span');
     text.className = 'task-text';
-    text.textContent = taskObj.text;
+
+if(masterSearchQuery && taskObj.text.toLowerCase().includes(masterSearchQuery)){
+  const regex = new RegExp(`(${masterSearchQuery})`, 'gi');
+  text.innerHTML = taskObj.text.replace(regex, '<span style="background:#fff79a;">$1</span>');
+} else {
+  text.textContent = taskObj.text;
+}
     if(taskObj.status === 'completed'){
       text.classList.add('completed');
     }
@@ -659,12 +716,14 @@ notesBtn.onclick = function(e){
     .sort((a,b)=>a.task.text.localeCompare(b.task.text));
 
   sorted.forEach(item=>{
-    container.appendChild(createTaskDiv(item.task,card,item.originalIndex));
-  });
+  const el = createTaskDiv(item.task, 'today', item.originalIndex);
+  if(el) container.appendChild(el);
+});
 } else {
   tasks[card].forEach((t,i)=>{
-    container.appendChild(createTaskDiv(t,card,i));
-  });
+  const el = createTaskDiv(t, card, i);
+  if(el) container.appendChild(el);
+});
 }
   });
   
@@ -680,7 +739,10 @@ todaySummaryDiv.textContent = `• ${pending}   → ${inProgress}   ✓ ${comple
   nc.style.display = hiddenCards.new ? 'none' : 'flex';
   const cardData=newCards[currentAdhoc]; 
   document.getElementById('new-card-title').value=cardData.title;
-  cardData.tasks.forEach((t,i)=>ncTasks.appendChild(createTaskDiv(t,'new',i,true)));
+  cardData.tasks.forEach((t,i)=>{
+  const el = createTaskDiv(t,'new',i,true);
+  if(el) ncTasks.appendChild(el);
+});
   document.querySelector('.new-card-index').textContent=`Card ${currentAdhoc+1}/${newCards.length}`;
 }
 
@@ -720,6 +782,13 @@ somedayTimestampBtn.addEventListener('click', () => {
 });
 
 renderTasks();
+
+document.addEventListener('keydown', function(e){
+  if(e.ctrlKey && e.key === '/'){
+    e.preventDefault();
+    masterSearchInput.focus();
+  }
+});
 </script>
 </body>
 </html>	
