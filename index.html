@@ -337,6 +337,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 <!-- MASTER TOOLBAR -->
 <div id="master-toolbar">
   <input type="text" id="master-search" placeholder="Search all tasks... (Ctrl + /)">
+  <div id="master-search-info" style="font-size:0.8rem; color:#555; margin-top:4px;"></div>
 </div>
 
 <!-- Today Card -->
@@ -744,6 +745,34 @@ todaySummaryDiv.textContent = `• ${pending}   → ${inProgress}   ✓ ${comple
   if(el) ncTasks.appendChild(el);
 });
   document.querySelector('.new-card-index').textContent=`Card ${currentAdhoc+1}/${newCards.length}`;
+  
+  // --- SHOW SEARCH RESULTS PER CARD ---
+function updateMasterSearchInfo() {
+  if(!masterSearchQuery) {
+    document.getElementById('master-search-info').textContent = '';
+    return;
+  }
+
+  const cardKeys = ['today','next','someday','archive','new'];
+  const counts = {};
+  let totalMatches = 0;
+
+  cardKeys.forEach(card => {
+    const taskArray = card === 'new' ? newCards[currentAdhoc].tasks : tasks[card];
+    counts[card] = taskArray.filter(t => {
+      const textMatch = t.text.toLowerCase().includes(masterSearchQuery);
+      const notesMatch = t.notes && t.notes.toLowerCase().includes(masterSearchQuery);
+      return textMatch || notesMatch;
+    }).length;
+    totalMatches += counts[card];
+  });
+
+  const display = `Total: ${totalMatches} | Today: ${counts.today}, Next: ${counts.next}, Someday: ${counts.someday}, Archive: ${counts.archive}, New: ${counts.new}`;
+  document.getElementById('master-search-info').textContent = display;
+}
+
+// --- CALL IT AFTER TASKS ARE RENDERED ---
+updateMasterSearchInfo();
 }
 
 // --- TASK ACTIONS ---
