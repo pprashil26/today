@@ -494,26 +494,32 @@ updateToggleBtn();
 // --- TODAY SORT TOGGLE ---
 const todaySortBtn = document.getElementById('today-sort-btn');
 todaySortBtn.addEventListener('click', () => {
-  if(todaySortMode === 'none') todaySortMode = 'alphabet';
-  else if(todaySortMode === 'alphabet') todaySortMode = 'color';
+  if (todaySortMode === 'none') todaySortMode = 'alphabet';
+  else if (todaySortMode === 'alphabet') todaySortMode = 'color';
   else todaySortMode = 'none';
-  todaySortBtn.textContent = 
-    todaySortMode === 'none' ? 'Sort' :
-    todaySortMode === 'alphabet' ? 'Sort A→Z' :
-    'Sort by Color';
+
+  // Updated labels
+  todaySortBtn.textContent =
+    todaySortMode === 'none' ? 'Sort A→Z' :
+    todaySortMode === 'alphabet' ? 'Sort by Color' :
+    'Clear Sort';
+
   renderTasks();
 });
 
 // --- NEXT SORT TOGGLE ---
 const nextSortBtn = document.getElementById('next-sort-btn');
 nextSortBtn.addEventListener('click', () => {
-  if(nextSortMode === 'none') nextSortMode = 'alphabet';
-  else if(nextSortMode === 'alphabet') nextSortMode = 'color';
+  if (nextSortMode === 'none') nextSortMode = 'alphabet';
+  else if (nextSortMode === 'alphabet') nextSortMode = 'color';
   else nextSortMode = 'none';
-  nextSortBtn.textContent = 
-    nextSortMode === 'none' ? 'Sort' :
-    nextSortMode === 'alphabet' ? 'Sort A→Z' :
-    'Sort by Color';
+
+  // Updated labels
+  nextSortBtn.textContent =
+    nextSortMode === 'none' ? 'Sort A→Z' :
+    nextSortMode === 'alphabet' ? 'Sort by Color' :
+    'Clear Sort';
+
   renderTasks();
 });
 
