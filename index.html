@@ -363,9 +363,17 @@ input:checked + .slider:before { transform: translateX(20px); }
   </button>
 </div>
   <div class="add-task">
-    <input type="text" placeholder="New task..." id="today-input">
-    <button onclick="addTask('today')">Add</button>
-  </div>
+  <select id="today-category" style="border:1px solid #ccc; border-radius:6px; padding:6px;">
+    <option value=""> </option>
+    <option value="❗️">❗️ Important</option>
+    <option value="‼️">‼️ Critical</option>
+    <option value="📆">📆 Event</option>
+    <option value="📝">📝 Note</option>
+    <option value="💡">💡 Idea</option>
+  </select>
+  <input type="text" placeholder="New task..." id="today-input">
+  <button onclick="addTask('today')">Add</button>
+</div>
 </div>
 
 <!-- Next Card -->
@@ -426,9 +434,17 @@ input:checked + .slider:before { transform: translateX(20px); }
   </h2>
   <div class="task-list" id="new-card-tasks"></div>
   <div class="add-task">
-    <input type="text" placeholder="New task..." id="new-card-input">
-    <button onclick="addTask('new')">Add</button>
-  </div>
+  <select id="new-category" style="border:1px solid #ccc; border-radius:6px; padding:6px;">
+    <option value=""> </option>
+    <option value="❗️">❗️ Important</option>
+    <option value="‼️">‼️ Critical</option>
+    <option value="📆">📆 Event</option>
+    <option value="📝">📝 Note</option>
+    <option value="💡">💡 Idea</option>
+  </select>
+  <input type="text" placeholder="New task..." id="new-card-input">
+  <button onclick="addTask('new')">Add</button>
+</div>
   <button class="new-card-index" title="Current card index">Card 1/1</button>
 </div>
 
@@ -516,20 +532,38 @@ function toggleHideCard(card){ hiddenCards[card]=!hiddenCards[card]; renderTasks
 
 // --- ADD TASK ---
 function addTask(card){ 
-  let input,text;
+  let input, text, category;
+
   if(card==='today'){ 
-    input=document.getElementById('today-input'); 
-    text=input.value.trim(); 
-    if(!text) return; 
-    tasks.today.push({text,status:'',highlighted:false,red:false}); 
-    input.value=''; saveTasks(); renderTasks(); 
+    input = document.getElementById('today-input'); 
+    category = document.getElementById('today-category').value;
+    text = input.value.trim(); 
+    if(!text) return;
+
+    const finalText = category ? category + ' ' + text : text;
+
+    tasks.today.push({text: finalText, status:'', highlighted:false, red:false}); 
+    
+    input.value='';
+    document.getElementById('today-category').value=''; // reset dropdown
+    saveTasks(); 
+    renderTasks(); 
   }
+
   else if(card==='new'){ 
-    input=document.getElementById('new-card-input'); 
-    text=input.value.trim(); 
-    if(!text) return; 
-    newCards[currentAdhoc].tasks.push({text,status:'',highlighted:false,red:false}); 
-    input.value=''; saveNewCards(); renderTasks(); 
+    input = document.getElementById('new-card-input'); 
+    category = document.getElementById('new-category').value;
+    text = input.value.trim(); 
+    if(!text) return;
+
+    const finalText = category ? category + ' ' + text : text;
+
+    newCards[currentAdhoc].tasks.push({text: finalText, status:'', highlighted:false, red:false}); 
+    
+    input.value='';
+    document.getElementById('new-category').value=''; // reset dropdown
+    saveNewCards(); 
+    renderTasks(); 
   }
 }
 document.getElementById('today-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('today'); });
