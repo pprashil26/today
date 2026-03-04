@@ -394,6 +394,10 @@ input:checked + .slider:before { transform: translateX(20px); }
     background: #ddd;
   }
 }
+
+#taskListTable tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
 </style>
 </head>
 <body>
@@ -403,6 +407,10 @@ input:checked + .slider:before { transform: translateX(20px); }
   <input type="text" id="master-search" placeholder="Search all tasks... (Ctrl + /)">
   <div id="master-search-info" style="font-size:0.8rem; color:#555; margin-top:4px;"></div>
 </div>
+
+<label style="margin-left: 10px; font-size: 14px;">
+  <input type="checkbox" id="toggleListView"> List View
+</label>
 
 <!-- Today Card -->
 <div class="card today">
@@ -525,6 +533,23 @@ input:checked + .slider:before { transform: translateX(20px); }
     <li><strong>New Cards → Manage multiple projects or categories</strong></li>
   </ul>
   <button id="close-help" style="margin-top:8px; padding:4px 8px; border:none; background:#333; color:#fff; border-radius:4px; cursor:pointer;">Close</button>
+</div>
+
+<div id="listViewContainer" style="display: none; margin-top: 10px;">
+  <table id="taskListTable" style="width: 100%; border-collapse: collapse; font-size: 12px;">
+    <thead>
+      <tr>
+        <th style="text-align: left; padding: 4px;">ID</th>
+        <th style="text-align: left; padding: 4px;">Task</th>
+        <th style="text-align: left; padding: 4px;">Category</th>
+        <th style="text-align: left; padding: 4px;">Due</th>
+        <th style="text-align: left; padding: 4px;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Rows will be populated by JS -->
+    </tbody>
+  </table>
 </div>
 
 <script>
@@ -939,6 +964,53 @@ document.querySelectorAll('#today-category-toolbar .category-btn').forEach(btn=>
     document.querySelectorAll('#today-category-toolbar .category-btn').forEach(b=>b.style.opacity='0.6');
     btn.style.opacity = '1';
   });
+});
+
+const toggleListView = document.getElementById('toggleListView');
+const listViewContainer = document.getElementById('listViewContainer');
+const taskListTableBody = document.querySelector('#taskListTable tbody');
+const cardContainer = document.getElementById('cardsContainer'); // your existing cards container
+
+function renderListView() {
+  taskListTableBody.innerHTML = ''; // clear old rows
+  tasks.forEach(task => {
+    const row = document.createElement('tr');
+    row.style.borderBottom = '1px solid #ddd';
+    row.innerHTML = `
+      <td style="padding: 4px;">${task.id}</td>
+      <td style="padding: 4px;">${task.title}</td>
+      <td style="padding: 4px;">${task.category}</td>
+      <td style="padding: 4px;">${task.due || '-'}</td>
+      <td style="padding: 4px;">${task.completed ? '✔️' : ''}</td>
+    `;
+    taskListTableBody.appendChild(row);
+  });
+}
+
+// toggle handler
+toggleListView.addEventListener('change', () => {
+  if (toggleListView.checked) {
+    listViewContainer.style.display = 'block';
+    cardContainer.style.display = 'none';
+    renderListView();
+  } else {
+    listViewContainer.style.display = 'none';
+    cardContainer.style.display = 'flex'; // restore original display
+  }
+});
+
+let nameSortAsc = true; // toggle ascending/descending
+
+document.querySelector('#taskListTable th:nth-child(2)').addEventListener('click', () => {
+  tasks.sort((a, b) => {
+    const nameA = a.title.toLowerCase();
+    const nameB = b.title.toLowerCase();
+    if (nameA < nameB) return nameSortAsc ? -1 : 1;
+    if (nameA > nameB) return nameSortAsc ? 1 : -1;
+    return 0;
+  });
+  nameSortAsc = !nameSortAsc; // flip for next click
+  renderListView();
 });
 
 </script>
