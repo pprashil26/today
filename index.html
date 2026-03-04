@@ -330,6 +330,13 @@ input:checked + .slider:before { transform: translateX(20px); }
     font-size: 0.75rem; /* smaller than 0.8rem */
   }
 }
+
+.category-btn {
+  border:none; padding:4px 8px; border-radius:6px; background:#eee; cursor:pointer; opacity:0.6;
+  transition: opacity 0.2s;
+}
+.category-btn:hover { opacity:0.9; }
+.category-btn[style*="opacity: 1"] { background:#ddd; font-weight:bold; }
 </style>
 </head>
 <body>
@@ -367,15 +374,12 @@ input:checked + .slider:before { transform: translateX(20px); }
   <button onclick="addTask('today')">Add</button>
 </div>
 
-<div style="margin-top:4px;">
-  <select id="today-category" style="border:1px solid #ccc; border-radius:6px; padding:6px;">
-  <option value="" disabled selected hidden> </option>
-  <option value="❗️">❗️ Important</option>
-  <option value="‼️">‼️ Critical</option>
-  <option value="📆">📆 Event</option>
-  <option value="📝">📝 Note</option>
-  <option value="💡">💡 Idea</option>
-</select>
+<div id="today-category-toolbar" style="display:flex; gap:6px; margin-bottom:4px;">
+  <button class="category-btn" data-cat="❗️">❗️ Important</button>
+  <button class="category-btn" data-cat="‼️">‼️ Critical</button>
+  <button class="category-btn" data-cat="📆">📆 Event</button>
+  <button class="category-btn" data-cat="📝">📝 Note</button>
+  <button class="category-btn" data-cat="💡">💡 Idea</button>
 </div>
 </div>
 
@@ -441,15 +445,12 @@ input:checked + .slider:before { transform: translateX(20px); }
   <button onclick="addTask('new')">Add</button>
 </div>
 
-<div style="margin-top:4px;">
-  <select id="new-category" style="border:1px solid #ccc; border-radius:6px; padding:6px;">
-  <option value="" disabled selected hidden> </option>
-  <option value="❗️">❗️ Important</option>
-  <option value="‼️">‼️ Critical</option>
-  <option value="📆">📆 Event</option>
-  <option value="📝">📝 Note</option>
-  <option value="💡">💡 Idea</option>
-</select>
+<div id="new-category-toolbar" style="display:flex; gap:6px; margin-bottom:4px;">
+  <button class="category-btn" data-cat="❗️">❗️ Important</button>
+  <button class="category-btn" data-cat="‼️">‼️ Critical</button>
+  <button class="category-btn" data-cat="📆">📆 Event</button>
+  <button class="category-btn" data-cat="📝">📝 Note</button>
+  <button class="category-btn" data-cat="💡">💡 Idea</button>
 </div>
   <button class="new-card-index" title="Current card index">Card 1/1</button>
 </div>
@@ -485,6 +486,9 @@ let currentAdhoc=0;
 function saveNewCards(){ localStorage.setItem(newCardsKey,JSON.stringify(newCards)); }
 
 let hiddenCards={next:false,someday:false,archive:false,new:false};
+
+let todaySelectedCategory = '';
+let newSelectedCategory = '';
 
 // --- TODAY TEMP SORT STATE ---
 let todaySortActive = false;
@@ -542,7 +546,7 @@ function addTask(card){
 
   if(card==='today'){ 
     input = document.getElementById('today-input'); 
-    category = document.getElementById('today-category').value;
+    category = todaySelectedCategory;
     text = input.value.trim(); 
     if(!text) return;
 
@@ -551,14 +555,13 @@ function addTask(card){
     tasks.today.push({text: finalText, status:'', highlighted:false, red:false}); 
     
     input.value='';
-    document.getElementById('today-category').value=''; // reset dropdown
     saveTasks(); 
     renderTasks(); 
   }
 
   else if(card==='new'){ 
     input = document.getElementById('new-card-input'); 
-    category = document.getElementById('new-category').value;
+    category = newSelectedCategory;
     text = input.value.trim(); 
     if(!text) return;
 
@@ -567,7 +570,6 @@ function addTask(card){
     newCards[currentAdhoc].tasks.push({text: finalText, status:'', highlighted:false, red:false}); 
     
     input.value='';
-    document.getElementById('new-category').value=''; // reset dropdown
     saveNewCards(); 
     renderTasks(); 
   }
@@ -870,6 +872,25 @@ renderTasks();
 // --- MASTER SEARCH SHORTCUT ---
 document.addEventListener('keydown', function(e){
   if(e.ctrlKey && e.key==='/'){ masterSearchInput.focus(); }
+});
+
+// TODAY CARD CATEGORY BUTTONS
+document.querySelectorAll('#today-category-toolbar .category-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    todaySelectedCategory = btn.dataset.cat;
+    // visually highlight selected
+    document.querySelectorAll('#today-category-toolbar .category-btn').forEach(b=>b.style.opacity='0.6');
+    btn.style.opacity = '1';
+  });
+});
+
+// NEW CARD CATEGORY BUTTONS
+document.querySelectorAll('#new-category-toolbar .category-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    newSelectedCategory = btn.dataset.cat;
+    document.querySelectorAll('#new-category-toolbar .category-btn').forEach(b=>b.style.opacity='0.6');
+    btn.style.opacity = '1';
+  });
 });
 </script>
 </body>
