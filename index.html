@@ -573,6 +573,58 @@ masterSearchInput.addEventListener('input', function(){
   renderTasks();
 });
 
+// --- MOVE / DELETE / HIGHLIGHT FUNCTIONS ---
+
+// Move task from one card to another
+function moveTask(from, to, i){
+  let task;
+  if(from === 'new'){
+    task = newCards[currentAdhoc].tasks.splice(i,1)[0];
+    if(to === 'today' || to==='next' || to==='someday' || to==='archive'){
+      tasks[to].push(task);
+      saveTasks();
+    } else if(to === 'new'){ newCards[currentAdhoc].tasks.push(task); saveNewCards(); }
+    else return;
+    saveNewCards();
+  } else {
+    task = tasks[from].splice(i,1)[0];
+    if(to === 'today' || to==='next' || to==='someday' || to==='archive'){
+      tasks[to].push(task);
+      saveTasks();
+    } else if(to === 'new'){ newCards[currentAdhoc].tasks.push(task); saveNewCards(); }
+    else return;
+    saveTasks();
+  }
+  renderTasks();
+}
+
+// Cycle task highlight (none → yellow → red → none)
+function cycleHighlight(card,i){
+  let task = card==='new'? newCards[currentAdhoc].tasks[i] : tasks[card][i];
+  if(!task.highlighted && !task.red){ task.highlighted=true; task.red=false; }
+  else if(task.highlighted){ task.highlighted=false; task.red=true; }
+  else { task.highlighted=false; task.red=false; }
+  if(card==='new') saveNewCards(); else saveTasks();
+  renderTasks();
+}
+
+// --- NEW CARD NAVIGATION ---
+function prevNewCard(){
+  if(currentAdhoc > 0){ currentAdhoc--; renderTasks(); }
+}
+
+function nextNewCard(){
+  if(currentAdhoc < newCards.length-1){ currentAdhoc++; renderTasks(); }
+}
+
+// --- CREATE NEW CARD ---
+function createNewCard(){
+  newCards.push({ title:'New Card', tasks: [] });
+  currentAdhoc = newCards.length-1;
+  saveNewCards();
+  renderTasks();
+}
+
 // --- RENDER TASKS ---
 function renderTasks(){
   function createTaskDiv(taskObj, card, i, isNew=false){
@@ -724,6 +776,158 @@ function toggleStatusNew(i){
 
 // --- INITIAL RENDER ---
 renderTasks();
+
+// --- ARCHIVE STATUS DIV ---
+let archiveStatusDiv = document.getElementById('archive-status');
+if(!archiveStatusDiv){
+  archiveStatusDiv = document.createElement('div');
+  archiveStatusDiv.id = 'archive-status';
+  archiveStatusDiv.style.fontSize = '0.75rem';
+  archiveStatusDiv.style.color = '#333';
+  archiveStatusDiv.style.marginTop = '6px';
+  archiveStatusDiv.style.opacity = '0.8';
+  document.getElementById('archive-card').appendChild(archiveStatusDiv);
+}
+
+// --- EXPORT ALL TASKS AND NEW CARDS AS JSON ---
+function exportTasksTxt(){
+  const data = { tasks, newCards };
+  const dataStr = JSON.stringify(data, null, 2);
+  const blob = new Blob([dataStr], {type: "text/plain"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "tasks_backup.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+  archiveStatusDiv.textContent = `💾 Exported ${tasks.today.length + tasks.next.length + tasks.someday.length + tasks.archive.length} tasks + ${newCards.length} new card(s).`;
+}
+
+// --- EXPORT READABLE TXT WITH SUMMARY LINE ---
+function exportReadableTxt(){
+  let summary = `SUMMARY: Today ${tasks.today.length}, Next ${tasks.next.length}, Someday ${tasks.someday.length}, Archive ${tasks.archive.length}, New Cards ${newCards.length}\n\n`;
+  let content = summary;
+
+  function appendTasks(taskArray, cardName){
+    content += `--- ${cardName.toUpperCase()} ---\n`;
+    taskArray.forEach((t,i)=>{
+      const status = t.status==='completed'?'✓':t.status==='inprogress'?'→':'•';
+      const highlight = t.red?'[RED]':t.highlighted?'[★]':'';
+      content += `${i+1}. ${status} ${t.text} ${highlight}\n`;
+      if(t.notes && t.notes.trim()!=='') content += `   Notes: ${t.notes}\n`;
+    });
+    content += '\n';
+  }
+
+  appendTasks(tasks.today,'Today');
+  appendTasks(tasks.next,'Next');
+  appendTasks(tasks.someday,'Someday');
+  appendTasks(tasks.archive,'Archive');
+
+  newCards.forEach((c,idx)=>{
+    content += `--- NEW CARD ${idx+1}: ${c.title} ---\n`;
+    appendTasks(c.tasks, `Card ${idx+1}`);
+  });
+
+  const blob = new Blob([content], {type: "text/plain"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "tasks_readable.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+  archiveStatusDiv.textContent = `💾 Exported readable TXT with ${tasks.today.length + tasks.next.length + tasks.someday.length + tasks.archive.length} tasks + ${newCards.length} new card(s).`;
+}
+
+// --- IMPORT TASKS & NEW CARDS ---
+function importTasksFile(){
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.txt,.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = evt => {
+      try{
+        const imported = JSON.parse(evt.target.result);
+        let importedTasks = 0, importedCards = 0;
+        if(imported.tasks){
+          ['today','next','someday','archive'].forEach(card=>{
+            if(Array.isArray(imported.tasks[card])){
+              tasks[card] = imported.tasks[card];
+              importedTasks += tasks[card].length;
+            }
+          });
+        }
+        if(imported.newCards && Array.isArray(imported.newCards)){
+          newCards = imported.newCards;
+          importedCards = newCards.length;
+          currentAdhoc = 0;
+          saveNewCards();
+        }
+        saveTasks();
+        renderTasks();
+        archiveStatusDiv.textContent = `✅ Imported ${importedTasks} tasks + ${importedCards} new card(s) successfully!`;
+      } catch(err){
+        archiveStatusDiv.textContent = '❌ Failed to import tasks. Invalid file.';
+        console.error(err);
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// --- IMPORT TASKS AND NEW CARDS FROM FILE ---
+function importTasksFile() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.txt,.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+    reader.onload = event => {
+      try {
+        const data = JSON.parse(event.target.result);
+
+        // Validate structure
+        if(data.tasks && typeof data.tasks === 'object'){
+          tasks = {
+            today: data.tasks.today || [],
+            next: data.tasks.next || [],
+            someday: data.tasks.someday || [],
+            archive: data.tasks.archive || []
+          };
+          saveTasks();
+        } else {
+          console.warn("Tasks structure missing or invalid.");
+        }
+
+        if(data.newCards && Array.isArray(data.newCards)){
+          newCards = data.newCards.map(c => ({
+            title: c.title || 'New Card',
+            tasks: Array.isArray(c.tasks) ? c.tasks : []
+          }));
+          currentAdhoc = 0; // reset to first new card
+          saveNewCards();
+        } else {
+          console.warn("New Cards structure missing or invalid.");
+        }
+
+        renderTasks();
+        archiveStatusDiv.textContent = `📥 Imported ${tasks.today.length + tasks.next.length + tasks.someday.length + tasks.archive.length} tasks + ${newCards.length} new card(s).`;
+      } catch(err) {
+        alert('Error importing file: Invalid JSON format.');
+        console.error(err);
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
 </script>
 </body>
 </html>	
