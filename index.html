@@ -1,4 +1,4 @@
-	<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -470,8 +470,8 @@ function saveNewCards(){ localStorage.setItem(newCardsKey,JSON.stringify(newCard
 let hiddenCards={next:false,someday:false,archive:false,new:false};
 
 // --- TODAY TEMP SORT STATE ---
-let todaySortActive = false;
-let nextSortActive = false;
+let todaySortMode = 'none';   // 'none' | 'az' | 'color'
+let nextSortMode = 'none';
 let todayTasksHidden = false;
 
 let masterSearchQuery = '';
@@ -502,7 +502,31 @@ nextSortBtn.addEventListener('click', function(){
     nextSortBtn.textContent = nextSortActive ? 'Unsort' : 'Sort A→Z';
     renderTasks();
 });
-todaySortBtn.addEventListener('click', function(){
+
+todaySortBtn.addEventListener('click', () => {
+  if(todaySortMode === 'none') todaySortMode = 'alphabet';
+  else if(todaySortMode === 'alphabet') todaySortMode = 'color';
+  else todaySortMode = 'none';
+
+  todaySortBtn.textContent = 
+    todaySortMode === 'none' ? 'Sort' :
+    todaySortMode === 'alphabet' ? 'Sort A→Z' :
+    'Sort by Color';
+  renderTasks();
+});
+
+nextSortBtn.addEventListener('click', () => {
+  if(nextSortMode === 'none') nextSortMode = 'alphabet';
+  else if(nextSortMode === 'alphabet') nextSortMode = 'color';
+  else nextSortMode = 'none';
+
+  nextSortBtn.textContent = 
+    nextSortMode === 'none' ? 'Sort' :
+    nextSortMode === 'alphabet' ? 'Sort A→Z' :
+    'Sort by Color';
+  renderTasks();
+});
+addEventListener('click', function(){
     todaySortActive = !todaySortActive;
     todaySortBtn.textContent = todaySortActive ? 'Unsort' : 'Sort A→Z';
     renderTasks();
@@ -749,23 +773,26 @@ function renderTasks(){
     container.innerHTML='';
     if(card!=='today'){ c.style.display=hiddenCards[card]?'none':'flex'; }
     if(card==='today'){ document.getElementById('today-tasks').style.display = todayTasksHidden ? 'none':'block'; }
-    if(card==='today' && todaySortActive){
-  const sorted = tasks.today
-    .map((t,i)=>({task:t,originalIndex:i}))
-    .sort((a,b)=>a.task.text.localeCompare(b.task.text));
-  sorted.forEach(item=>{
-    const el=createTaskDiv(item.task,'today',item.originalIndex);
-    if(el) container.appendChild(el);
-  });
+// --- clone tasks and sort if needed ---
+let sortedTasks = [...tasks[card]];
+
+if(card === 'today' && todaySortMode !== 'none') {
+  if(todaySortMode === 'alphabet') 
+    sortedTasks.sort((a,b) => a.text.localeCompare(b.text));
+  else if(todaySortMode === 'color') 
+    sortedTasks.sort((a,b) => (a.red?1:a.highlighted?2:3) - (b.red?1:b.highlighted?2:3));
+} else if(card === 'next' && nextSortMode !== 'none') {
+  if(nextSortMode === 'alphabet') 
+    sortedTasks.sort((a,b) => a.text.localeCompare(b.text));
+  else if(nextSortMode === 'color') 
+    sortedTasks.sort((a,b) => (a.red?1:a.highlighted?2:3) - (b.red?1:b.highlighted?2:3));
 }
-else if(card==='next' && nextSortActive){
-  const sorted = tasks.next
-    .map((t,i)=>({task:t,originalIndex:i}))
-    .sort((a,b)=>a.task.text.localeCompare(b.task.text));
-  sorted.forEach(item=>{
-    const el=createTaskDiv(item.task,'next',item.originalIndex);
-    if(el) container.appendChild(el);
-  });
+
+// --- render tasks ---
+sortedTasks.forEach((t,i) => {
+  const el = createTaskDiv(t, card, i);
+  if(el) container.appendChild(el);
+});
 }
 else {
   tasks[card].forEach((t,i)=>{
