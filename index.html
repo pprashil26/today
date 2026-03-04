@@ -370,9 +370,13 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 <!-- Next Card -->
 <div class="card next" id="next-card">
-  <h2><span><span class="first">N</span><span class="rest">ext / this week</span></span>
-    <span class="archive-tools"><button onclick="toggleHideCard('next')">hide</button></span>
-  </h2>
+  <h2>
+  <span><span class="first">N</span><span class="rest">ext / this week</span></span>
+  <span class="archive-tools">
+    <button id="next-sort-btn" style="border:none;background:none;cursor:pointer;font-size:0.75rem;color:#333;">Sort A→Z</button>
+    <button onclick="toggleHideCard('next')">hide</button>
+  </span>
+</h2>
   <div class="task-list" id="next-tasks"></div>
 </div>
 
@@ -462,6 +466,7 @@ let hiddenCards={next:false,someday:false,archive:false,new:false};
 
 // --- TODAY TEMP SORT STATE ---
 let todaySortActive = false;
+let nextSortActive = false;
 let todayTasksHidden = false;
 
 let masterSearchQuery = '';
@@ -485,6 +490,13 @@ updateToggleBtn();
 
 // --- TODAY SORT TOGGLE ---
 const todaySortBtn = document.getElementById('today-sort-btn');
+// --- NEXT SORT TOGGLE ---
+const nextSortBtn = document.getElementById('next-sort-btn');
+nextSortBtn.addEventListener('click', function(){
+    nextSortActive = !nextSortActive;
+    nextSortBtn.textContent = nextSortActive ? 'Unsort' : 'Sort A→Z';
+    renderTasks();
+});
 todaySortBtn.addEventListener('click', function(){
     todaySortActive = !todaySortActive;
     todaySortBtn.textContent = todaySortActive ? 'Unsort' : 'Sort A→Z';
@@ -725,10 +737,29 @@ function renderTasks(){
     if(card!=='today'){ c.style.display=hiddenCards[card]?'none':'flex'; }
     if(card==='today'){ document.getElementById('today-tasks').style.display = todayTasksHidden ? 'none':'block'; }
     if(card==='today' && todaySortActive){
-      const sorted = tasks.today.map((t,i)=>({task:t,originalIndex:i})).sort((a,b)=>a.task.text.localeCompare(b.task.text));
-      sorted.forEach(item=>{ const el=createTaskDiv(item.task,'today',item.originalIndex); if(el) container.appendChild(el); });
-    } else { tasks[card].forEach((t,i)=>{ const el=createTaskDiv(t,card,i); if(el) container.appendChild(el); }); }
+  const sorted = tasks.today
+    .map((t,i)=>({task:t,originalIndex:i}))
+    .sort((a,b)=>a.task.text.localeCompare(b.task.text));
+  sorted.forEach(item=>{
+    const el=createTaskDiv(item.task,'today',item.originalIndex);
+    if(el) container.appendChild(el);
   });
+}
+else if(card==='next' && nextSortActive){
+  const sorted = tasks.next
+    .map((t,i)=>({task:t,originalIndex:i}))
+    .sort((a,b)=>a.task.text.localeCompare(b.task.text));
+  sorted.forEach(item=>{
+    const el=createTaskDiv(item.task,'next',item.originalIndex);
+    if(el) container.appendChild(el);
+  });
+}
+else {
+  tasks[card].forEach((t,i)=>{
+    const el=createTaskDiv(t,card,i);
+    if(el) container.appendChild(el);
+  });
+}
 
   // --- TODAY TASK SUMMARY ---
   const todaySummaryDiv=document.getElementById('today-summary');
