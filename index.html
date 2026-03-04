@@ -903,14 +903,31 @@ document.querySelectorAll('#today-category-toolbar .category-btn').forEach(btn=>
   });
 });
 
-// NEW CARD CATEGORY BUTTONS
-document.querySelectorAll('#new-category-toolbar .category-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    newSelectedCategory = btn.dataset.cat;
-    document.querySelectorAll('#new-category-toolbar .category-btn').forEach(b=>b.style.opacity='0.6');
-    btn.style.opacity = '1';
-  });
-});
+/* =========================
+   CATEGORY / SIGNIFIER TOOLBAR DARKER ICONS
+   ========================= */
+.category-btn {
+  padding: 1px 4px;       /* ultra-compact */
+  font-size: 0.65rem;     /* small font */
+  border-radius: 3px;
+  background: #eee;       /* light background */
+  color: #444;            /* darker icon color */
+  opacity: 0.85;          /* more visible than 0.6 */
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.category-btn:hover {
+  opacity: 1;             /* fully visible on hover */
+  background: #ddd;       /* slightly darker hover background */
+}
+
+.category-btn[style*="opacity: 1"] {
+  background: #ddd;
+  font-weight: bold;
+  color: #333;            /* fully dark for selected */
+}
 </script>
 </body>
 </html>	
