@@ -134,9 +134,29 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 input:checked + .slider { background-color: #4caf50; }
 input:checked + .slider:before { transform: translateX(20px); }
 
-.archive-tools { display: flex; gap: 8px; }
-.archive-tools button { background: none; border: none; font-size: 12px; cursor: pointer; opacity: 0.6; padding: 0; }
-.archive-tools button:hover { opacity: 1; }
+.archive-tools {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;        /* wrap on small screens */
+  opacity: 1;             /* force full opacity */
+  font-size: 0.8rem;      /* slightly larger */
+}
+
+.archive-tools button {
+  background: #fff;       /* subtle contrast */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  opacity: 1;             /* ensure visible */
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.archive-tools button:hover {
+  background: #e0e0e0;
+  opacity: 1;
+}
 
 .new-card-index { background:none; border:none; font-size:12px; opacity:0.6; cursor:pointer; margin-top:4px; display:block; text-align:center; }
 .new-card-index:hover { opacity:1; }
@@ -934,6 +954,54 @@ function importTasksFile() {
   };
   input.click();
 }
+
+<script>
+// --- SOMEDAY LAST REVIEWED ---
+const somedayTimestampSpan = document.getElementById('someday-timestamp');
+const somedayBtn = document.getElementById('someday-timestamp-btn');
+
+// Load saved timestamp
+let lastReviewed = localStorage.getItem('somedayLastReviewed') || '—';
+somedayTimestampSpan.textContent = `Last reviewed: ${lastReviewed}`;
+
+// Update on button click
+somedayBtn.addEventListener('click', () => {
+  const now = new Date();
+  lastReviewed = now.toLocaleString();
+  localStorage.setItem('somedayLastReviewed', lastReviewed);
+  somedayTimestampSpan.textContent = `Last reviewed: ${lastReviewed}`;
+});
+
+// --- SOMEDAY LAST REVIEWED ---
+const somedayTimestampSpan = document.getElementById('someday-timestamp');
+const somedayTimestampBtn = document.getElementById('someday-timestamp-btn');
+
+// Load saved timestamp if any
+let somedayLastReviewed = localStorage.getItem('somedayLastReviewed') || '—';
+somedayTimestampSpan.textContent = `Last reviewed: ${somedayLastReviewed}`;
+
+// Update timestamp on click
+somedayTimestampBtn.addEventListener('click', ()=>{
+  const now = new Date();
+  const formatted = now.toLocaleString(); // or use toLocaleDateString() for just date
+  somedayLastReviewed = formatted;
+  somedayTimestampSpan.textContent = `Last reviewed: ${formatted}`;
+  localStorage.setItem('somedayLastReviewed', formatted);
+});
+
+// --- SOMEDAY LAST REVIEWED TIMESTAMP ---
+const somedayTimestamp = document.getElementById('someday-timestamp');
+const somedayBtn = document.getElementById('someday-timestamp-btn');
+const storedSometime = localStorage.getItem('somedayLastReviewed');
+if(storedSometime) somedayTimestamp.textContent = `Last reviewed: ${storedSometime}`;
+
+somedayBtn.addEventListener('click', ()=>{
+  const now = new Date();
+  const formatted = now.toLocaleDateString(undefined, { day:'numeric', month:'short', year:'2-digit' });
+  somedayTimestamp.textContent = `Last reviewed: ${formatted}`;
+  localStorage.setItem('somedayLastReviewed', formatted);
+});
 </script>
+
 </body>
 </html>	
