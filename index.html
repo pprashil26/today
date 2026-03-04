@@ -363,16 +363,19 @@ input:checked + .slider:before { transform: translateX(20px); }
   </button>
 </div>
   <div class="add-task">
-  <select id="today-category" style="border:1px solid #ccc; border-radius:6px; padding:6px;">
-    <option value=""> </option>
-    <option value="❗️">❗️ Important</option>
-    <option value="‼️">‼️ Critical</option>
-    <option value="📆">📆 Event</option>
-    <option value="📝">📝 Note</option>
-    <option value="💡">💡 Idea</option>
-  </select>
   <input type="text" placeholder="New task..." id="today-input">
   <button onclick="addTask('today')">Add</button>
+</div>
+
+<div style="margin-top:4px;">
+  <select id="today-category" style="border:1px solid #ccc; border-radius:6px; padding:6px;">
+  <option value="" disabled selected hidden> </option>
+  <option value="❗️">❗️ Important</option>
+  <option value="‼️">‼️ Critical</option>
+  <option value="📆">📆 Event</option>
+  <option value="📝">📝 Note</option>
+  <option value="💡">💡 Idea</option>
+</select>
 </div>
 </div>
 
@@ -434,16 +437,19 @@ input:checked + .slider:before { transform: translateX(20px); }
   </h2>
   <div class="task-list" id="new-card-tasks"></div>
   <div class="add-task">
-  <select id="new-category" style="border:1px solid #ccc; border-radius:6px; padding:6px;">
-    <option value=""> </option>
-    <option value="❗️">❗️ Important</option>
-    <option value="‼️">‼️ Critical</option>
-    <option value="📆">📆 Event</option>
-    <option value="📝">📝 Note</option>
-    <option value="💡">💡 Idea</option>
-  </select>
   <input type="text" placeholder="New task..." id="new-card-input">
   <button onclick="addTask('new')">Add</button>
+</div>
+
+<div style="margin-top:4px;">
+  <select id="new-category" style="border:1px solid #ccc; border-radius:6px; padding:6px;">
+  <option value="" disabled selected hidden> </option>
+  <option value="❗️">❗️ Important</option>
+  <option value="‼️">‼️ Critical</option>
+  <option value="📆">📆 Event</option>
+  <option value="📝">📝 Note</option>
+  <option value="💡">💡 Idea</option>
+</select>
 </div>
   <button class="new-card-index" title="Current card index">Card 1/1</button>
 </div>
