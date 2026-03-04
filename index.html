@@ -363,6 +363,37 @@ input:checked + .slider:before { transform: translateX(20px); }
   font-weight: bold;
   color: #333;            /* fully dark for selected */
 }
+
+/* =========================
+   MOBILE – CATEGORY / SIGNIFIER TOOLBAR
+   ========================= */
+@media (max-width: 600px) {
+  #today-category-toolbar,
+  #new-category-toolbar {
+    gap: 4px;               /* tighter spacing */
+    justify-content: flex-start;
+    flex-wrap: wrap;         /* wrap if needed */
+    margin-bottom: 4px;
+  }
+
+  .category-btn {
+    padding: 2px 5px;        /* slightly larger for tap target */
+    font-size: 0.7rem;       /* readable on mobile */
+    border-radius: 4px;
+    opacity: 0.9;            /* a little more visible */
+    color: #444;             /* consistent with web */
+  }
+
+  .category-btn:hover {
+    background: #ddd;
+    opacity: 1;
+  }
+
+  .category-btn[style*="opacity: 1"] {
+    color: #333;
+    background: #ddd;
+  }
+}
 </style>
 </head>
 <body>
