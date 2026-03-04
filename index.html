@@ -216,11 +216,12 @@ input:checked + .slider:before { transform: translateX(20px); }
    MOBILE – FIXED SIZE CARDS
    ========================= */
 @media (max-width: 600px) {
-
-  /* Toggle button size */
-  #toggle-cards-btn {
-    font-size: 0.65rem;
+  .card {
+    width: 100%;
+    max-width: 420px;
+    height: 85vh;  /* 85% of screen height */
   }
+}
 
   body {
     padding: 14px;
