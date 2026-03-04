@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+	<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -37,8 +37,8 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 }
 
 .card { 
-  width: 397px;   /* A6 width */
-  height: 561px;  /* A6 height */
+  width: 397px;
+  height: 561px;
   border-radius: 12px; 
   padding: 16px; 
   display: flex; 
@@ -47,7 +47,6 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   position: relative; 
   box-shadow: 0 6px 18px rgba(0,0,0,0.12); 
   overflow: hidden; 
-}
 }
 .card::before { 
   content: ""; 
@@ -332,69 +331,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   }
 }
 
-.category-btn {
-  border:none; padding:4px 8px; border-radius:6px; background:#eee; cursor:pointer; opacity:0.6;
-  transition: opacity 0.2s;
-}
-.category-btn:hover { opacity:0.9; }
-.category-btn[style*="opacity: 1"] { background:#ddd; font-weight:bold; }
 
-/* =========================
-   CATEGORY / SIGNIFIER TOOLBAR DARKER ICONS
-   ========================= */
-.category-btn {
-  padding: 1px 4px;       /* ultra-compact */
-  font-size: 0.65rem;     /* small font */
-  border-radius: 3px;
-  background: #eee;       /* light background */
-  color: #444;            /* darker icon color */
-  opacity: 0.85;          /* more visible than 0.6 */
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.2s, background 0.2s;
-}
-
-.category-btn:hover {
-  opacity: 1;             /* fully visible on hover */
-  background: #ddd;       /* slightly darker hover background */
-}
-
-.category-btn[style*="opacity: 1"] {
-  background: #ddd;
-  font-weight: bold;
-  color: #333;            /* fully dark for selected */
-}
-
-/* =========================
-   MOBILE – CATEGORY / SIGNIFIER TOOLBAR
-   ========================= */
-@media (max-width: 600px) {
-  #today-category-toolbar,
-  #new-category-toolbar {
-    gap: 4px;               /* tighter spacing */
-    justify-content: flex-start;
-    flex-wrap: wrap;         /* wrap if needed */
-    margin-bottom: 4px;
-  }
-
-  .category-btn {
-    padding: 2px 5px;        /* slightly larger for tap target */
-    font-size: 0.7rem;       /* readable on mobile */
-    border-radius: 4px;
-    opacity: 0.9;            /* a little more visible */
-    color: #444;             /* consistent with web */
-  }
-
-  .category-btn:hover {
-    background: #ddd;
-    opacity: 1;
-  }
-
-  .category-btn[style*="opacity: 1"] {
-    color: #333;
-    background: #ddd;
-  }
-}
 </style>
 </head>
 <body>
@@ -432,13 +369,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   <button onclick="addTask('today')">Add</button>
 </div>
 
-<div id="today-category-toolbar" style="display:flex; gap:6px; margin-bottom:4px;">
-  <button class="category-btn" data-cat="❗️">❗️ </button>
-  <button class="category-btn" data-cat="‼️">‼️ </button>
-  <button class="category-btn" data-cat="📆">📆 </button>
-  <button class="category-btn" data-cat="📝">📝 </button>
-  <button class="category-btn" data-cat="💡">💡 </button>
-</div>
+
 </div>
 
 <!-- Next Card -->
@@ -503,14 +434,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   <button onclick="addTask('new')">Add</button>
 </div>
 
-<div id="new-category-toolbar" style="display:flex; gap:6px; margin-bottom:4px;">
-  <button class="category-btn" data-cat="❗️">❗️ </button>
-  <button class="category-btn" data-cat="‼️">‼️ </button>
-  <button class="category-btn" data-cat="📆">📆 </button>
-  <button class="category-btn" data-cat="📝">📝 </button>
-  <button class="category-btn" data-cat="💡">💡 </button>
-</div>
-  <button class="new-card-index" title="Current card index">Card 1/1</button>
+<button class="new-card-index" title="Current card index">Card 1/1</button>
 </div>
 
 <!-- Help Overlay -->
@@ -544,9 +468,6 @@ let currentAdhoc=0;
 function saveNewCards(){ localStorage.setItem(newCardsKey,JSON.stringify(newCards)); }
 
 let hiddenCards={next:false,someday:false,archive:false,new:false};
-
-let todaySelectedCategory = '';
-let newSelectedCategory = '';
 
 // --- TODAY TEMP SORT STATE ---
 let todaySortActive = false;
@@ -600,33 +521,25 @@ function toggleHideCard(card){ hiddenCards[card]=!hiddenCards[card]; renderTasks
 
 // --- ADD TASK ---
 function addTask(card){ 
-  let input, text, category;
+  let input, text;
 
   if(card==='today'){ 
-    input = document.getElementById('today-input'); 
-    category = todaySelectedCategory;
-    text = input.value.trim(); 
+    input = document.getElementById('today-input');
+    text = input.value.trim();
     if(!text) return;
 
-    const finalText = category ? category + ' ' + text : text;
-
-    tasks.today.push({text: finalText, status:'', highlighted:false, red:false}); 
-    
+    tasks.today.push({text: text, status:'', highlighted:false, red:false});
     input.value='';
     saveTasks(); 
     renderTasks(); 
   }
 
   else if(card==='new'){ 
-    input = document.getElementById('new-card-input'); 
-    category = newSelectedCategory;
-    text = input.value.trim(); 
+    input = document.getElementById('new-card-input');
+    text = input.value.trim();
     if(!text) return;
 
-    const finalText = category ? category + ' ' + text : text;
-
-    newCards[currentAdhoc].tasks.push({text: finalText, status:'', highlighted:false, red:false}); 
-    
+    newCards[currentAdhoc].tasks.push({text: text, status:'', highlighted:false, red:false});
     input.value='';
     saveNewCards(); 
     renderTasks(); 
@@ -930,16 +843,6 @@ renderTasks();
 // --- MASTER SEARCH SHORTCUT ---
 document.addEventListener('keydown', function(e){
   if(e.ctrlKey && e.key==='/'){ masterSearchInput.focus(); }
-});
-
-// TODAY CARD CATEGORY BUTTONS
-document.querySelectorAll('#today-category-toolbar .category-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    todaySelectedCategory = btn.dataset.cat;
-    // visually highlight selected
-    document.querySelectorAll('#today-category-toolbar .category-btn').forEach(b=>b.style.opacity='0.6');
-    btn.style.opacity = '1';
-  });
 });
 
 </script>
