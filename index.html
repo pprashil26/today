@@ -8,13 +8,13 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
 
+/* MASTER TOOLBAR */
 #master-toolbar {
   width: 100%;
   max-width: 1400px;
   margin-bottom: 12px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
 }
 #master-search {
   width: 100%;
@@ -27,18 +27,27 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   background: #fff;
 }
 #master-search:focus { outline: none; border-color: #555; }
-#master-search-info { font-size:0.8rem; color:#555; margin-top:4px; }
 
 /* CARD BASE */
 .card { 
-  width: 397px; height: 561px; border-radius: 12px; 
-  padding: 16px; display: flex; flex-direction: column; gap: 8px; 
-  position: relative; box-shadow: 0 6px 18px rgba(0,0,0,0.12); overflow: hidden; 
+  width: 397px;
+  height: 561px;
+  border-radius: 12px; 
+  padding: 16px; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px; 
+  position: relative; 
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12); 
+  overflow: hidden; 
 }
 .card::before { 
-  content: ""; position: absolute; inset: 0; 
+  content: ""; 
+  position: absolute; 
+  inset: 0; 
   background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="none" stroke="%23e0e0e0" stroke-width="1"/></svg>') repeat; 
-  opacity: 0.03; pointer-events: none; 
+  opacity: 0.03; 
+  pointer-events: none; 
 }
 
 /* CARD TYPES */
@@ -49,13 +58,15 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 
 #toggle-cards-btn { font-size: 0.75rem; margin-left: 8px; border: none; background: none; cursor: pointer; color: #333; padding: 0; }
 
-/* Fonts */
+/* FONTS */
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
 
+/* TASKS */
 .task-text, .task-notes, .add-task input { font-family: 'Inter', sans-serif; }
 .task-text { font-size: 0.85rem; line-height: 1.4; }
 .task-notes { font-size: 0.75rem; line-height: 1.35; color: #555; margin-left: 24px; margin-top: 2px; white-space: pre-wrap; }
+.task-notes a { color:#007bff; text-decoration: underline; cursor:pointer; }
 .add-task button { font-family: 'Inter', sans-serif; font-size: 0.85rem; }
 
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
@@ -69,9 +80,6 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .task-list::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.2); border-radius: 3px; }
 
 .task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; cursor: pointer; }
-.task-top { display: flex; align-items: center; justify-content: space-between; }
-.circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px; flex-shrink: 0; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition: all 0.2s ease; background: #fff; color: #333; }
-.task-text { flex: 1; word-break: break-word; }
 .task-toolbar { display: none; margin-left: 24px; margin-top: 2px; gap: 6px; }
 .task-toolbar button { padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; transition: opacity 0.15s ease; }
 .task-toolbar button:hover { opacity: 0.8; }
@@ -81,27 +89,36 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .add-task button { padding: 6px 12px; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
 .add-task button:hover { background: #555; }
 
+.circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px; flex-shrink: 0; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition: all 0.2s ease; background: #fff; color: #333; }
 .circle.completed { background: #34c759; border: none; color: white; }
 .task-text.completed { opacity: 0.65; text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: #c7c7cc; transition: all 0.25s ease; }
 
 .search-highlight { background-color: #fff79a; }
+.red-highlighted { background-color: #FF746C; }
 
-/* Someday footer */
-.someday-footer { display: flex; justify-content: flex-end; align-items: center; gap: 4px; font-size: 0.75rem; color: #999; margin-top: 8px; }
-.someday-footer button { font-size: 0.75rem; border: none; background: none; cursor: pointer; color: #999; }
+.archive-tools { display:flex; gap:8px; }
+.archive-tools button { background:none; border:none; font-size:12px; cursor:pointer; opacity:0.6; }
+.archive-tools button:hover { opacity:1; }
+
+.new-card-index { background:none; border:none; font-size:12px; opacity:0.6; cursor:pointer; margin-top:4px; display:block; text-align:center; }
+.new-card-index:hover { opacity:1; }
+
+/* SOMEDAY FOOTER */
+.someday-footer { display:flex; justify-content:flex-end; align-items:center; gap:4px; font-size:0.75rem; color:#999; margin-top:8px; }
+.someday-footer button { font-size:0.75rem; border:none; background:none; cursor:pointer; color:#999; }
 
 /* MOBILE */
 @media (max-width:600px){
   #toggle-cards-btn { font-size: 0.65rem; }
-  body { padding: 14px; gap: 18px; flex-direction: column; align-items: center; background: #f2f2f7; }
-  .card { width: 100%; max-width: 420px; height: 480px; border-radius: 18px; display: flex; flex-direction: column; }
-  .task-list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
-  .circle { width: 22px; height: 22px; font-size: 14px; }
-  .task-text { font-size: 1rem; }
-  .add-task input, .add-task button { font-size: 1rem; padding: 10px 12px; border-radius: 10px; }
+  body { padding:14px; gap:18px; flex-direction:column; align-items:center; background:#f2f2f7; }
+  .card { width:100%; max-width:420px; height:480px; border-radius:18px; display:flex; flex-direction:column; }
+  .task-list { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; scroll-behavior:smooth; }
+  .circle { width:22px; height:22px; font-size:14px; }
+  .task-text { font-size:1rem; }
+  .add-task input, .add-task button { font-size:1rem; padding:10px 12px; border-radius:10px; }
 }
 
-/* DESKTOP SMALL TWEAKS */
+/* DESKTOP */
 @media(min-width:601px){
   .task-text { font-size:0.8rem; }
   .task-notes { font-size:0.7rem; }
@@ -109,6 +126,7 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   .card h2 { font-size:1rem; }
   #today-date { font-size:0.75rem; }
 }
+
 </style>
 </head>
 <body>
@@ -124,13 +142,13 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   <h2>
     <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
     <button id="toggle-cards-btn">Focus Mode</button>
-    <button id="today-sort-btn" style="margin-left:8px;border:none;background:none;cursor:pointer;font-size:0.75rem;color:#333;">Sort A→Z</button>
-    <button id="help-btn" style="margin-left:8px;border:none;background:none;cursor:pointer;font-size:1.2rem;color:#333;">?</button>
+    <button id="today-sort-btn">Sort A→Z</button>
+    <button id="help-btn">?</button>
   </h2>
   <div class="task-list" id="today-tasks"></div>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
-    <div id="today-summary" style="font-size:0.85rem;color:#555;"></div>
-    <button id="today-focus-btn" style="border:none;background:none;cursor:pointer;font-size:0.75rem;color:#333;">hide all tasks</button>
+    <div id="today-summary"></div>
+    <button id="today-focus-btn">hide all tasks</button>
   </div>
   <div class="add-task">
     <input type="text" placeholder="New task..." id="today-input">
@@ -138,32 +156,38 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   </div>
 </div>
 
-<!-- NEXT CARD -->
+<!-- Next Card -->
 <div class="card next" id="next-card">
   <h2>
-    <span><span class="first">N</span><span class="rest">ext / this week</span></span>
-    <span class="archive-tools">
-      <button id="next-sort-btn" style="border:none;background:none;cursor:pointer;font-size:0.75rem;color:#333;">Sort A→Z</button>
-      <button onclick="toggleHideCard('next')">hide</button>
-    </span>
-  </h2>
+  <span><span class="first">N</span><span class="rest">ext / this week</span></span>
+  <span class="archive-tools">
+    <button id="next-sort-btn" style="border:none;background:none;cursor:pointer;font-size:0.75rem;color:#333;">Sort A→Z</button>
+    <button onclick="toggleHideCard('next')">hide</button>
+  </span>
+</h2>
   <div class="task-list" id="next-tasks"></div>
 </div>
 
-<!-- SOMEDAY CARD -->
+<!-- Someday Card -->
 <div class="card someday" id="someday-card">
   <h2>
     <span><span class="first">S</span><span class="rest">omeday / notes</span></span>
-    <span class="archive-tools"><button onclick="toggleHideCard('someday')">hide</button></span>
+    <span class="archive-tools">
+      <button onclick="toggleHideCard('someday')">hide</button>
+    </span>
   </h2>
+
+  <!-- Scrollable task list -->
   <div class="task-list scrollable" id="someday-tasks"></div>
+
+  <!-- Last Reviewed Field (pinned at bottom) -->
   <div class="someday-footer">
     <span id="someday-timestamp">Last reviewed: —</span>
     <button id="someday-timestamp-btn">⏰</button>
   </div>
 </div>
 
-<!-- ARCHIVE CARD -->
+<!-- Archive Card -->
 <div class="card archive" id="archive-card">
   <h2>
     Archive
@@ -177,10 +201,10 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   <div class="task-list" id="archive-tasks"></div>
 </div>
 
-<!-- NEW CARD -->
+<!-- New Card Section -->
 <div class="card new-card" id="new-card">
   <h2>
-    <input type="text" id="new-card-title" value="New Card" style="border:none;background:none;font-family:sans-serif;font-size:1.05rem;width:140px;">
+    <input type="text" id="new-card-title" value="New Card" style="border:none;background:none;font-family:sans-serif;font-size:1.05rem; width: 140px;">
     <span class="archive-tools">
       <button onclick="toggleHideCard('new')">hide</button>
       <button onclick="prevNewCard()">Prev</button>
@@ -190,16 +214,17 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   </h2>
   <div class="task-list" id="new-card-tasks"></div>
   <div class="add-task">
-    <input type="text" placeholder="New task..." id="new-card-input">
-    <button onclick="addTask('new')">Add</button>
-  </div>
-  <button class="new-card-index">Card 1/1</button>
+  <input type="text" placeholder="New task..." id="new-card-input">
+  <button onclick="addTask('new')">Add</button>
 </div>
 
-<!-- HELP OVERLAY -->
+<button class="new-card-index" title="Current card index">Card 1/1</button>
+</div>
+
+<!-- Help Overlay -->
 <div id="help-overlay" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1px solid #ccc;padding:16px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.2);z-index:9999;font-size:0.9rem;line-height:1.4;">
   <strong>Quick Guide</strong>
-  <ul style="margin-top:8px;padding-left:18px;">
+  <ul style="margin-top:8px; padding-left:18px;">
     <li>Add task → Type + Add or press Enter</li>
     <li>Move task → T/N/S/✕</li>
     <li>Highlight → ⭐ cycles Yellow → Red → White</li>
@@ -208,288 +233,455 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
     <li>Hide/show cards → Toggle switch</li>
     <li><strong>New Cards → Manage multiple projects or categories</strong></li>
   </ul>
-  <button id="close-help" style="margin-top:8px;padding:4px 8px;border:none;background:#333;color:#fff;border-radius:4px;cursor:pointer;">Close</button>
+  <button id="close-help" style="margin-top:8px; padding:4px 8px; border:none; background:#333; color:#fff; border-radius:4px; cursor:pointer;">Close</button>
 </div>
 
+
 <script>
-// ======================
-// DATA STORAGE
-// ======================
-let tasks = {
-  today: JSON.parse(localStorage.getItem("tasks_today")||"[]"),
-  next: JSON.parse(localStorage.getItem("tasks_next")||"[]"),
-  someday: JSON.parse(localStorage.getItem("tasks_someday")||"[]"),
-  archive: JSON.parse(localStorage.getItem("tasks_archive")||"[]"),
-  newCards: JSON.parse(localStorage.getItem("tasks_newCards")||"[]")
-};
-
-let currentNewCardIndex = 0;
-if(!tasks.newCards.length) tasks.newCards.push({title:"New Card", tasks:[]});
-
-// ======================
-// UTILITIES
-// ======================
-function saveTasks(){
-  localStorage.setItem("tasks_today", JSON.stringify(tasks.today));
-  localStorage.setItem("tasks_next", JSON.stringify(tasks.next));
-  localStorage.setItem("tasks_someday", JSON.stringify(tasks.someday));
-  localStorage.setItem("tasks_archive", JSON.stringify(tasks.archive));
-  localStorage.setItem("tasks_newCards", JSON.stringify(tasks.newCards));
+// --- DATE ---
+function todayDate(){ 
+  const d = new Date(); 
+  return d.toLocaleDateString(undefined, { day:'numeric', month:'short' }); 
 }
+document.getElementById('today-date').innerText = " " + todayDate();
 
-function formatDate(){
-  const d = new Date();
-  return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+// --- STORAGE ---
+const storageKey = 'todayToolTasks';
+let tasks = JSON.parse(localStorage.getItem(storageKey)) || { today: [], next: [], someday: [], archive: [] };
+function saveTasks(){ localStorage.setItem(storageKey, JSON.stringify(tasks)); }
+
+const newCardsKey = 'newCards';
+let newCards = JSON.parse(localStorage.getItem(newCardsKey)) || [{ title:'New Card', tasks: [] }];
+let currentAdhoc = 0;
+function saveNewCards(){ localStorage.setItem(newCardsKey, JSON.stringify(newCards)); }
+
+let hiddenCards = { next:false, someday:false, archive:false, new:false };
+let todaySortMode = 'none';  // 'none' | 'alphabet' | 'color'
+let nextSortMode = 'none';
+let todayTasksHidden = false;
+let masterSearchQuery = '';
+
+// --- MASTER TOGGLE ---
+const toggleBtn = document.getElementById('toggle-cards-btn');
+function updateToggleBtn() {
+    const anyHidden = hiddenCards.next || hiddenCards.someday || hiddenCards.archive || hiddenCards.new;
+    toggleBtn.textContent = anyHidden ? 'Show All' : 'Focus Mode';
 }
+toggleBtn.addEventListener('click', function() {
+    const anyHidden = hiddenCards.next || hiddenCards.someday || hiddenCards.archive || hiddenCards.new;
+    if(anyHidden){ hiddenCards = { next:false, someday:false, archive:false, new:false }; }
+    else { hiddenCards = { next:true, someday:true, archive:true, new:true }; }
+    renderTasks();
+    updateToggleBtn();
+});
+updateToggleBtn();
 
-// ======================
-// TASK RENDERING
-// ======================
-function renderTasks(){
-  const renderList = (arr, containerId) => {
-    const container = document.getElementById(containerId);
-    container.innerHTML = "";
-    arr.forEach((t,i)=>{
-      const taskDiv = document.createElement("div");
-      taskDiv.className = "task";
-      const circle = document.createElement("div");
-      circle.className = "circle"+(t.completed?" completed":"");
-      circle.innerText = t.completed?"✓":"";
-      circle.onclick = ()=>toggleStatus(containerId,i);
+// --- TODAY SORT TOGGLE ---
+const todaySortBtn = document.getElementById('today-sort-btn');
+todaySortBtn.addEventListener('click', () => {
+  if (todaySortMode === 'none') todaySortMode = 'alphabet';
+  else if (todaySortMode === 'alphabet') todaySortMode = 'color';
+  else todaySortMode = 'none';
 
-      const textDiv = document.createElement("div");
-      textDiv.className = "task-text"+(t.completed?" completed":"");
-      textDiv.innerText = t.text;
+  // Updated labels
+  todaySortBtn.textContent =
+    todaySortMode === 'none' ? 'Sort A→Z' :
+    todaySortMode === 'alphabet' ? 'Sort by Color' :
+    'Clear Sort';
 
-      const toolbar = document.createElement("div");
-      toolbar.className = "task-toolbar";
-      toolbar.innerHTML = `
-        <button onclick="moveTask('${containerId}',${i},'today')">T</button>
-        <button onclick="moveTask('${containerId}',${i},'next')">N</button>
-        <button onclick="moveTask('${containerId}',${i},'someday')">S</button>
-        <button onclick="moveTask('${containerId}',${i},'archive')">✕</button>
-        <button onclick="editTask('${containerId}',${i})">✎</button>
-        <button onclick="cycleHighlight('${containerId}',${i})">⭐</button>
-      `;
+  renderTasks();
+});
 
-      taskDiv.append(circle,textDiv,toolbar);
-      taskDiv.onmouseover = ()=>toolbar.style.display="flex";
-      taskDiv.onmouseleave = ()=>toolbar.style.display="none";
-      if(t.highlight) taskDiv.classList.add("search-highlight");
-      container.appendChild(taskDiv);
-    });
-  };
+// --- NEXT SORT TOGGLE ---
+const nextSortBtn = document.getElementById('next-sort-btn');
+nextSortBtn.addEventListener('click', () => {
+  if (nextSortMode === 'none') nextSortMode = 'alphabet';
+  else if (nextSortMode === 'alphabet') nextSortMode = 'color';
+  else nextSortMode = 'none';
 
-  renderList(tasks.today,"today-tasks");
-  renderList(tasks.next,"next-tasks");
-  renderList(tasks.someday,"someday-tasks");
-  renderList(tasks.archive,"archive-tasks");
-  renderList(tasks.newCards[currentNewCardIndex].tasks,"new-card-tasks");
+  // Updated labels
+  nextSortBtn.textContent =
+    nextSortMode === 'none' ? 'Sort A→Z' :
+    nextSortMode === 'alphabet' ? 'Sort by Color' :
+    'Clear Sort';
 
-  document.getElementById("today-date").innerText = formatDate();
-  document.getElementById("today-summary").innerText = `Today ${tasks.today.length}, Next ${tasks.next.length}, Someday ${tasks.someday.length}, Archive ${tasks.archive.length}, New Cards ${tasks.newCards.length}`;
-  document.querySelector(".new-card-index").innerText = `Card ${currentNewCardIndex+1}/${tasks.newCards.length}`;
+  renderTasks();
+});
+
+// --- TODAY FOCUS MODE ---
+const todayFocusBtn = document.getElementById('today-focus-btn');
+todayFocusBtn.addEventListener('click', function(){
+  todayTasksHidden = !todayTasksHidden;
+  todayFocusBtn.textContent = todayTasksHidden ? 'show all tasks' : 'hide all tasks';
+  renderTasks();
+});
+
+// --- INDIVIDUAL HIDE ---
+function toggleHideCard(card){ hiddenCards[card] = !hiddenCards[card]; renderTasks(); }
+
+// --- ADD TASK ---
+function addTask(card){ 
+  let input, text;
+  if(card==='today'){ 
+    input = document.getElementById('today-input');
+    text = input.value.trim();
+    if(!text) return;
+    tasks.today.push({text: text, status:'', highlighted:false, red:false});
+    input.value='';
+    saveTasks(); 
+  }
+  else if(card==='new'){ 
+    input = document.getElementById('new-card-input');
+    text = input.value.trim();
+    if(!text) return;
+    newCards[currentAdhoc].tasks.push({text: text, status:'', highlighted:false, red:false});
+    input.value='';
+    saveNewCards(); 
+  }
+  renderTasks(); 
 }
+document.getElementById('today-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('today'); });
+document.getElementById('new-card-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('new'); });
 
-// ======================
-// TASK ACTIONS
-// ======================
-function addTask(card){
-  const inputId = card==="new"?"new-card-input":"today-input";
-  const input = document.getElementById(inputId);
-  const text = input.value.trim();
-  if(!text) return;
-  const taskObj = {text, completed:false, highlight:null};
-  if(card==="today") tasks.today.push(taskObj);
-  else if(card==="next") tasks.next.push(taskObj);
-  else if(card==="someday") tasks.someday.push(taskObj);
-  else if(card==="new") tasks.newCards[currentNewCardIndex].tasks.push(taskObj);
-  input.value="";
-  saveTasks();
+// --- SAVE NEW CARD TITLE ---
+const newCardTitleInput = document.getElementById('new-card-title');
+newCardTitleInput.addEventListener('input', function() {
+  newCards[currentAdhoc].title = this.value.trim() || 'New Card';
+  saveNewCards();
+});
+
+// --- HELP BUTTON ---
+const helpBtn = document.getElementById('help-btn');
+const helpOverlay = document.getElementById('help-overlay');
+const closeHelp = document.getElementById('close-help');
+helpBtn.addEventListener('click', ()=>{ helpOverlay.style.display='block'; });
+closeHelp.addEventListener('click', ()=>{ helpOverlay.style.display='none'; });
+
+// --- MASTER SEARCH ---
+const masterSearchInput = document.getElementById('master-search');
+masterSearchInput.addEventListener('input', function(){
+  masterSearchQuery = this.value.trim().toLowerCase();
+  renderTasks();
+});
+
+// --- MOVE / DELETE / HIGHLIGHT FUNCTIONS ---
+
+// Move task from one card to another
+function moveTask(from, to, i){
+  let task;
+  if(from === 'new'){
+    task = newCards[currentAdhoc].tasks.splice(i,1)[0];
+    if(to === 'today' || to==='next' || to==='someday' || to==='archive'){
+      tasks[to].push(task);
+      saveTasks();
+    } else if(to === 'new'){ newCards[currentAdhoc].tasks.push(task); saveNewCards(); }
+    else return;
+    saveNewCards();
+  } else {
+    task = tasks[from].splice(i,1)[0];
+    if(to === 'today' || to==='next' || to==='someday' || to==='archive'){
+      tasks[to].push(task);
+      saveTasks();
+    } else if(to === 'new'){ newCards[currentAdhoc].tasks.push(task); saveNewCards(); }
+    else return;
+    saveTasks();
+  }
   renderTasks();
 }
 
-function toggleStatus(containerId,index){
-  let arr = getArray(containerId);
-  arr[index].completed = !arr[index].completed;
-  saveTasks();
+// Cycle task highlight (none → yellow → red → none)
+function cycleHighlight(card,i){
+  let task = card==='new'? newCards[currentAdhoc].tasks[i] : tasks[card][i];
+  if(!task.highlighted && !task.red){ task.highlighted=true; task.red=false; }
+  else if(task.highlighted){ task.highlighted=false; task.red=true; }
+  else { task.highlighted=false; task.red=false; }
+  if(card==='new') saveNewCards(); else saveTasks();
   renderTasks();
 }
 
-function getArray(containerId){
-  if(containerId==="today-tasks") return tasks.today;
-  if(containerId==="next-tasks") return tasks.next;
-  if(containerId==="someday-tasks") return tasks.someday;
-  if(containerId==="archive-tasks") return tasks.archive;
-  if(containerId==="new-card-tasks") return tasks.newCards[currentNewCardIndex].tasks;
-}
-
-// ======================
-// MOVE / EDIT / HIGHLIGHT
-// ======================
-function moveTask(fromId,index,toCard){
-  let arr = getArray(fromId);
-  let task = arr.splice(index,1)[0];
-  if(toCard==="today") tasks.today.push(task);
-  else if(toCard==="next") tasks.next.push(task);
-  else if(toCard==="someday") tasks.someday.push(task);
-  else if(toCard==="archive") tasks.archive.push(task);
-  else if(toCard==="new") tasks.newCards[currentNewCardIndex].tasks.push(task);
-  saveTasks();
-  renderTasks();
-}
-
-function editTask(containerId,index){
-  let arr = getArray(containerId);
-  const newText = prompt("Edit task:",arr[index].text);
-  if(newText!==null) { arr[index].text = newText; saveTasks(); renderTasks(); }
-}
-
-function cycleHighlight(containerId,index){
-  let arr = getArray(containerId);
-  if(!arr[index].highlight) arr[index].highlight="yellow";
-  else if(arr[index].highlight==="yellow") arr[index].highlight="red";
-  else arr[index].highlight=null;
-  saveTasks();
-  renderTasks();
-}
-
-// ======================
-// CARD NAVIGATION
-// ======================
-function toggleHideCard(card){
-  const cardEl = document.getElementById(card+"-card");
-  if(cardEl.style.display==="none") cardEl.style.display="flex";
-  else cardEl.style.display="none";
+// --- NEW CARD NAVIGATION ---
+function prevNewCard(){
+  if(currentAdhoc > 0){ currentAdhoc--; renderTasks(); }
 }
 
 function nextNewCard(){
-  if(currentNewCardIndex<tasks.newCards.length-1) currentNewCardIndex++;
-  renderTasks();
+  if(currentAdhoc < newCards.length-1){ currentAdhoc++; renderTasks(); }
 }
-function prevNewCard(){
-  if(currentNewCardIndex>0) currentNewCardIndex--;
-  renderTasks();
-}
+
+// --- CREATE NEW CARD ---
 function createNewCard(){
-  tasks.newCards.push({title:"New Card",tasks:[]});
-  currentNewCardIndex=tasks.newCards.length-1;
-  saveTasks();
+  newCards.push({ title:'New Card', tasks: [] });
+  currentAdhoc = newCards.length-1;
+  saveNewCards();
   renderTasks();
 }
 
-// ======================
-// SORTING
-// ======================
-function sortCardAtoZ(card){
-  let arr = getArray(card+"-tasks");
-  arr.sort((a,b)=>a.text.localeCompare(b.text));
-  saveTasks();
-  renderTasks();
-}
+// --- RENDER TASKS ---
+function renderTasks(){
+  function createTaskDiv(taskObj, card, i, isNew=false){
+    if(masterSearchQuery){
+      const textMatch = taskObj.text.toLowerCase().includes(masterSearchQuery);
+      const notesMatch = taskObj.notes && taskObj.notes.toLowerCase().includes(masterSearchQuery);
+      if(!textMatch && !notesMatch){ return null; }
+    }
 
-document.getElementById("today-sort-btn").onclick = ()=>sortCardAtoZ("today");
-document.getElementById("next-sort-btn").onclick = ()=>sortCardAtoZ("next");
+    const taskDiv = document.createElement('div');
+    taskDiv.className = 'task';
+    if(taskObj.highlighted) taskDiv.classList.add('highlighted');
+    if(taskObj.red) taskDiv.classList.add('red-highlighted');
 
-// ======================
-// EXPORT / IMPORT
-// ======================
-function exportTasksTxt(){
-  let content = JSON.stringify(tasks,null,2);
-  const blob = new Blob([content],{type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href=url; a.download="tasks.json"; a.click();
-  URL.revokeObjectURL(url);
-}
+    const topRow = document.createElement('div');
+    topRow.className = 'task-top';
 
-function exportReadableTxt(){
-  let summary = `SUMMARY: Today ${tasks.today.length}, Next ${tasks.next.length}, Someday ${tasks.someday.length}, Archive ${tasks.archive.length}, New Cards ${tasks.newCards.length}\n\n`;
-  let content = summary;
+    const left = document.createElement('div');
+    left.style.display = 'flex';
+    left.style.alignItems = 'center';
 
-  function appendTasks(arr,name){
-    content += `--- ${name.toUpperCase()} ---\n`;
-    arr.forEach((t,i)=>{ content += `${i+1}. ${t.text} ${t.completed?"[x]":""}\n`; });
-    content += "\n";
+    const circle = document.createElement('span');
+    circle.className = 'circle';
+    circle.textContent = taskObj.status==='completed'?'✓':taskObj.status==='inprogress'?'→':'•';
+    if(taskObj.status==='completed'){ circle.classList.add('completed'); }
+
+    const text = document.createElement('span');
+    text.className = 'task-text';
+    if(masterSearchQuery && taskObj.text.toLowerCase().includes(masterSearchQuery)){
+      const regex = new RegExp(`(${masterSearchQuery})`, 'gi');
+      text.innerHTML = taskObj.text.replace(regex, '<span style="background:#fff79a;">$1</span>');
+    } else { text.textContent = taskObj.text; }
+    if(taskObj.status==='completed'){ text.classList.add('completed'); }
+
+    circle.onclick = function(e){ e.stopPropagation(); if(isNew){ toggleStatusNew(i); } else { toggleStatus(card,i); } };
+
+    left.append(circle,text);
+    topRow.append(left);
+
+    const tb = document.createElement('div');
+    tb.className = 'task-toolbar';
+    if(card!=='archive'){
+      const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=function(){ moveTask(isNew?'new':card,'today',i); };
+      const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=function(){ moveTask(isNew?'new':card,'next',i); };
+      const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=function(){ moveTask(isNew?'new':card,'someday',i); };
+      const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ moveTask(isNew?'new':card,'archive',i); };
+      const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐'; highlightBtn.onclick=function(){ cycleHighlight(isNew?'new':card,i); };
+      const editBtn=document.createElement('button'); editBtn.textContent='✎'; editBtn.onclick=function(){ 
+        const newText = prompt('Edit task:',taskObj.text);
+        if(newText && newText.trim()!==''){ taskObj.text=newText.trim(); if(card==='new'){saveNewCards();} else{saveTasks();} renderTasks(); }
+      };
+      const notesBtn=document.createElement('button'); notesBtn.textContent='📝'; notesBtn.onclick=function(e){
+        e.stopPropagation();
+        const currentNote = taskObj.notes || '';
+        let newNote = prompt('Enter notes for this task:', currentNote);
+        if(newNote!==null){ taskObj.notes=newNote.trim(); if(card==='new'){saveNewCards();} else{saveTasks();} renderTasks(); }
+      };
+      tb.append(todayBtn,nextBtn,somedayBtn,highlightBtn,editBtn,notesBtn,delBtn);
+    }
+
+    topRow.onclick = function(){ tb.style.display = tb.style.display==='flex'?'none':'flex'; };
+    taskDiv.append(topRow,tb);
+
+    if(taskObj.notes && taskObj.notes.trim()!==''){
+      const notesDiv = document.createElement('div'); notesDiv.className='task-notes';
+      const maxLength = 60;
+      if(taskObj.notes.length > maxLength){
+        const preview = taskObj.notes.slice(0,maxLength) + '... ';
+        const viewFull = document.createElement('a'); viewFull.textContent='(view full)';
+        viewFull.onclick=function(e){ e.stopPropagation(); const fullNote=prompt('Full note:',taskObj.notes); if(fullNote!==null){ taskObj.notes=fullNote.trim(); if(card==='new'){saveNewCards();} else{saveTasks();} renderTasks(); } };
+        notesDiv.textContent = preview;
+        notesDiv.appendChild(viewFull);
+      } else { notesDiv.textContent = taskObj.notes; }
+      taskDiv.appendChild(notesDiv);
+    }
+    return taskDiv;
   }
 
-  appendTasks(tasks.today,"Today");
-  appendTasks(tasks.next,"Next");
-  appendTasks(tasks.someday,"Someday");
-  appendTasks(tasks.archive,"Archive");
-  tasks.newCards.forEach((c,i)=>appendTasks(c.tasks,`New Card ${i+1}`));
+  // --- STANDARD CARDS ---
+  ['today','next','someday','archive'].forEach(card=>{
+    const c = document.getElementById(card+'-card');
+    const container = document.getElementById(card+'-tasks');
+    container.innerHTML='';
 
-  const blob = new Blob([content],{type:"text/plain"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href=url; a.download="tasks_readable.txt"; a.click();
-  URL.revokeObjectURL(url);
+    if(card!=='today'){ c.style.display = hiddenCards[card] ? 'none':'flex'; }
+    else { document.getElementById('today-tasks').style.display = todayTasksHidden ? 'none':'block'; }
+
+    let sortedTasks = [...tasks[card]];
+    if(card==='today' && todaySortMode!=='none'){
+      if(todaySortMode==='alphabet') sortedTasks.sort((a,b)=>a.text.localeCompare(b.text));
+      else if(todaySortMode==='color') sortedTasks.sort((a,b)=>(a.red?1:a.highlighted?2:3) - (b.red?1:b.highlighted?2:3));
+    } else if(card==='next' && nextSortMode!=='none'){
+      if(nextSortMode==='alphabet') sortedTasks.sort((a,b)=>a.text.localeCompare(b.text));
+      else if(nextSortMode==='color') sortedTasks.sort((a,b)=>(a.red?1:a.highlighted?2:3) - (b.red?1:b.highlighted?2:3));
+    }
+
+    sortedTasks.forEach((t,i)=>{
+      const el = createTaskDiv(t, card, i);
+      if(el) container.appendChild(el);
+    });
+  });
+
+  // --- TODAY SUMMARY ---
+  const todaySummaryDiv=document.getElementById('today-summary');
+  const todayTasksArr=tasks.today;
+  const pending=todayTasksArr.filter(t=>t.status==='').length;
+  const inProgress=todayTasksArr.filter(t=>t.status==='inprogress').length;
+  const completed=todayTasksArr.filter(t=>t.status==='completed').length;
+  todaySummaryDiv.textContent=`• ${pending}   → ${inProgress}   ✓ ${completed}`;
+
+  // --- NEW CARD ---
+  const nc=document.getElementById('new-card'); 
+  const ncTasks=document.getElementById('new-card-tasks'); 
+  ncTasks.innerHTML=''; 
+  nc.style.display=hiddenCards.new?'none':'flex';
+  const cardData=newCards[currentAdhoc]; 
+  document.getElementById('new-card-title').value=cardData.title;
+  cardData.tasks.forEach((t,i)=>{ const el=createTaskDiv(t,'new',i,true); if(el) ncTasks.appendChild(el); });
+  document.querySelector('.new-card-index').textContent=`Card ${currentAdhoc+1}/${newCards.length}`;
+
+  // --- MASTER SEARCH INFO ---
+  if(masterSearchQuery){
+    const cardKeys=['today','next','someday','archive','new'];
+    const counts={}; let totalMatches=0;
+    cardKeys.forEach(card=>{
+      let taskArray = card==='new'? newCards.flatMap(c=>c.tasks) : tasks[card];
+      counts[card] = taskArray.filter(t=> t.text.toLowerCase().includes(masterSearchQuery) || (t.notes && t.notes.toLowerCase().includes(masterSearchQuery)) ).length;
+      totalMatches += counts[card];
+    });
+    document.getElementById('master-search-info').textContent = `Total: ${totalMatches} | Today: ${counts.today}, Next: ${counts.next}, Someday: ${counts.someday}, Archive: ${counts.archive}, New: ${counts.new}`;
+  } else { document.getElementById('master-search-info').textContent=''; }
 }
 
-function importTasksFile(){
-  const input = document.createElement("input");
-  input.type="file"; input.accept=".json";
-  input.onchange = e=>{
+// --- TASK ACTIONS ---
+function toggleStatus(card,i){ 
+  const t=tasks[card][i]; 
+  t.status=t.status==='completed'?'':t.status==='inprogress'?'completed':'inprogress'; 
+  saveTasks(); renderTasks(); 
+}
+function toggleStatusNew(i){ 
+  const t=newCards[currentAdhoc].tasks[i]; 
+  t.status=t.status==='completed'?'':t.status==='inprogress'?'completed':'inprogress'; 
+  saveNewCards(); renderTasks(); 
+}
+
+// --- MOVE / DELETE / HIGHLIGHT ---
+// Keep your existing moveTask, deleteTask, cycleHighlight functions as before
+// (No changes needed for core rendering)
+
+// --- INITIAL RENDER ---
+renderTasks();
+
+// --- ARCHIVE STATUS DIV ---
+let archiveStatusDiv = document.getElementById('archive-status');
+if(!archiveStatusDiv){
+  archiveStatusDiv = document.createElement('div');
+  archiveStatusDiv.id = 'archive-status';
+  archiveStatusDiv.style.fontSize = '0.75rem';
+  archiveStatusDiv.style.color = '#333';
+  archiveStatusDiv.style.marginTop = '6px';
+  archiveStatusDiv.style.opacity = '0.8';
+  document.getElementById('archive-card').appendChild(archiveStatusDiv);
+}
+
+// --- EXPORT ALL TASKS AND NEW CARDS AS JSON ---
+function exportTasksTxt(){
+  const data = { tasks, newCards };
+  const dataStr = JSON.stringify(data, null, 2);
+  const blob = new Blob([dataStr], {type: "text/plain"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "tasks_backup.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+  archiveStatusDiv.textContent = `💾 Exported ${tasks.today.length + tasks.next.length + tasks.someday.length + tasks.archive.length} tasks + ${newCards.length} new card(s).`;
+}
+
+// --- EXPORT READABLE TXT WITH SUMMARY LINE ---
+function exportReadableTxt(){
+  let summary = `SUMMARY: Today ${tasks.today.length}, Next ${tasks.next.length}, Someday ${tasks.someday.length}, Archive ${tasks.archive.length}, New Cards ${newCards.length}\n\n`;
+  let content = summary;
+
+  function appendTasks(taskArray, cardName){
+    content += `--- ${cardName.toUpperCase()} ---\n`;
+    taskArray.forEach((t,i)=>{
+      const status = t.status==='completed'?'✓':t.status==='inprogress'?'→':'•';
+      const highlight = t.red?'[RED]':t.highlighted?'[★]':'';
+      content += `${i+1}. ${status} ${t.text} ${highlight}\n`;
+      if(t.notes && t.notes.trim()!=='') content += `   Notes: ${t.notes}\n`;
+    });
+    content += '\n';
+  }
+
+  appendTasks(tasks.today,'Today');
+  appendTasks(tasks.next,'Next');
+  appendTasks(tasks.someday,'Someday');
+  appendTasks(tasks.archive,'Archive');
+
+  newCards.forEach((c,idx)=>{
+    content += `--- NEW CARD ${idx+1}: ${c.title} ---\n`;
+    appendTasks(c.tasks, `Card ${idx+1}`);
+  });
+
+  const blob = new Blob([content], {type: "text/plain"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "tasks_readable.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+  archiveStatusDiv.textContent = `💾 Exported readable TXT with ${tasks.today.length + tasks.next.length + tasks.someday.length + tasks.archive.length} tasks + ${newCards.length} new card(s).`;
+}
+
+// --- IMPORT TASKS & NEW CARDS ---
+
+// --- IMPORT TASKS AND NEW CARDS FROM FILE ---
+function importTasksFile() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.txt,.json';
+  input.onchange = e => {
     const file = e.target.files[0];
     if(!file) return;
+
     const reader = new FileReader();
-    reader.onload = evt=>{
-      try{
-        const imported = JSON.parse(evt.target.result);
-        tasks = {...tasks,...imported};
-        saveTasks();
+    reader.onload = event => {
+      try {
+        const data = JSON.parse(event.target.result);
+
+        // Validate structure
+        if(data.tasks && typeof data.tasks === 'object'){
+          tasks = {
+            today: data.tasks.today || [],
+            next: data.tasks.next || [],
+            someday: data.tasks.someday || [],
+            archive: data.tasks.archive || []
+          };
+          saveTasks();
+        } else {
+          console.warn("Tasks structure missing or invalid.");
+        }
+
+        if(data.newCards && Array.isArray(data.newCards)){
+          newCards = data.newCards.map(c => ({
+            title: c.title || 'New Card',
+            tasks: Array.isArray(c.tasks) ? c.tasks : []
+          }));
+          currentAdhoc = 0; // reset to first new card
+          saveNewCards();
+        } else {
+          console.warn("New Cards structure missing or invalid.");
+        }
+
         renderTasks();
-      }catch(err){ alert("Invalid JSON file"); }
+        archiveStatusDiv.textContent = `📥 Imported ${tasks.today.length + tasks.next.length + tasks.someday.length + tasks.archive.length} tasks + ${newCards.length} new card(s).`;
+      } catch(err) {
+        alert('Error importing file: Invalid JSON format.');
+        console.error(err);
+      }
     };
     reader.readAsText(file);
   };
   input.click();
 }
 
-// ======================
-// MASTER SEARCH
-// ======================
-document.getElementById("master-search").oninput = function(){
-  const query = this.value.toLowerCase();
-  const allLists = ["today-tasks","next-tasks","someday-tasks","archive-tasks","new-card-tasks"];
-  allLists.forEach(id=>{
-    let arr = getArray(id);
-    arr.forEach(t=>t.highlight=false);
-    arr.forEach(t=>{
-      if(t.text.toLowerCase().includes(query)) t.highlight="yellow";
-    });
-  });
-  renderTasks();
-  document.getElementById("master-search-info").innerText = query?"Searching: "+query:"";
-};
-
-// ======================
-// HELP OVERLAY
-// ======================
-document.getElementById("help-btn").onclick = ()=>document.getElementById("help-overlay").style.display="block";
-document.getElementById("close-help").onclick = ()=>document.getElementById("help-overlay").style.display="none";
-
-// INITIAL RENDER
-renderTasks();
-// ======================
-// ENTER KEY TO ADD TASK
-// ======================
-document.getElementById("today-input").addEventListener("keydown", e=>{
-  if(e.key === "Enter") addTask("today");
-});
-document.getElementById("new-card-input").addEventListener("keydown", e=>{
-  if(e.key === "Enter") addTask("new");
-});
-
-// ======================
-// CTRL + / TO FOCUS MASTER SEARCH
-// ======================
-document.addEventListener("keydown", e=>{
-  if(e.ctrlKey && e.key === "/"){
-    e.preventDefault();
-    document.getElementById("master-search").focus();
-  }
-});
 </script>
 </body>
 </html>
