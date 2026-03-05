@@ -3,23 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today</title>
+<title>Today Tool</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
 body { background: #f4f4f4; padding: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; }
-
-/* =========================
-   MASTER TOOLBAR
-   ========================= */
 
 #master-toolbar {
   width: 100%;
   max-width: 1400px;
   margin-bottom: 12px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
-
 #master-search {
   width: 100%;
   max-width: 500px;
@@ -30,80 +26,38 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
   font-size: 0.9rem;
   background: #fff;
 }
+#master-search:focus { outline: none; border-color: #555; }
+#master-search-info { font-size:0.8rem; color:#555; margin-top:4px; }
 
-#master-search:focus {
-  outline: none;
-  border-color: #555;
-}
-
+/* CARD BASE */
 .card { 
-  width: 397px;
-  height: 561px;
-  border-radius: 12px; 
-  padding: 16px; 
-  display: flex; 
-  flex-direction: column; 
-  gap: 8px; 
-  position: relative; 
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12); 
-  overflow: hidden; 
+  width: 397px; height: 561px; border-radius: 12px; 
+  padding: 16px; display: flex; flex-direction: column; gap: 8px; 
+  position: relative; box-shadow: 0 6px 18px rgba(0,0,0,0.12); overflow: hidden; 
 }
 .card::before { 
-  content: ""; 
-  position: absolute; 
-  inset: 0; 
+  content: ""; position: absolute; inset: 0; 
   background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="none" stroke="%23e0e0e0" stroke-width="1"/></svg>') repeat; 
-  opacity: 0.03; 
-  pointer-events: none; 
+  opacity: 0.03; pointer-events: none; 
 }
 
+/* CARD TYPES */
 .today { background-color: #ffffff; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
 .next, .new-card { background-color: #dffcf0; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
 .someday { background-color: #c8f7e2; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
 .archive { background-color: #a0d9b7; background-image: linear-gradient(to bottom, rgba(0,0,0,0.08) 1px, transparent 1px); background-size: 1px 24px; }
 
-#toggle-cards-btn {
-  font-size: 0.75rem;
-  margin-left: 8px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: #333;
-  padding: 0;
-}
+#toggle-cards-btn { font-size: 0.75rem; margin-left: 8px; border: none; background: none; cursor: pointer; color: #333; padding: 0; }
 
-
+/* Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
-/* =========================
-   FONT FIX – INTER for TASKS
-   ========================= */
-
-/* 1️⃣ Import Inter font */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
 
-/* 2️⃣ Apply Inter to task text, notes, and input */
-.task-text, 
-.task-notes, 
-.add-task input {
-  font-family: 'Inter', sans-serif;
-}
+.task-text, .task-notes, .add-task input { font-family: 'Inter', sans-serif; }
+.task-text { font-size: 0.85rem; line-height: 1.4; }
+.task-notes { font-size: 0.75rem; line-height: 1.35; color: #555; margin-left: 24px; margin-top: 2px; white-space: pre-wrap; }
+.add-task button { font-family: 'Inter', sans-serif; font-size: 0.85rem; }
 
-.task-text {
-  font-size: 0.85rem; /* slightly smaller for compact layout */
-  line-height: 1.4;
-}
-
-.task-notes {
-  font-size: 0.75rem;
-  line-height: 1.35;
-  color: #555;
-}
-
-/* Optional: slightly smaller add-task button font to match */
-.add-task button {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-}
 .card h2 { font-family: 'Patrick Hand', cursive; font-size: 1.05rem; color: #666; display: flex; justify-content: space-between; align-items: center; }
 .card h2 .first { font-weight: bold; color: #666; }
 .card h2 .rest { opacity: 0.3; font-weight: normal; }
@@ -117,7 +71,7 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .task { display: flex; flex-direction: column; padding: 6px 4px; margin-bottom: 2px; cursor: pointer; }
 .task-top { display: flex; align-items: center; justify-content: space-between; }
 .circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #999; margin-right: 6px; flex-shrink: 0; display: inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; transition: all 0.2s ease; background: #fff; color: #333; }
-.task-text { flex: 1; word-break: break-word; font-size: 0.9rem; }
+.task-text { flex: 1; word-break: break-word; }
 .task-toolbar { display: none; margin-left: 24px; margin-top: 2px; gap: 6px; }
 .task-toolbar button { padding: 0; font-size: 0.7rem; border: none; background: none; opacity: 0.5; cursor: pointer; transition: opacity 0.15s ease; }
 .task-toolbar button:hover { opacity: 0.8; }
@@ -127,215 +81,34 @@ body { background: #f4f4f4; padding: 20px; display: flex; justify-content: cente
 .add-task button { padding: 6px 12px; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
 .add-task button:hover { background: #555; }
 
-.switch { position: relative; display: inline-block; width: 40px; height: 20px; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 12px; transition: .2s; }
-.slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .2s; }
-input:checked + .slider { background-color: #4caf50; }
-input:checked + .slider:before { transform: translateX(20px); }
-
-.archive-tools { display: flex; gap: 8px; }
-.archive-tools button { background: none; border: none; font-size: 12px; cursor: pointer; opacity: 0.6; padding: 0; }
-.archive-tools button:hover { opacity: 1; }
-
-.new-card-index { background:none; border:none; font-size:12px; opacity:0.6; cursor:pointer; margin-top:4px; display:block; text-align:center; }
-.new-card-index:hover { opacity:1; }
-
-.highlighted { background-color: #fff79a; color: #000; }
-.red-highlighted { background-color: #FF746C; color: #000; }
-
 .circle.completed { background: #34c759; border: none; color: white; }
 .task-text.completed { opacity: 0.65; text-decoration: line-through; text-decoration-thickness: 1px; text-decoration-color: #c7c7cc; transition: all 0.25s ease; }
 
-/* Make Someday card flex column and full height */
-.card.someday {
-  display: flex;
-  flex-direction: column;
+.search-highlight { background-color: #fff79a; }
+
+/* Someday footer */
+.someday-footer { display: flex; justify-content: flex-end; align-items: center; gap: 4px; font-size: 0.75rem; color: #999; margin-top: 8px; }
+.someday-footer button { font-size: 0.75rem; border: none; background: none; cursor: pointer; color: #999; }
+
+/* MOBILE */
+@media (max-width:600px){
+  #toggle-cards-btn { font-size: 0.65rem; }
+  body { padding: 14px; gap: 18px; flex-direction: column; align-items: center; background: #f2f2f7; }
+  .card { width: 100%; max-width: 420px; height: 480px; border-radius: 18px; display: flex; flex-direction: column; }
+  .task-list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+  .circle { width: 22px; height: 22px; font-size: 14px; }
+  .task-text { font-size: 1rem; }
+  .add-task input, .add-task button { font-size: 1rem; padding: 10px 12px; border-radius: 10px; }
 }
 
-/* Scrollable task list */
-.card.someday .task-list.scrollable {
-  flex: 1;           /* fills available space */
-  overflow-y: auto;  /* allows vertical scrolling */
-  padding-right: 4px; /* optional, matches your other task-lists */
+/* DESKTOP SMALL TWEAKS */
+@media(min-width:601px){
+  .task-text { font-size:0.8rem; }
+  .task-notes { font-size:0.7rem; }
+  .add-task button { font-size:0.8rem; }
+  .card h2 { font-size:1rem; }
+  #today-date { font-size:0.75rem; }
 }
-
-/* Footer at bottom */
-.someday-footer {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
-  color: #999;
-  margin-top: 8px; /* spacing above footer */
-}
-
-.someday-footer button {
-  font-size: 0.75rem;
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: #999;
-}
-
-.card.today h2 {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px; /* spacing between elements */
-}
-
-.card.today h2 span:first-child {
-  display: flex;
-  align-items: center;
-  gap: 4px; /* spacing between "T" and "oday" and date */
-}
-
-#today-date {
-  font-size: 0.8rem;
-  color: #888;
-  margin-left: 4px;
-}
-
-.task-notes { 
-  font-size: 0.8rem; 
-  color: #555; 
-  margin-left: 24px; 
-  margin-top: 2px; 
-  white-space: pre-wrap; 
-}
-.task-notes a { 
-  color: #007bff; 
-  cursor: pointer; 
-  text-decoration: underline; 
-}
-
-/* =========================
-   MOBILE – FIXED SIZE CARDS
-   ========================= */
-@media (max-width: 600px) {
-
-  /* Toggle button size */
-  #toggle-cards-btn {
-    font-size: 0.65rem;
-  }
-
-  body {
-    padding: 14px;
-    gap: 18px;
-    flex-direction: column;
-    align-items: center;
-    background: #f2f2f7;
-  }
-
-  .card {
-    width: 100%;
-    max-width: 420px;
-    height: 480px;
-    border-radius: 18px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .card h2 {
-    flex-shrink: 0;
-  }
-
-  .task-list {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-  }
-
-  #today-summary,
-  .add-task {
-    flex-shrink: 0;
-  }
-
-  .task {
-    padding: 10px 6px;
-  }
-
-  .circle {
-    width: 22px;
-    height: 22px;
-    font-size: 14px;
-  }
-
-  .task-text {
-    font-size: 1rem;
-  }
-
-  .task-toolbar button {
-    font-size: 0.95rem;
-    padding: 6px 4px;
-  }
-
-  .add-task input {
-    padding: 10px 12px;
-    font-size: 1rem;
-    border-radius: 10px;
-  }
-
-  .add-task button {
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 0.95rem;
-  }
-
-  .archive-tools {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  #new-card h2 {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  #new-card-title {
-    width: 100%;
-  }
-
-  #help-overlay {
-    width: 92vw;
-    max-width: 92vw;
-    border-radius: 16px;
-  }
-}
-
-/* Desktop/Web only – reduce font size slightly */
-@media (min-width: 601px) {
-  .task-text {
-    font-size: 0.8rem; /* smaller than default 0.9rem */
-  }
-  .task-notes {
-    font-size: 0.7rem; /* smaller than default 0.8rem */
-  }
-  .add-task button {
-    font-size: 0.8rem; /* slightly smaller button font */
-  }
-  #today-summary {
-    font-size: 0.8rem;
-  }
-}
-
-@media (min-width: 601px) {
-  .card h2 {
-    font-size: 1rem; /* slightly smaller than 1.05rem */
-  }
-  #today-date {
-    font-size: 0.75rem; /* smaller than 0.8rem */
-  }
-}
-
-.search-highlight {
-  background-color: #fff79a; /* Yellow for search matches only */
-  color: inherit;
-}
-
 </style>
 </head>
 <body>
@@ -343,71 +116,54 @@ input:checked + .slider:before { transform: translateX(20px); }
 <!-- MASTER TOOLBAR -->
 <div id="master-toolbar">
   <input type="text" id="master-search" placeholder="Search all tasks... (Ctrl + /)">
-  <div id="master-search-info" style="font-size:0.8rem; color:#555; margin-top:4px;"></div>
+  <div id="master-search-info"></div>
 </div>
 
-<!-- Today Card -->
-<div class="card today">
+<!-- TODAY CARD -->
+<div class="card today" id="today-card">
   <h2>
     <span><span class="first">T</span><span class="rest">oday</span><span id="today-date"></span></span>
-    <button id="toggle-cards-btn">focus mode</button>
-	<button id="today-sort-btn" style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:0.75rem; color:#333;">Sort A→Z</button>
-    <button id="help-btn" title="Help" 
-    style="margin-left:8px; border:none; background:none; cursor:pointer; font-size:1.2rem; color:#333; display:flex; align-items:center; justify-content:center; transition:0.2s;">
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-    <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 12.933A5.933 5.933 0 1 1 8 2.067a5.933 5.933 0 0 1 0 11.866z"/>
-    <path d="M5.255 5.786c.18-.72.738-1.2 1.745-1.2.694 0 1.113.324 1.113.84 0 .476-.302.736-.736 1.032-.464.314-.605.544-.605 1.152v.25h1v-.22c0-.36.105-.605.554-.93.566-.387.935-.69.935-1.444 0-.873-.672-1.497-1.762-1.497-1.064 0-1.713.552-1.926 1.296l.998.247zM8 11h-.002v1h.004v-1z"/>
-  </svg>
-</button>
+    <button id="toggle-cards-btn">Focus Mode</button>
+    <button id="today-sort-btn" style="margin-left:8px;border:none;background:none;cursor:pointer;font-size:0.75rem;color:#333;">Sort A→Z</button>
+    <button id="help-btn" style="margin-left:8px;border:none;background:none;cursor:pointer;font-size:1.2rem;color:#333;">?</button>
   </h2>
   <div class="task-list" id="today-tasks"></div>
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-  <div id="today-summary" style="font-size:0.85rem; color:#555;"></div>
-  <button id="today-focus-btn" 
-    style="border:none; background:none; cursor:pointer; font-size:0.75rem; color:#333;">
-    hide all tasks
-  </button>
-</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+    <div id="today-summary" style="font-size:0.85rem;color:#555;"></div>
+    <button id="today-focus-btn" style="border:none;background:none;cursor:pointer;font-size:0.75rem;color:#333;">hide all tasks</button>
+  </div>
   <div class="add-task">
-  <input type="text" placeholder="New task..." id="today-input">
-  <button onclick="addTask('today')">Add</button>
+    <input type="text" placeholder="New task..." id="today-input">
+    <button onclick="addTask('today')">Add</button>
+  </div>
 </div>
 
-
-</div>
-
-<!-- Next Card -->
+<!-- NEXT CARD -->
 <div class="card next" id="next-card">
   <h2>
-  <span><span class="first">N</span><span class="rest">ext / this week</span></span>
-  <span class="archive-tools">
-    <button id="next-sort-btn" style="border:none;background:none;cursor:pointer;font-size:0.75rem;color:#333;">Sort A→Z</button>
-    <button onclick="toggleHideCard('next')">hide</button>
-  </span>
-</h2>
+    <span><span class="first">N</span><span class="rest">ext / this week</span></span>
+    <span class="archive-tools">
+      <button id="next-sort-btn" style="border:none;background:none;cursor:pointer;font-size:0.75rem;color:#333;">Sort A→Z</button>
+      <button onclick="toggleHideCard('next')">hide</button>
+    </span>
+  </h2>
   <div class="task-list" id="next-tasks"></div>
 </div>
 
-<!-- Someday Card -->
+<!-- SOMEDAY CARD -->
 <div class="card someday" id="someday-card">
   <h2>
     <span><span class="first">S</span><span class="rest">omeday / notes</span></span>
-    <span class="archive-tools">
-      <button onclick="toggleHideCard('someday')">hide</button>
-    </span>
+    <span class="archive-tools"><button onclick="toggleHideCard('someday')">hide</button></span>
   </h2>
-
-  <!-- Scrollable task list -->
   <div class="task-list scrollable" id="someday-tasks"></div>
-
-  <!-- Last Reviewed Field (pinned at bottom) -->
   <div class="someday-footer">
     <span id="someday-timestamp">Last reviewed: —</span>
     <button id="someday-timestamp-btn">⏰</button>
   </div>
 </div>
 
-<!-- Archive Card -->
+<!-- ARCHIVE CARD -->
 <div class="card archive" id="archive-card">
   <h2>
     Archive
@@ -421,10 +177,10 @@ input:checked + .slider:before { transform: translateX(20px); }
   <div class="task-list" id="archive-tasks"></div>
 </div>
 
-<!-- New Card Section -->
+<!-- NEW CARD -->
 <div class="card new-card" id="new-card">
   <h2>
-    <input type="text" id="new-card-title" value="New Card" style="border:none;background:none;font-family:sans-serif;font-size:1.05rem; width: 140px;">
+    <input type="text" id="new-card-title" value="New Card" style="border:none;background:none;font-family:sans-serif;font-size:1.05rem;width:140px;">
     <span class="archive-tools">
       <button onclick="toggleHideCard('new')">hide</button>
       <button onclick="prevNewCard()">Prev</button>
@@ -434,17 +190,16 @@ input:checked + .slider:before { transform: translateX(20px); }
   </h2>
   <div class="task-list" id="new-card-tasks"></div>
   <div class="add-task">
-  <input type="text" placeholder="New task..." id="new-card-input">
-  <button onclick="addTask('new')">Add</button>
+    <input type="text" placeholder="New task..." id="new-card-input">
+    <button onclick="addTask('new')">Add</button>
+  </div>
+  <button class="new-card-index">Card 1/1</button>
 </div>
 
-<button class="new-card-index" title="Current card index">Card 1/1</button>
-</div>
-
-<!-- Help Overlay -->
+<!-- HELP OVERLAY -->
 <div id="help-overlay" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1px solid #ccc;padding:16px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.2);z-index:9999;font-size:0.9rem;line-height:1.4;">
   <strong>Quick Guide</strong>
-  <ul style="margin-top:8px; padding-left:18px;">
+  <ul style="margin-top:8px;padding-left:18px;">
     <li>Add task → Type + Add or press Enter</li>
     <li>Move task → T/N/S/✕</li>
     <li>Highlight → ⭐ cycles Yellow → Red → White</li>
@@ -453,536 +208,288 @@ input:checked + .slider:before { transform: translateX(20px); }
     <li>Hide/show cards → Toggle switch</li>
     <li><strong>New Cards → Manage multiple projects or categories</strong></li>
   </ul>
-  <button id="close-help" style="margin-top:8px; padding:4px 8px; border:none; background:#333; color:#fff; border-radius:4px; cursor:pointer;">Close</button>
+  <button id="close-help" style="margin-top:8px;padding:4px 8px;border:none;background:#333;color:#fff;border-radius:4px;cursor:pointer;">Close</button>
 </div>
 
 <script>
-// --- DATE ---
-function todayDate(){ 
-  const d = new Date(); 
-  return d.toLocaleDateString(undefined, { day:'numeric', month:'short' }); 
+// ======================
+// DATA STORAGE
+// ======================
+let tasks = {
+  today: JSON.parse(localStorage.getItem("tasks_today")||"[]"),
+  next: JSON.parse(localStorage.getItem("tasks_next")||"[]"),
+  someday: JSON.parse(localStorage.getItem("tasks_someday")||"[]"),
+  archive: JSON.parse(localStorage.getItem("tasks_archive")||"[]"),
+  newCards: JSON.parse(localStorage.getItem("tasks_newCards")||"[]")
+};
+
+let currentNewCardIndex = 0;
+if(!tasks.newCards.length) tasks.newCards.push({title:"New Card", tasks:[]});
+
+// ======================
+// UTILITIES
+// ======================
+function saveTasks(){
+  localStorage.setItem("tasks_today", JSON.stringify(tasks.today));
+  localStorage.setItem("tasks_next", JSON.stringify(tasks.next));
+  localStorage.setItem("tasks_someday", JSON.stringify(tasks.someday));
+  localStorage.setItem("tasks_archive", JSON.stringify(tasks.archive));
+  localStorage.setItem("tasks_newCards", JSON.stringify(tasks.newCards));
 }
-document.getElementById('today-date').innerText = " " + todayDate();
 
-// --- STORAGE ---
-const storageKey = 'todayToolTasks';
-let tasks = JSON.parse(localStorage.getItem(storageKey)) || { today: [], next: [], someday: [], archive: [] };
-function saveTasks(){ localStorage.setItem(storageKey, JSON.stringify(tasks)); }
-
-const newCardsKey = 'newCards';
-let newCards = JSON.parse(localStorage.getItem(newCardsKey)) || [{ title:'New Card', tasks: [] }];
-let currentAdhoc = 0;
-function saveNewCards(){ localStorage.setItem(newCardsKey, JSON.stringify(newCards)); }
-
-let hiddenCards = { next:false, someday:false, archive:false, new:false };
-let todaySortMode = 'none';  // 'none' | 'alphabet' | 'color'
-let nextSortMode = 'none';
-let todayTasksHidden = false;
-let masterSearchQuery = '';
-
-// --- MASTER TOGGLE ---
-const toggleBtn = document.getElementById('toggle-cards-btn');
-function updateToggleBtn() {
-    const anyHidden = hiddenCards.next || hiddenCards.someday || hiddenCards.archive || hiddenCards.new;
-    toggleBtn.textContent = anyHidden ? 'Show All' : 'Focus Mode';
+function formatDate(){
+  const d = new Date();
+  return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
 }
-toggleBtn.addEventListener('click', function() {
-    const anyHidden = hiddenCards.next || hiddenCards.someday || hiddenCards.archive || hiddenCards.new;
-    if(anyHidden){ hiddenCards = { next:false, someday:false, archive:false, new:false }; }
-    else { hiddenCards = { next:true, someday:true, archive:true, new:true }; }
-    renderTasks();
-    updateToggleBtn();
-});
-updateToggleBtn();
 
-// --- TODAY SORT TOGGLE ---
-const todaySortBtn = document.getElementById('today-sort-btn');
-todaySortBtn.addEventListener('click', () => {
-  if (todaySortMode === 'none') todaySortMode = 'alphabet';
-  else if (todaySortMode === 'alphabet') todaySortMode = 'color';
-  else todaySortMode = 'none';
+// ======================
+// TASK RENDERING
+// ======================
+function renderTasks(){
+  const renderList = (arr, containerId) => {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+    arr.forEach((t,i)=>{
+      const taskDiv = document.createElement("div");
+      taskDiv.className = "task";
+      const circle = document.createElement("div");
+      circle.className = "circle"+(t.completed?" completed":"");
+      circle.innerText = t.completed?"✓":"";
+      circle.onclick = ()=>toggleStatus(containerId,i);
 
-  // Updated labels
-  todaySortBtn.textContent =
-    todaySortMode === 'none' ? 'Sort A→Z' :
-    todaySortMode === 'alphabet' ? 'Sort by Color' :
-    'Clear Sort';
+      const textDiv = document.createElement("div");
+      textDiv.className = "task-text"+(t.completed?" completed":"");
+      textDiv.innerText = t.text;
 
-  renderTasks();
-});
+      const toolbar = document.createElement("div");
+      toolbar.className = "task-toolbar";
+      toolbar.innerHTML = `
+        <button onclick="moveTask('${containerId}',${i},'today')">T</button>
+        <button onclick="moveTask('${containerId}',${i},'next')">N</button>
+        <button onclick="moveTask('${containerId}',${i},'someday')">S</button>
+        <button onclick="moveTask('${containerId}',${i},'archive')">✕</button>
+        <button onclick="editTask('${containerId}',${i})">✎</button>
+        <button onclick="cycleHighlight('${containerId}',${i})">⭐</button>
+      `;
 
-// --- NEXT SORT TOGGLE ---
-const nextSortBtn = document.getElementById('next-sort-btn');
-nextSortBtn.addEventListener('click', () => {
-  if (nextSortMode === 'none') nextSortMode = 'alphabet';
-  else if (nextSortMode === 'alphabet') nextSortMode = 'color';
-  else nextSortMode = 'none';
+      taskDiv.append(circle,textDiv,toolbar);
+      taskDiv.onmouseover = ()=>toolbar.style.display="flex";
+      taskDiv.onmouseleave = ()=>toolbar.style.display="none";
+      if(t.highlight) taskDiv.classList.add("search-highlight");
+      container.appendChild(taskDiv);
+    });
+  };
 
-  // Updated labels
-  nextSortBtn.textContent =
-    nextSortMode === 'none' ? 'Sort A→Z' :
-    nextSortMode === 'alphabet' ? 'Sort by Color' :
-    'Clear Sort';
+  renderList(tasks.today,"today-tasks");
+  renderList(tasks.next,"next-tasks");
+  renderList(tasks.someday,"someday-tasks");
+  renderList(tasks.archive,"archive-tasks");
+  renderList(tasks.newCards[currentNewCardIndex].tasks,"new-card-tasks");
 
-  renderTasks();
-});
-
-// --- TODAY FOCUS MODE ---
-const todayFocusBtn = document.getElementById('today-focus-btn');
-todayFocusBtn.addEventListener('click', function(){
-  todayTasksHidden = !todayTasksHidden;
-  todayFocusBtn.textContent = todayTasksHidden ? 'show all tasks' : 'hide all tasks';
-  renderTasks();
-});
-
-// --- INDIVIDUAL HIDE ---
-function toggleHideCard(card){ hiddenCards[card] = !hiddenCards[card]; renderTasks(); }
-
-// --- ADD TASK ---
-function addTask(card){ 
-  let input, text;
-  if(card==='today'){ 
-    input = document.getElementById('today-input');
-    text = input.value.trim();
-    if(!text) return;
-    tasks.today.push({text: text, status:'', highlighted:false, red:false});
-    input.value='';
-    saveTasks(); 
-  }
-  else if(card==='new'){ 
-    input = document.getElementById('new-card-input');
-    text = input.value.trim();
-    if(!text) return;
-    newCards[currentAdhoc].tasks.push({text: text, status:'', highlighted:false, red:false});
-    input.value='';
-    saveNewCards(); 
-  }
-  renderTasks(); 
+  document.getElementById("today-date").innerText = formatDate();
+  document.getElementById("today-summary").innerText = `Today ${tasks.today.length}, Next ${tasks.next.length}, Someday ${tasks.someday.length}, Archive ${tasks.archive.length}, New Cards ${tasks.newCards.length}`;
+  document.querySelector(".new-card-index").innerText = `Card ${currentNewCardIndex+1}/${tasks.newCards.length}`;
 }
-document.getElementById('today-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('today'); });
-document.getElementById('new-card-input').addEventListener('keypress', e=>{ if(e.key==='Enter') addTask('new'); });
 
-// --- SAVE NEW CARD TITLE ---
-const newCardTitleInput = document.getElementById('new-card-title');
-newCardTitleInput.addEventListener('input', function() {
-  newCards[currentAdhoc].title = this.value.trim() || 'New Card';
-  saveNewCards();
-});
-
-// --- HELP BUTTON ---
-const helpBtn = document.getElementById('help-btn');
-const helpOverlay = document.getElementById('help-overlay');
-const closeHelp = document.getElementById('close-help');
-helpBtn.addEventListener('click', ()=>{ helpOverlay.style.display='block'; });
-closeHelp.addEventListener('click', ()=>{ helpOverlay.style.display='none'; });
-
-// --- MASTER SEARCH ---
-const masterSearchInput = document.getElementById('master-search');
-masterSearchInput.addEventListener('input', function(){
-  masterSearchQuery = this.value.trim().toLowerCase();
-  renderTasks();
-});
-
-// --- MOVE / DELETE / HIGHLIGHT FUNCTIONS ---
-
-// Move task from one card to another
-function moveTask(from, to, i){
-  let task;
-  if(from === 'new'){
-    task = newCards[currentAdhoc].tasks.splice(i,1)[0];
-    if(to === 'today' || to==='next' || to==='someday' || to==='archive'){
-      tasks[to].push(task);
-      saveTasks();
-    } else if(to === 'new'){ newCards[currentAdhoc].tasks.push(task); saveNewCards(); }
-    else return;
-    saveNewCards();
-  } else {
-    task = tasks[from].splice(i,1)[0];
-    if(to === 'today' || to==='next' || to==='someday' || to==='archive'){
-      tasks[to].push(task);
-      saveTasks();
-    } else if(to === 'new'){ newCards[currentAdhoc].tasks.push(task); saveNewCards(); }
-    else return;
-    saveTasks();
-  }
+// ======================
+// TASK ACTIONS
+// ======================
+function addTask(card){
+  const inputId = card==="new"?"new-card-input":"today-input";
+  const input = document.getElementById(inputId);
+  const text = input.value.trim();
+  if(!text) return;
+  const taskObj = {text, completed:false, highlight:null};
+  if(card==="today") tasks.today.push(taskObj);
+  else if(card==="next") tasks.next.push(taskObj);
+  else if(card==="someday") tasks.someday.push(taskObj);
+  else if(card==="new") tasks.newCards[currentNewCardIndex].tasks.push(taskObj);
+  input.value="";
+  saveTasks();
   renderTasks();
 }
 
-// Cycle task highlight (none → yellow → red → none)
-function cycleHighlight(card,i){
-  let task = card==='new'? newCards[currentAdhoc].tasks[i] : tasks[card][i];
-  // Cycle: None → Yellow → Red → None
-  if(!task.highlighted && !task.red){ 
-    task.highlighted = true; 
-    task.red = false; 
-  } else if(task.highlighted && !task.red){ 
-    task.highlighted = false; 
-    task.red = true; 
-  } else { 
-    task.highlighted = false; 
-    task.red = false; 
-  }
-  if(card==='new') saveNewCards(); else saveTasks();
+function toggleStatus(containerId,index){
+  let arr = getArray(containerId);
+  arr[index].completed = !arr[index].completed;
+  saveTasks();
   renderTasks();
 }
 
-// --- NEW CARD NAVIGATION ---
-function prevNewCard(){
-  if(currentAdhoc > 0){ currentAdhoc--; renderTasks(); }
+function getArray(containerId){
+  if(containerId==="today-tasks") return tasks.today;
+  if(containerId==="next-tasks") return tasks.next;
+  if(containerId==="someday-tasks") return tasks.someday;
+  if(containerId==="archive-tasks") return tasks.archive;
+  if(containerId==="new-card-tasks") return tasks.newCards[currentNewCardIndex].tasks;
+}
+
+// ======================
+// MOVE / EDIT / HIGHLIGHT
+// ======================
+function moveTask(fromId,index,toCard){
+  let arr = getArray(fromId);
+  let task = arr.splice(index,1)[0];
+  if(toCard==="today") tasks.today.push(task);
+  else if(toCard==="next") tasks.next.push(task);
+  else if(toCard==="someday") tasks.someday.push(task);
+  else if(toCard==="archive") tasks.archive.push(task);
+  else if(toCard==="new") tasks.newCards[currentNewCardIndex].tasks.push(task);
+  saveTasks();
+  renderTasks();
+}
+
+function editTask(containerId,index){
+  let arr = getArray(containerId);
+  const newText = prompt("Edit task:",arr[index].text);
+  if(newText!==null) { arr[index].text = newText; saveTasks(); renderTasks(); }
+}
+
+function cycleHighlight(containerId,index){
+  let arr = getArray(containerId);
+  if(!arr[index].highlight) arr[index].highlight="yellow";
+  else if(arr[index].highlight==="yellow") arr[index].highlight="red";
+  else arr[index].highlight=null;
+  saveTasks();
+  renderTasks();
+}
+
+// ======================
+// CARD NAVIGATION
+// ======================
+function toggleHideCard(card){
+  const cardEl = document.getElementById(card+"-card");
+  if(cardEl.style.display==="none") cardEl.style.display="flex";
+  else cardEl.style.display="none";
 }
 
 function nextNewCard(){
-  if(currentAdhoc < newCards.length-1){ currentAdhoc++; renderTasks(); }
+  if(currentNewCardIndex<tasks.newCards.length-1) currentNewCardIndex++;
+  renderTasks();
 }
-
-// --- CREATE NEW CARD ---
+function prevNewCard(){
+  if(currentNewCardIndex>0) currentNewCardIndex--;
+  renderTasks();
+}
 function createNewCard(){
-  newCards.push({ title:'New Card', tasks: [] });
-  currentAdhoc = newCards.length-1;
-  saveNewCards();
+  tasks.newCards.push({title:"New Card",tasks:[]});
+  currentNewCardIndex=tasks.newCards.length-1;
+  saveTasks();
   renderTasks();
 }
 
-// --- RENDER TASKS ---
-function renderTasks(){
-  function createTaskDiv(taskObj, card, i, isNew=false){
-    if(masterSearchQuery){
-      const textMatch = taskObj.text.toLowerCase().includes(masterSearchQuery);
-      const notesMatch = taskObj.notes && taskObj.notes.toLowerCase().includes(masterSearchQuery);
-      if(!textMatch && !notesMatch){ return null; }
-    }
-
-    const taskDiv = document.createElement('div');
-    taskDiv.className = 'task';
-    if(taskObj.highlighted) taskDiv.classList.add('highlighted');
-    if(taskObj.red) taskDiv.classList.add('red-highlighted');
-
-    const topRow = document.createElement('div');
-    topRow.className = 'task-top';
-
-    const left = document.createElement('div');
-    left.style.display = 'flex';
-    left.style.alignItems = 'center';
-
-    const circle = document.createElement('span');
-    circle.className = 'circle';
-    circle.textContent = taskObj.status==='completed'?'✓':taskObj.status==='inprogress'?'→':'•';
-    if(taskObj.status==='completed'){ circle.classList.add('completed'); }
-
-    const text = document.createElement('span');
-    text.className = 'task-text';
-if(masterSearchQuery && taskObj.text.toLowerCase().includes(masterSearchQuery)){
-  const regex = new RegExp(`(${masterSearchQuery})`, 'gi');
-  text.innerHTML = taskObj.text.replace(regex, '<span class="search-highlight">$1</span>');
-} else {
-  text.textContent = taskObj.text;
-}
-    if(taskObj.status==='completed'){ text.classList.add('completed'); }
-
-    circle.onclick = function(e){ e.stopPropagation(); if(isNew){ toggleStatusNew(i); } else { toggleStatus(card,i); } };
-
-    left.append(circle,text);
-    topRow.append(left);
-
-    const tb = document.createElement('div');
-    tb.className = 'task-toolbar';
-    if(card!=='archive'){
-      const todayBtn=document.createElement('button'); todayBtn.textContent='T'; todayBtn.onclick=function(){ moveTask(isNew?'new':card,'today',i); };
-      const nextBtn=document.createElement('button'); nextBtn.textContent='N'; nextBtn.onclick=function(){ moveTask(isNew?'new':card,'next',i); };
-      const somedayBtn=document.createElement('button'); somedayBtn.textContent='S'; somedayBtn.onclick=function(){ moveTask(isNew?'new':card,'someday',i); };
-      const delBtn=document.createElement('button'); delBtn.textContent='✕'; delBtn.onclick=function(){ moveTask(isNew?'new':card,'archive',i); };
-      const highlightBtn=document.createElement('button'); highlightBtn.textContent='⭐'; highlightBtn.onclick=function(){ cycleHighlight(isNew?'new':card,i); };
-      const editBtn=document.createElement('button'); editBtn.textContent='✎'; editBtn.onclick=function(){ 
-        const newText = prompt('Edit task:',taskObj.text);
-        if(newText && newText.trim()!==''){ taskObj.text=newText.trim(); if(card==='new'){saveNewCards();} else{saveTasks();} renderTasks(); }
-      };
-      const notesBtn=document.createElement('button'); notesBtn.textContent='📝'; notesBtn.onclick=function(e){
-        e.stopPropagation();
-        const currentNote = taskObj.notes || '';
-        let newNote = prompt('Enter notes for this task:', currentNote);
-        if(newNote!==null){ taskObj.notes=newNote.trim(); if(card==='new'){saveNewCards();} else{saveTasks();} renderTasks(); }
-      };
-      tb.append(todayBtn,nextBtn,somedayBtn,highlightBtn,editBtn,notesBtn,delBtn);
-    }
-
-    topRow.onclick = function(){ tb.style.display = tb.style.display==='flex'?'none':'flex'; };
-    taskDiv.append(topRow,tb);
-
-    if(taskObj.notes && taskObj.notes.trim()!==''){
-      const notesDiv = document.createElement('div'); notesDiv.className='task-notes';
-      const maxLength = 60;
-      if(taskObj.notes.length > maxLength){
-        const preview = taskObj.notes.slice(0,maxLength) + '... ';
-        const viewFull = document.createElement('a'); viewFull.textContent='(view full)';
-        viewFull.onclick=function(e){ e.stopPropagation(); const fullNote=prompt('Full note:',taskObj.notes); if(fullNote!==null){ taskObj.notes=fullNote.trim(); if(card==='new'){saveNewCards();} else{saveTasks();} renderTasks(); } };
-        notesDiv.textContent = preview;
-        notesDiv.appendChild(viewFull);
-      } else { notesDiv.textContent = taskObj.notes; }
-      taskDiv.appendChild(notesDiv);
-    }
-    return taskDiv;
-  }
-
-  // --- STANDARD CARDS ---
-  ['today','next','someday','archive'].forEach(card=>{
-    const c = document.getElementById(card+'-card');
-    const container = document.getElementById(card+'-tasks');
-    container.innerHTML='';
-
-    if(card!=='today'){ c.style.display = hiddenCards[card] ? 'none':'flex'; }
-    else { document.getElementById('today-tasks').style.display = todayTasksHidden ? 'none':'block'; }
-
-    let sortedTasks = [...tasks[card]];
-    if(card==='today' && todaySortMode!=='none'){
-      if(todaySortMode==='alphabet') sortedTasks.sort((a,b)=>a.text.localeCompare(b.text));
-      else if(todaySortMode==='color') sortedTasks.sort((a,b)=>(a.red?1:a.highlighted?2:3) - (b.red?1:b.highlighted?2:3));
-    } else if(card==='next' && nextSortMode!=='none'){
-      if(nextSortMode==='alphabet') sortedTasks.sort((a,b)=>a.text.localeCompare(b.text));
-      else if(nextSortMode==='color') sortedTasks.sort((a,b)=>(a.red?1:a.highlighted?2:3) - (b.red?1:b.highlighted?2:3));
-    }
-
-    sortedTasks.forEach((t,i)=>{
-      const el = createTaskDiv(t, card, i);
-      if(el) container.appendChild(el);
-    });
-  });
-
-  // --- TODAY SUMMARY ---
-  const todaySummaryDiv=document.getElementById('today-summary');
-  const todayTasksArr=tasks.today;
-  const pending=todayTasksArr.filter(t=>t.status==='').length;
-  const inProgress=todayTasksArr.filter(t=>t.status==='inprogress').length;
-  const completed=todayTasksArr.filter(t=>t.status==='completed').length;
-  todaySummaryDiv.textContent=`• ${pending}   → ${inProgress}   ✓ ${completed}`;
-
-  // --- NEW CARD ---
-  const nc=document.getElementById('new-card'); 
-  const ncTasks=document.getElementById('new-card-tasks'); 
-  ncTasks.innerHTML=''; 
-  nc.style.display=hiddenCards.new?'none':'flex';
-  const cardData=newCards[currentAdhoc]; 
-  document.getElementById('new-card-title').value=cardData.title;
-  cardData.tasks.forEach((t,i)=>{ const el=createTaskDiv(t,'new',i,true); if(el) ncTasks.appendChild(el); });
-  document.querySelector('.new-card-index').textContent=`Card ${currentAdhoc+1}/${newCards.length}`;
-
-  // --- MASTER SEARCH INFO ---
-  if(masterSearchQuery){
-    const cardKeys=['today','next','someday','archive','new'];
-    const counts={}; let totalMatches=0;
-    cardKeys.forEach(card=>{
-      let taskArray = card==='new'? newCards.flatMap(c=>c.tasks) : tasks[card];
-      counts[card] = taskArray.filter(t=> t.text.toLowerCase().includes(masterSearchQuery) || (t.notes && t.notes.toLowerCase().includes(masterSearchQuery)) ).length;
-      totalMatches += counts[card];
-    });
-    document.getElementById('master-search-info').textContent = `Total: ${totalMatches} | Today: ${counts.today}, Next: ${counts.next}, Someday: ${counts.someday}, Archive: ${counts.archive}, New: ${counts.new}`;
-  } else { document.getElementById('master-search-info').textContent=''; }
+// ======================
+// SORTING
+// ======================
+function sortCardAtoZ(card){
+  let arr = getArray(card+"-tasks");
+  arr.sort((a,b)=>a.text.localeCompare(b.text));
+  saveTasks();
+  renderTasks();
 }
 
-// --- TASK ACTIONS ---
-function toggleStatus(card,i){ 
-  const t=tasks[card][i]; 
-  t.status=t.status==='completed'?'':t.status==='inprogress'?'completed':'inprogress'; 
-  saveTasks(); renderTasks(); 
-}
-function toggleStatusNew(i){ 
-  const t=newCards[currentAdhoc].tasks[i]; 
-  t.status=t.status==='completed'?'':t.status==='inprogress'?'completed':'inprogress'; 
-  saveNewCards(); renderTasks(); 
-}
+document.getElementById("today-sort-btn").onclick = ()=>sortCardAtoZ("today");
+document.getElementById("next-sort-btn").onclick = ()=>sortCardAtoZ("next");
 
-// --- MOVE / DELETE / HIGHLIGHT ---
-// Keep your existing moveTask, deleteTask, cycleHighlight functions as before
-// (No changes needed for core rendering)
-
-// --- INITIAL RENDER ---
-renderTasks();
-
-// --- ARCHIVE STATUS DIV ---
-let archiveStatusDiv = document.getElementById('archive-status');
-if(!archiveStatusDiv){
-  archiveStatusDiv = document.createElement('div');
-  archiveStatusDiv.id = 'archive-status';
-  archiveStatusDiv.style.fontSize = '0.75rem';
-  archiveStatusDiv.style.color = '#333';
-  archiveStatusDiv.style.marginTop = '6px';
-  archiveStatusDiv.style.opacity = '0.8';
-  document.getElementById('archive-card').appendChild(archiveStatusDiv);
-}
-
-// --- EXPORT ALL TASKS AND NEW CARDS AS JSON ---
+// ======================
+// EXPORT / IMPORT
+// ======================
 function exportTasksTxt(){
-  const data = { tasks, newCards };
-  const dataStr = JSON.stringify(data, null, 2);
-  const blob = new Blob([dataStr], {type: "text/plain"});
+  let content = JSON.stringify(tasks,null,2);
+  const blob = new Blob([content],{type:"application/json"});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = "tasks_backup.txt";
-  a.click();
+  const a = document.createElement("a");
+  a.href=url; a.download="tasks.json"; a.click();
   URL.revokeObjectURL(url);
-  archiveStatusDiv.textContent = `💾 Exported ${tasks.today.length + tasks.next.length + tasks.someday.length + tasks.archive.length} tasks + ${newCards.length} new card(s).`;
 }
 
-// --- EXPORT READABLE TXT WITH SUMMARY LINE ---
 function exportReadableTxt(){
-  let summary = `SUMMARY: Today ${tasks.today.length}, Next ${tasks.next.length}, Someday ${tasks.someday.length}, Archive ${tasks.archive.length}, New Cards ${newCards.length}\n\n`;
+  let summary = `SUMMARY: Today ${tasks.today.length}, Next ${tasks.next.length}, Someday ${tasks.someday.length}, Archive ${tasks.archive.length}, New Cards ${tasks.newCards.length}\n\n`;
   let content = summary;
 
-  function appendTasks(taskArray, cardName){
-    content += `--- ${cardName.toUpperCase()} ---\n`;
-    taskArray.forEach((t,i)=>{
-      const status = t.status==='completed'?'✓':t.status==='inprogress'?'→':'•';
-      const highlight = t.red?'[RED]':t.highlighted?'[★]':'';
-      content += `${i+1}. ${status} ${t.text} ${highlight}\n`;
-      if(t.notes && t.notes.trim()!=='') content += `   Notes: ${t.notes}\n`;
-    });
-    content += '\n';
+  function appendTasks(arr,name){
+    content += `--- ${name.toUpperCase()} ---\n`;
+    arr.forEach((t,i)=>{ content += `${i+1}. ${t.text} ${t.completed?"[x]":""}\n`; });
+    content += "\n";
   }
 
-  appendTasks(tasks.today,'Today');
-  appendTasks(tasks.next,'Next');
-  appendTasks(tasks.someday,'Someday');
-  appendTasks(tasks.archive,'Archive');
+  appendTasks(tasks.today,"Today");
+  appendTasks(tasks.next,"Next");
+  appendTasks(tasks.someday,"Someday");
+  appendTasks(tasks.archive,"Archive");
+  tasks.newCards.forEach((c,i)=>appendTasks(c.tasks,`New Card ${i+1}`));
 
-  newCards.forEach((c,idx)=>{
-    content += `--- NEW CARD ${idx+1}: ${c.title} ---\n`;
-    appendTasks(c.tasks, `Card ${idx+1}`);
-  });
-
-  // --- Create and download the file ---
-  const blob = new Blob([content], {type: "text/plain"});
+  const blob = new Blob([content],{type:"text/plain"});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = "tasks_readable.txt";
-  a.click();
+  const a = document.createElement("a");
+  a.href=url; a.download="tasks_readable.txt"; a.click();
   URL.revokeObjectURL(url);
-
-  archiveStatusDiv.textContent = `💾 Exported readable txt with ${tasks.today.length + tasks.next.length + tasks.someday.length + tasks.archive.length} tasks + ${newCards.length} new card(s).`;
-}
-  let summary = `SUMMARY: Today ${tasks.today.length}, Next ${tasks.next.length}, Someday ${tasks.someday.length}, Archive ${tasks.archive.length}, New Cards ${newCards.length}\n\n`;
-  let content = summary;
-
-  function appendTasks(taskArray, cardName){
-    content += `--- ${cardName.toUpperCase()} ---\n`;
-    taskArray.forEach((t,i)=>{
-      const status = t.status==='completed'?'✓':t.status==='inprogress'?'→':'•';
-      const highlight = t.red?'[RED]':t.highlighted?'[★]':'';
-      content += `${i+1}. ${status} ${t.text} ${highlight}\n`;
-      if(t.notes && t.notes.trim()!=='') content += `   Notes: ${t.notes}\n`;
-    });
-    content += '\n';
-  }
-
-  appendTasks(tasks.today,'Today');
-  appendTasks(tasks.next,'Next');
-  appendTasks(tasks.someday,'Someday');
-  appendTasks(tasks.archive,'Archive');
-
-  newCards.forEach((c,idx)=>{
-    content += `--- NEW CARD ${idx+1}: ${c.title} ---\n`;
-    appendTasks(c.tasks, `Card ${idx+1}`);
-  });
-
-  const blob = new Blob([content], {type: "text/plain"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = "tasks_readable.txt";
-  a.click();
-  URL.revokeObjectURL(url);
-  archiveStatusDiv.textContent = `💾 Exported readable TXT with ${tasks.today.length + tasks.next.length + tasks.someday.length + tasks.archive.length} tasks + ${newCards.length} new card(s).`;
 }
 
-// --- IMPORT TASKS & NEW CARDS ---
 function importTasksFile(){
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.txt,.json';
-  input.onchange = e => {
+  const input = document.createElement("input");
+  input.type="file"; input.accept=".json";
+  input.onchange = e=>{
     const file = e.target.files[0];
     if(!file) return;
     const reader = new FileReader();
-    reader.onload = evt => {
+    reader.onload = evt=>{
       try{
         const imported = JSON.parse(evt.target.result);
-        let importedTasks = 0, importedCards = 0;
-        if(imported.tasks){
-          ['today','next','someday','archive'].forEach(card=>{
-            if(Array.isArray(imported.tasks[card])){
-              tasks[card] = imported.tasks[card];
-              importedTasks += tasks[card].length;
-            }
-          });
-        }
-        if(imported.newCards && Array.isArray(imported.newCards)){
-          newCards = imported.newCards;
-          importedCards = newCards.length;
-          currentAdhoc = 0;
-          saveNewCards();
-        }
+        tasks = {...tasks,...imported};
         saveTasks();
         renderTasks();
-        archiveStatusDiv.textContent = `✅ Imported ${importedTasks} tasks + ${importedCards} new card(s) successfully!`;
-      } catch(err){
-        archiveStatusDiv.textContent = '❌ Failed to import tasks. Invalid file.';
-        console.error(err);
-      }
+      }catch(err){ alert("Invalid JSON file"); }
     };
     reader.readAsText(file);
   };
   input.click();
 }
 
-// --- IMPORT TASKS AND NEW CARDS FROM FILE ---
-function importTasksFile() {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.txt,.json';
-  input.onchange = e => {
-    const file = e.target.files[0];
-    if(!file) return;
+// ======================
+// MASTER SEARCH
+// ======================
+document.getElementById("master-search").oninput = function(){
+  const query = this.value.toLowerCase();
+  const allLists = ["today-tasks","next-tasks","someday-tasks","archive-tasks","new-card-tasks"];
+  allLists.forEach(id=>{
+    let arr = getArray(id);
+    arr.forEach(t=>t.highlight=false);
+    arr.forEach(t=>{
+      if(t.text.toLowerCase().includes(query)) t.highlight="yellow";
+    });
+  });
+  renderTasks();
+  document.getElementById("master-search-info").innerText = query?"Searching: "+query:"";
+};
 
-    const reader = new FileReader();
-    reader.onload = event => {
-      try {
-        const data = JSON.parse(event.target.result);
+// ======================
+// HELP OVERLAY
+// ======================
+document.getElementById("help-btn").onclick = ()=>document.getElementById("help-overlay").style.display="block";
+document.getElementById("close-help").onclick = ()=>document.getElementById("help-overlay").style.display="none";
 
-        // Validate structure
-        if(data.tasks && typeof data.tasks === 'object'){
-          tasks = {
-            today: data.tasks.today || [],
-            next: data.tasks.next || [],
-            someday: data.tasks.someday || [],
-            archive: data.tasks.archive || []
-          };
-          saveTasks();
-        } else {
-          console.warn("Tasks structure missing or invalid.");
-        }
+// INITIAL RENDER
+renderTasks();
+// ======================
+// ENTER KEY TO ADD TASK
+// ======================
+document.getElementById("today-input").addEventListener("keydown", e=>{
+  if(e.key === "Enter") addTask("today");
+});
+document.getElementById("new-card-input").addEventListener("keydown", e=>{
+  if(e.key === "Enter") addTask("new");
+});
 
-        if(data.newCards && Array.isArray(data.newCards)){
-          newCards = data.newCards.map(c => ({
-            title: c.title || 'New Card',
-            tasks: Array.isArray(c.tasks) ? c.tasks : []
-          }));
-          currentAdhoc = 0; // reset to first new card
-          saveNewCards();
-        } else {
-          console.warn("New Cards structure missing or invalid.");
-        }
-
-        renderTasks();
-        archiveStatusDiv.textContent = `📥 Imported ${tasks.today.length + tasks.next.length + tasks.someday.length + tasks.archive.length} tasks + ${newCards.length} new card(s).`;
-      } catch(err) {
-        alert('Error importing file: Invalid JSON format.');
-        console.error(err);
-      }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
-}
+// ======================
+// CTRL + / TO FOCUS MASTER SEARCH
+// ======================
+document.addEventListener("keydown", e=>{
+  if(e.ctrlKey && e.key === "/"){
+    e.preventDefault();
+    document.getElementById("master-search").focus();
+  }
+});
 </script>
 </body>
-</html>	
+</html>
