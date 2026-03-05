@@ -331,6 +331,10 @@ input:checked + .slider:before { transform: translateX(20px); }
   }
 }
 
+.search-highlight {
+  background-color: #fff79a; /* Yellow for search matches only */
+  color: inherit;
+}
 
 </style>
 </head>
@@ -607,9 +611,17 @@ function moveTask(from, to, i){
 // Cycle task highlight (none → yellow → red → none)
 function cycleHighlight(card,i){
   let task = card==='new'? newCards[currentAdhoc].tasks[i] : tasks[card][i];
-  if(!task.highlighted && !task.red){ task.highlighted=true; task.red=false; }
-  else if(task.highlighted){ task.highlighted=false; task.red=true; }
-  else { task.highlighted=false; task.red=false; }
+  // Cycle: None → Yellow → Red → None
+  if(!task.highlighted && !task.red){ 
+    task.highlighted = true; 
+    task.red = false; 
+  } else if(task.highlighted && !task.red){ 
+    task.highlighted = false; 
+    task.red = true; 
+  } else { 
+    task.highlighted = false; 
+    task.red = false; 
+  }
   if(card==='new') saveNewCards(); else saveTasks();
   renderTasks();
 }
@@ -659,10 +671,12 @@ function renderTasks(){
 
     const text = document.createElement('span');
     text.className = 'task-text';
-    if(masterSearchQuery && taskObj.text.toLowerCase().includes(masterSearchQuery)){
-      const regex = new RegExp(`(${masterSearchQuery})`, 'gi');
-      text.innerHTML = taskObj.text.replace(regex, '<span style="background:#fff79a;">$1</span>');
-    } else { text.textContent = taskObj.text; }
+if(masterSearchQuery && taskObj.text.toLowerCase().includes(masterSearchQuery)){
+  const regex = new RegExp(`(${masterSearchQuery})`, 'gi');
+  text.innerHTML = taskObj.text.replace(regex, '<span class="search-highlight">$1</span>');
+} else {
+  text.textContent = taskObj.text;
+}
     if(taskObj.status==='completed'){ text.classList.add('completed'); }
 
     circle.onclick = function(e){ e.stopPropagation(); if(isNew){ toggleStatusNew(i); } else { toggleStatus(card,i); } };
@@ -811,6 +825,41 @@ function exportTasksTxt(){
 
 // --- EXPORT READABLE TXT WITH SUMMARY LINE ---
 function exportReadableTxt(){
+  let summary = `SUMMARY: Today ${tasks.today.length}, Next ${tasks.next.length}, Someday ${tasks.someday.length}, Archive ${tasks.archive.length}, New Cards ${newCards.length}\n\n`;
+  let content = summary;
+
+  function appendTasks(taskArray, cardName){
+    content += `--- ${cardName.toUpperCase()} ---\n`;
+    taskArray.forEach((t,i)=>{
+      const status = t.status==='completed'?'✓':t.status==='inprogress'?'→':'•';
+      const highlight = t.red?'[RED]':t.highlighted?'[★]':'';
+      content += `${i+1}. ${status} ${t.text} ${highlight}\n`;
+      if(t.notes && t.notes.trim()!=='') content += `   Notes: ${t.notes}\n`;
+    });
+    content += '\n';
+  }
+
+  appendTasks(tasks.today,'Today');
+  appendTasks(tasks.next,'Next');
+  appendTasks(tasks.someday,'Someday');
+  appendTasks(tasks.archive,'Archive');
+
+  newCards.forEach((c,idx)=>{
+    content += `--- NEW CARD ${idx+1}: ${c.title} ---\n`;
+    appendTasks(c.tasks, `Card ${idx+1}`);
+  });
+
+  // --- Create and download the file ---
+  const blob = new Blob([content], {type: "text/plain"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "tasks_readable.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+
+  archiveStatusDiv.textContent = `💾 Exported readable txt with ${tasks.today.length + tasks.next.length + tasks.someday.length + tasks.archive.length} tasks + ${newCards.length} new card(s).`;
+}
   let summary = `SUMMARY: Today ${tasks.today.length}, Next ${tasks.next.length}, Someday ${tasks.someday.length}, Archive ${tasks.archive.length}, New Cards ${newCards.length}\n\n`;
   let content = summary;
 
